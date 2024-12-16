@@ -14,7 +14,8 @@ struct GarnishTestView: View {
     @State private var colorScheme: ColorScheme = .light
     
     @State var blendAmount: CGFloat = 0.8
-    @State var detent: PresentationDetent = .height(190)
+    @State var detent: PresentationDetent = .height(230)
+//    @State var detent: PresentationDetent = .fraction(0.6)
     
     var body: some View {
         NavigationView{
@@ -113,7 +114,7 @@ struct GarnishTestView: View {
                 }
             }
             .safeAreaInset(edge: .bottom, content: {
-                Color.clear.frame(height: detent == .fraction(0.05) ? 50 : 190)
+                Color.clear.frame(height: detent == .fraction(0.05) ? 50 : 230)
             })
             .navigationTitle("Garnish")
             .navigationBarTitleDisplayMode(.inline)
@@ -137,8 +138,66 @@ struct GarnishSheet: View {
     var body: some View {
         
         VStack(spacing: 20){
-            ColorPicker("Color", selection: $inputColor)
+            VStack(spacing: 15){
+                ColorPicker("Color", selection: $inputColor)
+                
+                let exampleColor: [Color] = [Color(red: 189/255, green: 117/255, blue: 199/255),
+                                             Color(red: 0.8, green: 0.3, blue: 0.2),
+                                             Color(red: 0.8, green: 0.3, blue: 0.4),
+                                             Color(red: 150/255, green: 240/255, blue: 180/255),
+                                             Color(red: 200/255, green: 210/255, blue: 240/255),
+                                             Color.white,
+                                             Color.black,
+                                             Color.teal,
+                ]
+                
+                if detent == .fraction(0.6){
+                    LazyVGrid(columns: [
+                        GridItem(),
+                        GridItem(),
+                        GridItem(),
+                        GridItem()
+                    ]) {
+                        ForEach(exampleColor, id: \.self){ color in
+                            Button {
+                                inputColor = color
+                            } label: {
+                                color
+                                    .frame(height: 35)
+                                    .clipShape(Capsule())
+                                    .overlay(
+                                        Capsule()
+                                            .strokeBorder(color.adjustedBrightness(for: colorScheme, by: 0.1), lineWidth: 3)
+                                    )
+                            }
+                            
+                        }
+                    }
+                }else{
+                    ScrollView(.horizontal){
+                        HStack{
+                            ForEach(exampleColor, id: \.self){ color in
+                                Button {
+                                    inputColor = color
+                                } label: {
+                                    color
+                                        .frame(width: 80, height: 35)
+                                        .clipShape(Capsule())
+                                        .overlay(
+                                            Capsule()
+                                                .strokeBorder(color.adjustedBrightness(for: colorScheme, by: 0.1), lineWidth: 3)
+                                        )
+                                }
+                                
+                            }
+                        }
+                        .padding(.horizontal, 25)
+                    }
+                    .padding(.horizontal, -25)
+                }
+            }
             
+            Divider()
             HStack{
                 Text("Environment")
                 Picker("Color Scheme", selection: $colorScheme) {
@@ -155,7 +214,7 @@ struct GarnishSheet: View {
                     }
                 } label: {
                     Text("Blend")
-                        .foregroundStyle(blendAmount == 0.9 ? Color.primary : inputColor)
+                        .foregroundStyle(blendAmount == 0.9 ? Color.primary : (Garnish.bgBase(for: inputColor, in: colorScheme)))
                 }
 
                 Slider(value: $blendAmount, in: 0...1, step: 0.01) {
@@ -167,9 +226,9 @@ struct GarnishSheet: View {
             Spacer()
         }
         .tint(Garnish.bgBase(for: inputColor, in: colorScheme))
-        .scaleEffect(detent == .height(190) ? 1 : 0.9)
-        .blur(radius: (detent == .height(190) ? 0 : 2))
-        .opacity(detent == .height(190) ? 1 : 0)
+        .scaleEffect(detent != .fraction(0.05) ? 1 : 0.9)
+        .blur(radius: (detent != .fraction(0.05) ? 0 : 2))
+        .opacity(detent != .fraction(0.05) ? 1 : 0)
         .animation(.smooth, value: detent)
         .padding(.top, 25)
         .padding(.horizontal, 25)
@@ -181,7 +240,7 @@ struct GarnishSheet: View {
                 .opacity(0.5)
                 .animation(.smooth, value: detent)
         })
-        .presentationDetents([.fraction(0.05), .height(190)], selection: $detent)
+        .presentationDetents([.fraction(0.05), .height(230), .fraction(0.6)], selection: $detent)
         .presentationCornerRadius(30)
         .presentationBackgroundInteraction(.enabled)
         .interactiveDismissDisabled()
