@@ -8,6 +8,10 @@
 - **Color Utilities**: Access brightness, luminance, and contrast ratio calculations.
 - **Blending & Manipulation**: Blend colors dynamically and adjust brightness for visual balance.
 
+## Join the Kyo Discord
+
+[Join the Kyo Discord](https://discord.gg/6NHhAvwbXV) to discuss features, share feedback, or connect with other users. It's a great place to collaborate and engage with the community.
+
 ---
 
 ## Getting Started
