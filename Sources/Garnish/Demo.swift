@@ -14,6 +14,7 @@ struct GarnishTestView: View {
     @State private var colorScheme: ColorScheme = .light
     
     @State var blendAmount: CGFloat = 0.8
+    @State var detent: PresentationDetent = .height(190)
     
     var body: some View {
         NavigationView{
@@ -103,16 +104,21 @@ struct GarnishTestView: View {
                             Text("Relative Luminance: \(luminance, specifier: "%.2f")")
                             Text("Brightness: \(brightness, specifier: "%.2f")")
                             Text("Is Light Color: \(Garnish.isLightColor(inputColor) ? "Yes" : "No")")
+                            Text("Colorscheme: \(Garnish.determineColorScheme(inputColor))")
+                            Text("Is Dark Color: \(Garnish.isDarkColor(inputColor) ? "Yes" : "No")")
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 20)
                 }
             }
+            .safeAreaInset(edge: .bottom, content: {
+                Color.clear.frame(height: detent == .fraction(0.05) ? 50 : 190)
+            })
             .navigationTitle("Garnish")
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: .constant(true)) {
-                GarnishSheet(inputColor: $inputColor, colorScheme: $colorScheme, blendAmount: $blendAmount)
+                GarnishSheet(inputColor: $inputColor, colorScheme: $colorScheme, blendAmount: $blendAmount, detent: $detent)
             }
         }
         
@@ -127,7 +133,7 @@ struct GarnishSheet: View {
     @Binding var colorScheme: ColorScheme
     @Binding var blendAmount: CGFloat
     
-    @State var detent: PresentationDetent = .fraction(0.3)
+    @Binding var detent: PresentationDetent
     var body: some View {
         
         VStack(spacing: 20){
@@ -161,7 +167,10 @@ struct GarnishSheet: View {
             Spacer()
         }
         .tint(Garnish.bgBase(for: inputColor, in: colorScheme))
-        .opacity(detent == .fraction(0.05) ? 0 : 1)
+        .scaleEffect(detent == .height(190) ? 1 : 0.9)
+        .blur(radius: (detent == .height(190) ? 0 : 2))
+        .opacity(detent == .height(190) ? 1 : 0)
+        .animation(.smooth, value: detent)
         .padding(.top, 25)
         .padding(.horizontal, 25)
         .overlay(content: {
@@ -170,8 +179,9 @@ struct GarnishSheet: View {
                 .font(.caption)
                 .padding(.top, 10)
                 .opacity(0.5)
+                .animation(.smooth, value: detent)
         })
-        .presentationDetents([.fraction(0.05), .fraction(0.18), .fraction(0.3)], selection: $detent)
+        .presentationDetents([.fraction(0.05), .height(190)], selection: $detent)
         .presentationCornerRadius(30)
         .presentationBackgroundInteraction(.enabled)
         .interactiveDismissDisabled()
