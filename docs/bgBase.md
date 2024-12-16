@@ -8,9 +8,9 @@ Produces a background color dynamically adjusted based on the input color's brig
 ## Parameters
 - **`color`**: The input color to evaluate and adjust.
 - **`scheme`**: The color scheme (`.light` or `.dark`) that determines the adjustment logic.
-- **`blendAmount`**: The primary ratio to blend the input color with the base color when adjustments are necessary (default: `0.90`).
-- **`lightBlendRatio`**: The ratio to blend when the input color is not excessively bright in a light scheme (default: `0.1`).
-- **`darkBlendRatio`**: The ratio to blend when the input color is not excessively dark in a dark scheme (default: `0.3`).
+- **`blendAmount`**: The primary ratio to blend the input color with the base color when adjustments are necessary.
+- **`lightBlendRatio`**: The ratio to blend when the input color is not excessively bright in a light scheme.
+- **`darkBlendRatio`**: The ratio to blend when the input color is not excessively dark in a dark scheme.
 
 ## Example
 ```swift
@@ -19,3 +19,5 @@ let backgroundColor = Garnish.bgBase(
     in: .light
 )
 ```
+### Returns
+A Color object that is either the input color or adjusted to ensure better contrast based on the color scheme.
