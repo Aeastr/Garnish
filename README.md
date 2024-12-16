@@ -16,7 +16,7 @@
 Garnish is available as a Swift Package. Add it to your project using the following steps:
 
 1. In Xcode, go to **File > Add Packages...**
-2. Enter the repository URL: `https://github.com/your-repo-url`
+2. Enter the repository URL: `[https://github.com/your-repo-ur](https://github.com/Aeastr/Garnish.git)`
 3. Add the package to your desired targets.
 
 ---
