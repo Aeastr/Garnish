@@ -5,7 +5,7 @@
 ## Features
 - **Dynamic Background Colors**: Automatically adjust colors for light or dark themes with customizable blending.
 - **Contrast-Optimized Foreground Colors**: Ensure text is readable against any background.
-- **Color Utilities**: Access brightness, luminance, and contrast ratio calculations for WCAG compliance.
+- **Color Utilities**: Access brightness, luminance, and contrast ratio calculations.
 - **Blending & Manipulation**: Blend colors dynamically and adjust brightness for visual balance.
 
 ---
