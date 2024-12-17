@@ -1,6 +1,6 @@
 # Garnish
 
-**Garnish** helps you pick the ideal colors for text and UI elements in light and dark themes, ensuring optimal contrast and visual harmony based on luminance and brightness.
+**Garnish** helps you calculate some ideal colors for text and UI elements in light and dark themes, ensuring contrast and visual harmony based on luminance.
 
 ![This image contains 15 rounded rectangles arranged in a 3x5 grid, each showcasing a unique background color with centered text that reads “Foreground Color.” The rectangles display a variety of colors. The text “Foreground Color” adjusts in contrast against each background to maintain visibility](assets/example1.png)
 
