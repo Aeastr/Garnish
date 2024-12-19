@@ -6,3 +6,41 @@ DerivedData/
 .swiftpm/configuration/registries.json
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .netrc
+
+# Xcode project settings (Exclude user-specific data)
+*.xcworkspace/xcuserdata/
+xcuserdata/
+*.xcuserstate
+
+# Build Artifacts
+DerivedData/
+build/
+*.ipa
+*.app
+*.dSYM
+
+# Code Signing and Provisioning
+*.mobileprovision
+*.cer
+*.p12
+*.keychain
+*.pem
+**/ProvisioningProfiles/
+**/embedded.mobileprovision
+
+# Swift Package Manager
+.swiftpm
+Package.resolved
+.build/
+
+# Fastlane
+fastlane/report.xml
+fastlane/screenshots
+fastlane/test_output
+
+# Logs
+*.log
+
+# Other IDE or temporary files
+*.swp
+*.lock

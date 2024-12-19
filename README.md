@@ -31,7 +31,7 @@ Garnish is available as a Swift Package. Add it to your project using the follow
 Adjust a color to create a background that adapts to the current color scheme.
 
 ```swift
-let backgroundColor = Garnish.bgBase(for: .blue, in: .light)
+let backgroundColor = Garnish.adjustForBackground(for: .blue, in: .light)
 ```
 
 ### Generate a Foreground Color
@@ -48,7 +48,7 @@ let foregroundColor = Garnish.contrastingForeground(for: .blue)
 
 Explore detailed documentation for each function and extension under the [`docs/`](docs/) directory:
 
-- [Dynamic Background Colors (`bgBase`)](docs/bgBase.md)
+- [Dynamic Background Colors (`adjustForBackground`)](docs/adjustForBackground.md)
 - [Dynamic Color Adjustment (`colorBase`)](docs/colorBase.md)
 - [Contrast-Optimized Foregrounds (`contrastingForeground`)](docs/contrastingForeground.md)
 - [Relative Luminance (`relativeLuminance`)](docs/relativeLuminance.md)
