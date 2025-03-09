@@ -1,4 +1,4 @@
-# `bgBase`
+# `adjustForBackground`
 
 Produces a background color dynamically adjusted based on the input color's brightness and the provided color scheme (light or dark).
 
@@ -14,7 +14,7 @@ Produces a background color dynamically adjusted based on the input color's brig
 
 ## Example
 ```swift
-let backgroundColor = Garnish.bgBase(
+let backgroundColor = Garnish.adjustForBackground(
     for: .blue,
     in: .light
 )
