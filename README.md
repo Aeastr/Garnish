@@ -1,6 +1,14 @@
-# Garnish
+<div align="center">
+  <img width="300" height="300" src="/assets/icon.png" alt="Garnish Logo">
+  <h1><b>Garnish</b></h1>
+  <p>
+    Garnish helps you calculate some ideal colors for text and UI elements in light and dark themes, ensuring contrast and visual harmony based on luminance.
+    <br>
+    <i>Compatible with iOS 15.0 and later</i>
+  </p>
+</div>
 
-**Garnish** helps you calculate some ideal colors for text and UI elements in light and dark themes, ensuring contrast and visual harmony based on luminance.
+
 
 ![This image contains 15 rounded rectangles arranged in a 3x5 grid, each showcasing a unique background color with centered text that reads “Foreground Color.” The rectangles display a variety of colors. The text “Foreground Color” adjusts in contrast against each background to maintain visibility](assets/example1.png)
 
