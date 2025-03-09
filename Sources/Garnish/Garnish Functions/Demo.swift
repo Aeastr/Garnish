@@ -76,7 +76,9 @@ struct GarnishTestViewLeg: View {
                 }
             }
             .navigationTitle("Garnish")
+#if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
         }
         .colorScheme(colorScheme)
         .preferredColorScheme(colorScheme)

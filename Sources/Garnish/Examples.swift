@@ -47,7 +47,7 @@ struct GarnishModifierExampels: View {
                     ColorPicker("`color`", selection: $color)
                 }
                 .padding(.horizontal, 20)
-
+                
             }
         } detail: {
             ScrollView{
@@ -146,7 +146,7 @@ struct GarnishModifierExampels: View {
                 .frame(maxWidth: 600)
             }
         }
-
+        
     }
 }
 
@@ -159,35 +159,34 @@ struct FontDemo: View {
     
     @State var blendAmount: CGFloat = 0.8
     @State var detent: PresentationDetent = .height(230)
-//    @State var detent: PresentationDetent = .fraction(0.05)
+    //    @State var detent: PresentationDetent = .fraction(0.05)
     
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     var body: some View {
         Group{
             if horizontalSizeClass == .compact{
                 main
-                .sheet(isPresented: .constant(true)) {
-                    GarnishSheet(inputColor: $inputColor, backgroundColor: $backgroundColor, colorScheme: $colorScheme, blendAmount: $blendAmount, detent: $detent)
-                }
+                    .sheet(isPresented: .constant(true)) {
+                        GarnishSheet(inputColor: $inputColor, backgroundColor: $backgroundColor, colorScheme: $colorScheme, blendAmount: $blendAmount, detent: $detent)
+                    }
             }
             else{
-                HStack{
-                    GarnishSheet(inputColor: $inputColor, backgroundColor: $backgroundColor, colorScheme: $colorScheme, blendAmount: $blendAmount, detent: $detent)
-                        .padding(.top, 10)
-                        .background{
-                            Color(.secondarySystemBackground)
-                                .ignoresSafeArea()
-                        }
-                        .clipShape(.rect(cornerRadius: 20))
-                        .padding(20)
-                        .frame(idealWidth: 250, maxWidth: 300)
-                
-                        main
-                            .frame(maxWidth: 550)
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .padding(.top, 50)
+                NavigationSplitView{
+                    HStack{
+                        GarnishSheet(inputColor: $inputColor, backgroundColor: $backgroundColor, colorScheme: $colorScheme, blendAmount: $blendAmount, detent: $detent)
+                            .padding(.top, 10)
+                            .frame(idealWidth: 250, maxWidth: 300)
+                        
+                    }
+                    .ignoresSafeArea()
+                    .padding(.top, 200)
                 }
-                .ignoresSafeArea()
+                detail:{
+                    
+                    main
+                        .frame(maxWidth: 550)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
             }
         }
     }
@@ -245,10 +244,10 @@ struct FontDemo: View {
                     let AdjustedColor = Garnish.adjustForBackground(for: inputColor, with: backgroundColor)
                     
                     
-                        Text("Custom Foreground Contrast Adjusted for Background, and Custom Background")
-                            .font(.caption)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.top, 7)
+                    Text("Custom Foreground Contrast Adjusted for Background, and Custom Background")
+                        .font(.caption)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 7)
                     HStack{
                         VStack{
                             Text("Adjusted Foreground + BG")
@@ -274,7 +273,6 @@ struct FontDemo: View {
                         
                         VStack{
                             Text("Adjusted Foreground + BG")
-                                .fontWeight(Color.primary.recommendedFontWeight(in: colorScheme))
                                 .frame(maxWidth: .infinity)
                                 .multilineTextAlignment(.center)
                             
@@ -298,10 +296,10 @@ struct FontDemo: View {
                     let foregroundContrast = inputColor.constratingForegroud()
                     
                     
-                        Text("Same Color for Foreground and Background, with contrast for foreground")
-                            .font(.caption)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.top, 7)
+                    Text("Same Color for Foreground and Background, with contrast for foreground")
+                        .font(.caption)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 7)
                     
                     HStack{
                         VStack{
@@ -327,8 +325,7 @@ struct FontDemo: View {
                         }
                         
                         VStack{
-                            Text("Adjusted Foreground + BG")
-                                .fontWeight(Color.primary.recommendedFontWeight(in: colorScheme))
+                            Text(("Contrast Foreground"))
                                 .frame(maxWidth: .infinity)
                                 .multilineTextAlignment(.center)
                             
@@ -355,54 +352,53 @@ struct FontDemo: View {
                         +
                         Text("Custom Foreground and Custom Background (No contrast adjustmnents)")
                     }
-                        .font(.caption)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.top, 7)
-                HStack{
-                    VStack{
-                        Text("Custom Foreground + BG")
-                            .frame(maxWidth: .infinity)
-                            .multilineTextAlignment(.center)
+                    .font(.caption)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 7)
+                    HStack{
+                        VStack{
+                            Text("Custom Foreground + BG")
+                                .frame(maxWidth: .infinity)
+                                .multilineTextAlignment(.center)
+                            
+                            Spacer()
+                            Text("Adjusted")
+                                .font(.caption2)
+                                .kerning(1.1)
+                                .opacity(0.5)
+                                .textCase(.uppercase)
+                        }
+                        .foregroundStyle(inputColor)
+                        .fontWeight(inputColor.recommendedFontWeight(in: colorScheme, with: backgroundColor))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 15)
+                        .background(backgroundColor, in: .rect(cornerRadius: 25))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 25)
+                                .stroke(Color.primary.opacity(0.15), style: StrokeStyle(lineWidth: 1.5))
+                        }
                         
-                        Spacer()
-                        Text("Adjusted")
-                            .font(.caption2)
-                            .kerning(1.1)
-                            .opacity(0.5)
-                            .textCase(.uppercase)
+                        VStack{
+                            Text("Custom Foreground + BG")
+                                .frame(maxWidth: .infinity)
+                                .multilineTextAlignment(.center)
+                            
+                            Spacer()
+                            Text("Default")
+                                .font(.caption2)
+                                .kerning(1.1)
+                                .opacity(0.5)
+                                .textCase(.uppercase)
+                        }
+                        .foregroundStyle(inputColor)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 15)
+                        .background(backgroundColor, in: .rect(cornerRadius: 25))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 25)
+                                .stroke(Color.primary.opacity(0.15), style: StrokeStyle(lineWidth: 1.5))
+                        }
                     }
-                    .foregroundStyle(inputColor)
-                    .fontWeight(inputColor.recommendedFontWeight(in: colorScheme, with: backgroundColor))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 15)
-                    .background(backgroundColor, in: .rect(cornerRadius: 25))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 25)
-                            .stroke(Color.primary.opacity(0.15), style: StrokeStyle(lineWidth: 1.5))
-                    }
-                    
-                    VStack{
-                        Text("Custom Foreground + BG")
-                            .fontWeight(Color.primary.recommendedFontWeight(in: colorScheme))
-                            .frame(maxWidth: .infinity)
-                            .multilineTextAlignment(.center)
-                        
-                        Spacer()
-                        Text("Default")
-                            .font(.caption2)
-                            .kerning(1.1)
-                            .opacity(0.5)
-                            .textCase(.uppercase)
-                    }
-                    .foregroundStyle(inputColor)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 15)
-                    .background(backgroundColor, in: .rect(cornerRadius: 25))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 25)
-                            .stroke(Color.primary.opacity(0.15), style: StrokeStyle(lineWidth: 1.5))
-                    }
-                }
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -419,7 +415,7 @@ struct GarnishTestView: View {
     
     @State var blendAmount: CGFloat = 0.8
     @State var detent: PresentationDetent = .height(230)
-//    @State var detent: PresentationDetent = .fraction(0.05)
+    //    @State var detent: PresentationDetent = .fraction(0.05)
     
     var body: some View {
         NavigationSplitView{
@@ -431,12 +427,20 @@ struct GarnishTestView: View {
                     // Tinted Base Color
                     VStack(alignment: .leading, spacing: 15){
                         VStack(alignment: .leading, spacing: 15){
-                            Color(.systemBackground)
+#if canImport(UIKit)
+            Color(.systemBackground)
+#elseif os(macOS)
+            Color(NSColor.windowBackgroundColor)
+#endif
                             TitleSection(title: "Adjust for System Background", description: "Use .garnish(foregroundColor, backgroundColor) to adjust the color of a view based on its background color. Here your inputColor is adjusted to match the system background color.")
                             
                             HStack{
                                 Text("Adjusted")
+#if canImport(UIKit)
                                     .garnish(inputColor, Color(.systemBackground))
+#elseif os(macOS)
+                                    .garnish(inputColor, Color(.windowBackgroundColor))
+#endif
                                     .frame(maxWidth: .infinity)
                                 
                                 Divider()
@@ -449,12 +453,12 @@ struct GarnishTestView: View {
                             HStack(spacing: 0){
                                 
                                 UnevenRoundedRectangle(topLeadingRadius: 25, bottomLeadingRadius: 25, bottomTrailingRadius: 0, topTrailingRadius: 0, style: .continuous)
-                                    .garnish(inputColor, Color(.systemBackground))
+                                    .garnish(inputColor, Color.systemBackground)
                                 
                                 
                                 UnevenRoundedRectangle(topLeadingRadius: 0, bottomLeadingRadius: 0, bottomTrailingRadius: 25, topTrailingRadius: 25, style: .continuous)
                                     .foregroundStyle(inputColor)
-                                    
+                                
                             }
                             .frame(height: 80)
                             
@@ -477,7 +481,7 @@ struct GarnishTestView: View {
                         
                         VStack(alignment: .leading, spacing: 15){
                             
-                           VStack{
+                            VStack{
                                 TitleSection(title: "Adjust for Given Background", description: "Used when displaying colored text agaisnt a given background, like the one this text is against")
                                 
                                 
@@ -510,7 +514,7 @@ struct GarnishTestView: View {
                             
                             HStack(alignment: .top, spacing: 30){
                                 
-                                    CodeBlock(code: Text("`.garnish(inputColor, backgroundColor)`"))
+                                CodeBlock(code: Text("`.garnish(inputColor, backgroundColor)`"))
                                 
                                 
                                 Divider()
@@ -538,26 +542,26 @@ struct GarnishTestView: View {
                         TitleSection(title: "Create a Contrasting Foreground Color", code: Text("`Garnish.contrastingForeground`"), description: "Make sure a color can display agaisn't itself.")
                         
                         let contrastingForeground = Garnish.contrastingForeground(for: inputColor, blendAmount: blendAmount)
-                            HStack{
-                                Group{
-                                    Text("Adjusted Style")
-                                        .frame(maxWidth: .infinity)
-                                    
-                                    Rectangle()
-                                        .frame(width: 1)
-                                        .opacity(0.5)
-                                }
-                                
-                                .garnish(inputColor)
-                                Text("Not Adjusted")
+                        HStack{
+                            Group{
+                                Text("Adjusted Style")
                                     .frame(maxWidth: .infinity)
                                 
+                                Rectangle()
+                                    .frame(width: 1)
+                                    .opacity(0.5)
                             }
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 25)
-                            .background(
-                                ColorRectangle(color: inputColor)
-                            )
+                            
+                            .garnish(inputColor)
+                            Text("Not Adjusted")
+                                .frame(maxWidth: .infinity)
+                            
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 25)
+                        .background(
+                            ColorRectangle(color: inputColor)
+                        )
                     }
                     .padding(.horizontal, 20)
                     
@@ -565,7 +569,7 @@ struct GarnishTestView: View {
                     VStack(alignment: .leading, spacing: 10){
                         VStack(alignment: .leading, spacing: 5){
                             Text("Utility Tests")
-                            .font(.headline)
+                                .font(.headline)
                             
                             Text("Some tests of other utility functions")
                                 .font(.caption)
@@ -590,24 +594,26 @@ struct GarnishTestView: View {
                     .padding(.horizontal, 20)
                 }
             }
-//            .safeAreaInset(edge: .bottom, content: {
-//                Color.clear.frame(height: detent == .fraction(0.05) ? 50 : 230)
-//            })
-//            .safeAreaInset(edge: .top, content: {
-//                Color.clear.frame(height: 10)
-//            })
-//            .navigationTitle("Garnish")
+            //            .safeAreaInset(edge: .bottom, content: {
+            //                Color.clear.frame(height: detent == .fraction(0.05) ? 50 : 230)
+            //            })
+            //            .safeAreaInset(edge: .top, content: {
+            //                Color.clear.frame(height: 10)
+            //            })
+            //            .navigationTitle("Garnish")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
-//            .sheet(isPresented: .constant(true)) {
-//                GarnishSheet(inputColor: $inputColor, backgroundColor: $backgroundColor, colorScheme: $colorScheme, blendAmount: $blendAmount, detent: $detent)
-//            }
+            #endif
+            //            .sheet(isPresented: .constant(true)) {
+            //                GarnishSheet(inputColor: $inputColor, backgroundColor: $backgroundColor, colorScheme: $colorScheme, blendAmount: $blendAmount, detent: $detent)
+            //            }
         }
         
         .colorScheme(colorScheme)
         .preferredColorScheme(colorScheme)
     }
     
-   
+    
 }
 
 @available(iOS 16.4, *)
@@ -632,7 +638,11 @@ struct TitleSection: View {
                     .opacity(0.7)
                     .font(.caption)
                     .padding(8)
+#if canImport(UIKit)
                     .background(Color(.secondarySystemBackground))
+#elseif os(macOS)
+                    .background(Color(NSColor.windowBackgroundColor))
+                #endif
                     .clipShape(.rect(cornerRadius: 10))
                     .overlay {
                         RoundedRectangle(cornerRadius: 10)
@@ -654,7 +664,11 @@ struct CodeBlock: View {
             .font(.caption)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(8)
+#if canImport(UIKit)
             .background(Color(.secondarySystemBackground))
+#elseif os(macOS)
+            .background(Color(NSColor.windowBackgroundColor))
+#endif
             .clipShape(.rect(cornerRadius: 10))
             .overlay {
                 RoundedRectangle(cornerRadius: 10)
@@ -679,7 +693,7 @@ struct GarnishSheet: View {
                 ColorPicker("Color", selection: $inputColor)
                 
                 
-                    ColorPicker("Background", selection: $backgroundColor)
+                ColorPicker("Background", selection: $backgroundColor)
                 
                 let exampleColor: [Color] = [Color(red: 189/255, green: 117/255, blue: 199/255),
                                              Color(red: 0.8, green: 0.3, blue: 0.2),
@@ -691,50 +705,50 @@ struct GarnishSheet: View {
                                              Color.teal,
                 ]
                 
-//                if detent == .fraction(0.6){
-//                    LazyVGrid(columns: [
-//                        GridItem(),
-//                        GridItem(),
-//                        GridItem(),
-//                        GridItem()
-//                    ]) {
-//                        ForEach(exampleColor, id: \.self){ color in
-//                            Button {
-//                                inputColor = color
-//                            } label: {
-//                                color
-//                                    .frame(height: 35)
-//                                    .clipShape(Capsule())
-//                                    .overlay(
-//                                        Capsule()
-//                                            .strokeBorder(color.adjustedBrightness(for: colorScheme, by: 0.1), lineWidth: 3)
-//                                    )
-//                            }
-//
-//                        }
-//                    }
-//                }else{
-//                    ScrollView(.horizontal){
-//                        HStack{
-//                            ForEach(exampleColor, id: \.self){ color in
-//                                Button {
-//                                    inputColor = color
-//                                } label: {
-//                                    color
-//                                        .frame(width: 80, height: 35)
-//                                        .clipShape(Capsule())
-//                                        .overlay(
-//                                            Capsule()
-//                                                .strokeBorder(color.adjustedBrightness(for: colorScheme, by: 0.1), lineWidth: 3)
-//                                        )
-//                                }
-//
-//                            }
-//                        }
-//                        .padding(.horizontal, 25)
-//                    }
-//                    .padding(.horizontal, -25)
-//                }
+                //                if detent == .fraction(0.6){
+                //                    LazyVGrid(columns: [
+                //                        GridItem(),
+                //                        GridItem(),
+                //                        GridItem(),
+                //                        GridItem()
+                //                    ]) {
+                //                        ForEach(exampleColor, id: \.self){ color in
+                //                            Button {
+                //                                inputColor = color
+                //                            } label: {
+                //                                color
+                //                                    .frame(height: 35)
+                //                                    .clipShape(Capsule())
+                //                                    .overlay(
+                //                                        Capsule()
+                //                                            .strokeBorder(color.adjustedBrightness(for: colorScheme, by: 0.1), lineWidth: 3)
+                //                                    )
+                //                            }
+                //
+                //                        }
+                //                    }
+                //                }else{
+                //                    ScrollView(.horizontal){
+                //                        HStack{
+                //                            ForEach(exampleColor, id: \.self){ color in
+                //                                Button {
+                //                                    inputColor = color
+                //                                } label: {
+                //                                    color
+                //                                        .frame(width: 80, height: 35)
+                //                                        .clipShape(Capsule())
+                //                                        .overlay(
+                //                                            Capsule()
+                //                                                .strokeBorder(color.adjustedBrightness(for: colorScheme, by: 0.1), lineWidth: 3)
+                //                                        )
+                //                                }
+                //
+                //                            }
+                //                        }
+                //                        .padding(.horizontal, 25)
+                //                    }
+                //                    .padding(.horizontal, -25)
+                //                }
             }
             
             Divider()
@@ -756,7 +770,7 @@ struct GarnishSheet: View {
                     Text("Blend")
                         .foregroundStyle(blendAmount == 0.9 ? Color.primary : (Garnish.adjustForBackground(for: inputColor, in: colorScheme)))
                 }
-
+                
                 Slider(value: $blendAmount, in: 0...1, step: 0.01) {
                 }
             }
@@ -786,10 +800,29 @@ struct GarnishSheet: View {
         .interactiveDismissDisabled()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background{
+#if canImport(UIKit)
             Color(.secondarySystemBackground)
                 .ignoresSafeArea()
+#elseif os(macOS)
+            Color(.windowBackgroundColor)
+                .ignoresSafeArea()
+            #else
+            Color.white
+#endif
         }
         .colorScheme(colorScheme)
         .preferredColorScheme(colorScheme)
+    }
+}
+
+extension Color {
+    static var systemBackground: Color {
+        #if canImport(UIKit)
+        return Color(UIColor.systemBackground)
+        #elseif os(macOS)
+        return Color(NSColor.windowBackgroundColor)
+        #else
+        return Color.black // Fallback if needed
+        #endif
     }
 }

@@ -6,7 +6,7 @@ let package = Package(
     name: "Garnish",
     platforms: [
         .iOS(.v14),
-        .macOS(.v11),
+        .macOS("13.3"),
         .tvOS(.v14),
         .watchOS(.v7)
     ],

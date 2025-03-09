@@ -2,7 +2,11 @@
 // https://docs.swift.org/swift-book
 
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 /// `Garnish` is a utility for generating colors suitable for various UI elements, such as backgrounds and foregrounds,
 /// ensuring readability and visual harmony across light and dark themes.
@@ -19,7 +23,13 @@ public struct Garnish {
     /// - Parameter color: The input color to analyze.
     /// - Returns: A value between 0.0 and 1.0 representing the relative luminance.
     public static func relativeLuminance(of color: Color) -> CGFloat {
-        return UIColor(color).relativeLuminance()
+           #if canImport(UIKit)
+           return UIColor(color).relativeLuminance()
+           #elseif os(macOS)
+           return NSColor(color).relativeLuminance()
+           #else
+           return 0
+           #endif
     }
     
     /// Calculates the brightness of a color using a simple RGB averaging heuristic.
@@ -32,11 +42,15 @@ public struct Garnish {
     /// - Parameter color: The input color to analyze.
     /// - Returns: A value between 0.0 and 1.0 representing the brightness.
     public static func brightness(of color: Color) -> CGFloat {
-        let uiColor = UIColor(color)
+#if canImport(UIKit)
+        let newColor = UIColor(color)
+#elseif os(macOS)
+        let newColor = NSColor(color)
+#endif
         var r: CGFloat = 0
         var g: CGFloat = 0
         var b: CGFloat = 0
-        uiColor.getRed(&r, green: &g, blue: &b, alpha: nil)
+        newColor.getRed(&r, green: &g, blue: &b, alpha: nil)
         return (r + g + b) / 3.0
     }
     

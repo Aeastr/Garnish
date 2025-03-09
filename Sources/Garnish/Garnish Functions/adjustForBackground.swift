@@ -45,41 +45,43 @@ extension Garnish {
         darkBlendRatio: CGFloat = 0.3,
         debugStatements: Bool = false
     ) -> Color {
-        let bgUIColor: UIColor
-            if let backgroundColor = backgroundColor {
-                bgUIColor = UIColor(backgroundColor).resolvedColor(with: UITraitCollection(userInterfaceStyle: Garnish.colorScheme))
-            } else {
-                bgUIColor = scheme == .dark ? .black : .white
-            }
-            let bgColor = Color(bgUIColor)
+        let bgColor = backgroundColor ?? (scheme == .dark ? Color.black : Color.white)
         
         // Determine scheme dynamically based on the background color's brightness
-        let calcScheme: ColorScheme = isLightColor(bgColor, debug: backgroundColor == Color(.systemBackground)) ? .light : .dark
+        let calcScheme: ColorScheme = isLightColor(bgColor, debug: false) ? .light : .dark
         
         // Compute contrast ratio
         let contrast = luminanceContrastRatio(between: color, and: bgColor)
         
         // Base color for contrast improvement
-        let contrastImprovingBase = calcScheme == .light ? UIColor.black : UIColor.white
+#if canImport(UIKit)
+        typealias PlatformColor = UIColor
+#elseif os(macOS)
+        typealias PlatformColor = NSColor
+#endif
         
+        let contrastImprovingBase: PlatformColor = calcScheme == .light ? .black : .white
         
         // Define thresholds for blending
         let heavyBlendThreshold: CGFloat = 3.0
         let lightBlendThreshold: CGFloat = 4.5
         
         // Adjust the color based on contrast thresholds
-        let adjusted: UIColor
+        let adjusted: PlatformColor
+        let baseColor = PlatformColor(color)
+        
         if contrast < heavyBlendThreshold {
             // Poor contrast, blend heavily
-            adjusted = UIColor(color).blend(with: contrastImprovingBase, ratio: blendAmount)
+            adjusted = baseColor.blend(with: contrastImprovingBase, ratio: blendAmount)
         } else if contrast < lightBlendThreshold {
-            // Medium contrast, blend lightlyx
+            // Medium contrast, blend lightly
             let ratio = calcScheme == .light ? lightBlendRatio : darkBlendRatio
-            adjusted = UIColor(color).blend(with: contrastImprovingBase, ratio: ratio)
+            adjusted = baseColor.blend(with: contrastImprovingBase, ratio: ratio)
         } else {
             // Sufficient contrast, no adjustment needed
-            adjusted = UIColor(color)
+            adjusted = baseColor
         }
+        
         
         return Color(adjusted)
     }
