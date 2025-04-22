@@ -2,6 +2,16 @@
 
 **Garnish** helps you calculate some ideal colors for text and UI elements in light and dark themes, ensuring contrast and visual harmony based on luminance.
 
+---
+**NOTICE:** This repository is currently outdated. A full rework is underway to bring it up-to-date and introduce new features.
+
+The existing code is functional but represents an older version. New content and updates will be added as the rework progresses and is finalized.
+
+Thanks for your understanding!
+---
+
+
+
 ![This image contains 15 rounded rectangles arranged in a 3x5 grid, each showcasing a unique background color with centered text that reads “Foreground Color.” The rectangles display a variety of colors. The text “Foreground Color” adjusts in contrast against each background to maintain visibility](assets/example1.png)
 
 ## Features
