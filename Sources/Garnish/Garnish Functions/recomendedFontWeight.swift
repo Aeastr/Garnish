@@ -15,7 +15,7 @@ extension Garnish{
         fontWeightRange: [Font.Weight] = [.regular, .semibold],
         debugStatements: Bool = false
     ) -> Font.Weight {
-        let bgColor = backgroundColor ?? (scheme == .dark ? Color.black : Color.white)
+        let bgColor = backgroundColor ?? (scheme == .dark ? Color.systemBackground : Color.primary)
         
         // Determine scheme dynamically based on the background color's brightness
         let calcScheme: ColorScheme = isLightColor(bgColor, debug: debugStatements) ? .light : .dark

@@ -700,8 +700,8 @@ struct GarnishSheet: View {
                                              Color(red: 0.8, green: 0.3, blue: 0.4),
                                              Color(red: 150/255, green: 240/255, blue: 180/255),
                                              Color(red: 200/255, green: 210/255, blue: 240/255),
-                                             Color.white,
-                                             Color.black,
+                                             Color.primary,
+                                             Color.systemBackground,
                                              Color.teal,
                 ]
                 
@@ -807,7 +807,7 @@ struct GarnishSheet: View {
             Color(.windowBackgroundColor)
                 .ignoresSafeArea()
             #else
-            Color.white
+            Color.primary
 #endif
         }
         .colorScheme(colorScheme)
@@ -822,7 +822,7 @@ extension Color {
         #elseif os(macOS)
         return Color(NSColor.windowBackgroundColor)
         #else
-        return Color.black // Fallback if needed
+        return Color.systemBackground // Fallback if needed
         #endif
     }
 }

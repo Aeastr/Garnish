@@ -26,7 +26,7 @@ import SwiftUI
 //    /// - Returns: A `Color` object that is tinted towards the appropriate base color for the given scheme.
 //    public static func colorBase(for color: Color, in scheme: ColorScheme, blendAmount: CGFloat = 0.90) -> Color {
 //        let uiColor = UIColor(color)
-//        let base = scheme == .light ? UIColor.black : UIColor.white
+//        let base = scheme == .light ? UIColor.systemBackground : UIColor.primary
 //        
 //        // We'll blend the input color with the chosen base.
 //        // A high blend ratio means a subtle tint. Adjust these numbers as desired.

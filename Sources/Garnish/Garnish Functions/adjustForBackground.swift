@@ -45,7 +45,7 @@ extension Garnish {
         darkBlendRatio: CGFloat = 0.3,
         debugStatements: Bool = false
     ) -> Color {
-        let bgColor = backgroundColor ?? (scheme == .dark ? Color.black : Color.white)
+        let bgColor = backgroundColor ?? (scheme == .dark ? Color.systemBackground : Color.primary)
         
         // Determine scheme dynamically based on the background color's brightness
         let calcScheme: ColorScheme = isLightColor(bgColor, debug: false) ? .light : .dark
