@@ -27,11 +27,12 @@ public class Garnish {
     ///   - method: Brightness calculation method (default: .luminance)
     ///   - blendAmount: How much to blend toward contrasting base (default: 0.8)
     /// - Returns: A contrasting shade of the input color
+    /// - Throws: `GarnishError` if color analysis fails
     public static func contrastingShade(
         of color: Color,
         using method: GarnishMath.BrightnessMethod = .luminance,
         blendAmount: CGFloat = 0.8
-    ) -> Color {
+    ) throws -> Color {
         #if canImport(UIKit)
         typealias PlatformColor = UIColor
         #elseif os(macOS)
@@ -39,7 +40,7 @@ public class Garnish {
         #endif
         
         let platformColor = PlatformColor(color)
-        let isLight = GarnishMath.classify(color, using: method) == .light
+        let isLight = try GarnishMath.classify(color, using: method) == .light
         
         // Choose contrasting base: black for light colors, white for dark colors
         let contrastingBase: PlatformColor = isLight ? .black : .white
@@ -63,12 +64,13 @@ public class Garnish {
     ///   - method: Brightness calculation method (default: .luminance)
     ///   - targetRatio: Minimum contrast ratio (default: WCAG AA = 4.5)
     /// - Returns: Optimized version of the input color
+    /// - Throws: `GarnishError` if color analysis fails
     public static func contrastingColor(
         _ color: Color,
         against background: Color,
         using method: GarnishMath.BrightnessMethod = .luminance,
         targetRatio: CGFloat = GarnishMath.defaultThreshold
-    ) -> Color {
+    ) throws -> Color {
         #if canImport(UIKit)
         typealias PlatformColor = UIColor
         #elseif os(macOS)
@@ -84,7 +86,7 @@ public class Garnish {
         }
         
         // Determine which direction to adjust (toward black or white)
-        let backgroundIsLight = GarnishMath.classify(background, using: method) == .light
+        let backgroundIsLight = try GarnishMath.classify(background, using: method) == .light
         let contrastingBase: PlatformColor = backgroundIsLight ? .black : .white
         
         // Binary search for the right blend amount to achieve target contrast
@@ -116,8 +118,9 @@ public class Garnish {
     }
     
     /// Quick accessibility check.
-    public static func hasGoodContrast(_ color1: Color, _ color2: Color) -> Bool {
-        return GarnishMath.meetsWCAGAA(color1, color2)
+    /// - Throws: `GarnishError` if color analysis fails
+    public static func hasGoodContrast(_ color1: Color, _ color2: Color) throws -> Bool {
+        return try GarnishMath.meetsWCAGAA(color1, color2)
     }
 }
 

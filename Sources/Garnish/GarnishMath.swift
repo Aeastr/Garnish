@@ -166,7 +166,7 @@ public class GarnishMath {
     
     // MARK: - Contrast Validation
     
-    /// Convenience function: Checks if two colors meet WCAG AA contrast requirements.
+    /// Checks if two colors meet WCAG AA contrast requirements.
     ///
     /// - Parameters:
     ///   - color1: First color
@@ -175,6 +175,15 @@ public class GarnishMath {
     /// - Throws: `GarnishError` if color analysis fails
     public static func meetsWCAGAA(_ color1: Color, _ color2: Color) throws -> Bool {
         return try contrastRatio(between: color1, and: color2) >= wcagAAThreshold
+    }
+    
+    /// Checks if contrast ratio meets WCAG AA contrast requirements.
+    ///
+    /// - Parameters:
+    ///   - ratio: Contrast Ratio
+    /// - Returns: True if contrast ratio >= 4.5:1
+    public static func meetsWCAGAA(_ ratio: CGFloat) -> Bool {
+        return ratio >= wcagAAThreshold
     }
     
     /// Checks if two colors meet WCAG AAA contrast requirements.
@@ -186,5 +195,16 @@ public class GarnishMath {
     /// - Throws: `GarnishError` if color analysis fails
     public static func meetsWCAGAAA(_ color1: Color, _ color2: Color) throws -> Bool {
         return try contrastRatio(between: color1, and: color2) >= wcagAAAThreshold
+    }
+    
+    /// Checks if contrast ratio meets WCAG AAA contrast requirements.
+    ///
+    /// - Parameters:
+    ///   - color1: First color
+    ///   - color2: Second color
+    /// - Returns: True if contrast ratio >= 7:1
+    /// - Throws: `GarnishError` if color analysis fails
+    public static func meetsWCAGAAA(_ ratio: CGFloat) -> Bool {
+        return ratio >= wcagAAAThreshold
     }
 }

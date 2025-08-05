@@ -29,7 +29,7 @@ public extension Garnish {
         blendAmount: CGFloat = 0.8
     ) -> Color {
         // Use the new standardized API with equivalent behavior
-        return contrastingShade(of: background, blendAmount: blendAmount)
+        return (try? contrastingShade(of: background, blendAmount: blendAmount)) ?? background
     }
 }
 

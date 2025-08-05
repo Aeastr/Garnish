@@ -19,8 +19,9 @@ public extension Color {
     ///
     /// - Parameter blendAmount: How much to blend toward the contrasting base (0.0-1.0, default: 0.8)
     /// - Returns: A contrasting shade of this color
-    func contrastingShade(blendAmount: CGFloat = 0.8) -> Color {
-        return Garnish.contrastingShade(of: self, blendAmount: blendAmount)
+    /// - Throws: `GarnishError` if color analysis fails
+    func contrastingShade(blendAmount: CGFloat = 0.8) throws -> Color {
+        return try Garnish.contrastingShade(of: self, blendAmount: blendAmount)
     }
     
     /// Returns an optimized version of this color that works well against the specified background.
@@ -35,7 +36,8 @@ public extension Color {
     ///   - background: The background color to optimize against
     ///   - targetRatio: Minimum contrast ratio to achieve (default: WCAG AA = 4.5)
     /// - Returns: An optimized version of this color with better contrast
-    func optimized(against background: Color, targetRatio: CGFloat = GarnishMath.wcagAAThreshold) -> Color {
-        return Garnish.contrastingColor(self, against: background, targetRatio: targetRatio)
+    /// - Throws: `GarnishError` if color analysis fails
+    func optimized(against background: Color, targetRatio: CGFloat = GarnishMath.wcagAAThreshold) throws -> Color {
+        return try Garnish.contrastingColor(self, against: background, targetRatio: targetRatio)
     }
 }

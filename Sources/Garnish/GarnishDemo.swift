@@ -86,6 +86,24 @@ enum DemoSection: CaseIterable {
 struct CoreAPIDemo: View {
     @State private var inputColor = Color.blue
     @State private var backgroundColor = Color.white
+
+    private var monochromaticContrastResult: (shade: Color?, error: String?) {
+        do {
+            let shade = try Garnish.contrastingShade(of: inputColor)
+            return (shade, nil)
+        } catch {
+            return (nil, error.localizedDescription)
+        }
+    }
+    
+    private var bichromaticContrastResult: (color: Color?, error: String?) {
+        do {
+            let color = try Garnish.contrastingColor(inputColor, against: backgroundColor)
+            return (color, nil)
+        } catch {
+            return (nil, error.localizedDescription)
+        }
+    }
     
     var body: some View {
         ScrollView {
@@ -97,24 +115,30 @@ struct CoreAPIDemo: View {
                     VStack(spacing: 15) {
                         ColorPicker("Input Color", selection: $inputColor)
                         
-                        let contrastingShade = Garnish.contrastingShade(of: inputColor)
-                        
                         HStack(spacing: 20) {
                             ColorSwatch(color: inputColor, label: "Original")
-                            ColorSwatch(color: contrastingShade, label: "Contrasting Shade")
+                            if let shade = monochromaticContrastResult.shade {
+                                ColorSwatch(color: shade, label: "Contrasting Shade")
+                            }
                         }
                         
                         CodeBlock(code: """
-                        let contrastingShade = Garnish.contrastingShade(of: inputColor)
+                        let contrastingShade = try Garnish.contrastingShade(of: inputColor)
                         """)
                         
+                        if let errorMessage = monochromaticContrastResult.error {
+                            Text("Error: \(errorMessage)").foregroundColor(.red)
+                        }
+                        
                         // Demo usage
-                        VStack {
-                            Text("Sample Text")
-                                .foregroundColor(contrastingShade)
-                                .padding()
-                                .background(inputColor)
-                                .cornerRadius(8)
+                        if let shade = monochromaticContrastResult.shade {
+                            VStack {
+                                Text("Sample Text")
+                                    .foregroundColor(shade)
+                                    .padding()
+                                    .background(inputColor)
+                                    .cornerRadius(8)
+                            }
                         }
                     }
                 }
@@ -127,24 +151,30 @@ struct CoreAPIDemo: View {
                         ColorPicker("Foreground Color", selection: $inputColor)
                         ColorPicker("Background Color", selection: $backgroundColor)
                         
-                        let optimizedColor = Garnish.contrastingColor(of: inputColor, against: backgroundColor)
-                        
                         HStack(spacing: 20) {
                             ColorSwatch(color: inputColor, label: "Original")
-                            ColorSwatch(color: optimizedColor, label: "Optimized")
+                            if let optimized = bichromaticContrastResult.color {
+                                ColorSwatch(color: optimized, label: "Optimized")
+                            }
                         }
                         
                         CodeBlock(code: """
-                        let optimizedColor = Garnish.contrastingColor(of: inputColor, against: backgroundColor)
+                        let optimizedColor = try Garnish.contrastingColor(of: inputColor, against: backgroundColor)
                         """)
                         
+                        if let errorMessage = bichromaticContrastResult.error {
+                            Text("Error: \(errorMessage)").foregroundColor(.red)
+                        }
+                        
                         // Demo usage
-                        VStack {
-                            Text("Sample Text")
-                                .foregroundColor(optimizedColor)
-                                .padding()
-                                .background(backgroundColor)
-                                .cornerRadius(8)
+                        if let optimized = bichromaticContrastResult.color {
+                            VStack {
+                                Text("Sample Text")
+                                    .foregroundColor(optimized)
+                                    .padding()
+                                    .background(backgroundColor)
+                                    .cornerRadius(8)
+                            }
                         }
                     }
                 }
@@ -159,6 +189,42 @@ struct MathUtilitiesDemo: View {
     @State private var color1 = Color.blue
     @State private var color2 = Color.red
     
+    private var luminanceResult: (value: Double?, error: String?) {
+        do {
+            let value = try GarnishMath.relativeLuminance(of: color1)
+            return (value, nil)
+        } catch {
+            return (nil, error.localizedDescription)
+        }
+    }
+    
+    private var brightnessResult: (value: Double?, error: String?) {
+        do {
+            let value = try GarnishMath.brightness(of: color1)
+            return (value, nil)
+        } catch {
+            return (nil, error.localizedDescription)
+        }
+    }
+    
+    private var contrastRatioResult: (value: Double?, error: String?) {
+        do {
+            let value = try GarnishMath.contrastRatio(between: color1, and: color2)
+            return (value, nil)
+        } catch {
+            return (nil, error.localizedDescription)
+        }
+    }
+    
+    private var colorSchemeResult: (scheme: ColorScheme?, error: String?) {
+        do {
+            let scheme = try GarnishMath.colorScheme(for: color1)
+            return (scheme, nil)
+        } catch {
+            return (nil, error.localizedDescription)
+        }
+    }
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 30) {
@@ -169,29 +235,40 @@ struct MathUtilitiesDemo: View {
                     VStack(spacing: 15) {
                         ColorPicker("Color to Analyze", selection: $color1)
                         
-                        let luminance = try? GarnishMath.relativeLuminance(of: color1)
-                        let brightness = try? GarnishMath.brightness(of: color1)
-                        let colorScheme = GarnishMath.colorScheme(for: color1)
+                        let colorScheme = colorSchemeResult.scheme
+                        let colorSchemeError = colorSchemeResult.error
                         
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Text("Relative Luminance:")
                                 Spacer()
-                                Text(String(format: "%.3f", luminance ?? 0))
-                                    .fontDesign(.monospaced)
+                                if let errorMessage = luminanceResult.error {
+                                    Text("Error: \(errorMessage)").foregroundColor(.red)
+                                } else if let value = luminanceResult.value {
+                                    Text(String(format: "%.3f", value))
+                                        .fontDesign(.monospaced)
+                                }
                             }
                             
                             HStack {
                                 Text("Brightness:")
                                 Spacer()
-                                Text(String(format: "%.3f", brightness ?? 0))
-                                    .fontDesign(.monospaced)
+                                if let errorMessage = brightnessResult.error {
+                                    Text("Error: \(errorMessage)").foregroundColor(.red)
+                                } else if let value = brightnessResult.value {
+                                    Text(String(format: "%.3f", value))
+                                        .fontDesign(.monospaced)
+                                }
                             }
                             
                             HStack {
                                 Text("Color Scheme:")
                                 Spacer()
-                                Text(colorScheme == .light ? "Light" : "Dark")
+                                if let colorSchemeError = colorSchemeError {
+                                    Text("Error: \(colorSchemeError)").foregroundColor(.red)
+                                } else if let colorScheme = colorScheme {
+                                    Text(colorScheme == .light ? "Light" : "Dark")
+                                }
                             }
                         }
                         .padding()
@@ -208,7 +285,7 @@ struct MathUtilitiesDemo: View {
                         ColorPicker("Color 1", selection: $color1)
                         ColorPicker("Color 2", selection: $color2)
                         
-                        let contrastRatio = (try? GarnishMath.contrastRatio(between: color1, and: color2)) ?? 1.0
+                        let contrastRatio = contrastRatioResult.value ?? 1.0
                         let meetsAA = GarnishMath.meetsWCAGAA(contrastRatio)
                         let meetsAAA = GarnishMath.meetsWCAGAAA(contrastRatio)
                         
@@ -216,8 +293,12 @@ struct MathUtilitiesDemo: View {
                             HStack {
                                 Text("Contrast Ratio:")
                                 Spacer()
-                                Text(String(format: "%.2f:1", contrastRatio))
-                                    .fontDesign(.monospaced)
+                                if let errorMessage = contrastRatioResult.error {
+                                    Text("Error: \(errorMessage)").foregroundColor(.red)
+                                } else {
+                                    Text(String(format: "%.2f:1", contrastRatio))
+                                        .fontDesign(.monospaced)
+                                }
                             }
                             
                             HStack {
@@ -238,12 +319,14 @@ struct MathUtilitiesDemo: View {
                         .background(Color.secondary.opacity(0.1))
                         .cornerRadius(8)
                         
-                        // Visual demonstration
-                        Text("Sample Text")
-                            .foregroundColor(color1)
-                            .padding()
-                            .background(color2)
-                            .cornerRadius(8)
+                        if contrastRatioResult.error == nil {
+                            // Visual demonstration
+                            Text("Sample Text")
+                                .foregroundColor(color1)
+                                .padding()
+                                .background(color2)
+                                .cornerRadius(8)
+                        }
                     }
                 }
             }
@@ -256,6 +339,24 @@ struct MathUtilitiesDemo: View {
 struct ColorExtensionsDemo: View {
     @State private var baseColor = Color.blue
     @State private var brightnessAdjustment: Double = 0.2
+    
+    private var contrastingShadeResult: (color: Color?, error: String?) {
+        do {
+            let color = try baseColor.contrastingShade()
+            return (color, nil)
+        } catch {
+            return (nil, error.localizedDescription)
+        }
+    }
+    
+    private var hexResult: (hex: String?, error: String?) {
+        do {
+            let hex = try baseColor.toHex()
+            return (hex, nil)
+        } catch {
+            return (nil, error.localizedDescription)
+        }
+    }
     
     var body: some View {
         ScrollView {
@@ -272,6 +373,7 @@ struct ColorExtensionsDemo: View {
                             Slider(value: $brightnessAdjustment, in: -1...1, step: 0.1)
                         }
                         
+                        // adjustedBrightness returns Color, no throwing assumed
                         let adjustedColor = baseColor.adjustedBrightness(by: CGFloat(brightnessAdjustment))
                         
                         HStack(spacing: 20) {
@@ -292,23 +394,28 @@ struct ColorExtensionsDemo: View {
                     VStack(spacing: 15) {
                         ColorPicker("Input Color", selection: $baseColor)
                         
-                        let contrastingShade = baseColor.contrastingShade()
-                        let hexString = (try? baseColor.toHex()) ?? "#000000"
-                        
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Text("Hex Value:")
                                 Spacer()
-                                Text(hexString)
-                                    .fontDesign(.monospaced)
+                                if let errorMessage = hexResult.error {
+                                    Text("Error: \(errorMessage)").foregroundColor(.red)
+                                } else if let hex = hexResult.hex {
+                                    Text(hex)
+                                        .fontDesign(.monospaced)
+                                }
                             }
                             
                             HStack {
                                 Text("Contrasting Shade:")
                                 Spacer()
-                                Circle()
-                                    .fill(contrastingShade)
-                                    .frame(width: 30, height: 30)
+                                if let errorMessage = contrastingShadeResult.error {
+                                    Text("Error: \(errorMessage)").foregroundColor(.red)
+                                } else if let color = contrastingShadeResult.color {
+                                    Circle()
+                                        .fill(color)
+                                        .frame(width: 30, height: 30)
+                                }
                             }
                         }
                         .padding()
@@ -327,6 +434,15 @@ struct FontWeightDemo: View {
     @State private var textColor = Color.primary
     @State private var backgroundColor = Color.white
     
+    private var recommendedFontWeightResult: (weight: Font.Weight?, error: String?) {
+        do {
+            let weight = try textColor.recommendedFontWeight(against: backgroundColor)
+            return (weight, nil)
+        } catch {
+            return (nil, error.localizedDescription)
+        }
+    }
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 30) {
@@ -338,20 +454,23 @@ struct FontWeightDemo: View {
                         ColorPicker("Text Color", selection: $textColor)
                         ColorPicker("Background Color", selection: $backgroundColor)
                         
-                        let fontWeight = (try? textColor.recommendedFontWeight(against: backgroundColor)) ?? .regular
-                        
                         VStack(spacing: 10) {
-                            Text("Sample Text")
-                                .font(.title2)
-                                .fontWeight(fontWeight)
-                                .foregroundColor(textColor)
-                                .padding()
-                                .background(backgroundColor)
-                                .cornerRadius(8)
-                            
-                            Text("Recommended: \(fontWeight.description)")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                            if let fontWeight = recommendedFontWeightResult.weight {
+                                Text("Sample Text")
+                                    .font(.title2)
+                                    .fontWeight(fontWeight)
+                                    .foregroundColor(textColor)
+                                    .padding()
+                                    .background(backgroundColor)
+                                    .cornerRadius(8)
+                                
+                                Text("Recommended: \(fontWeight.description)")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            } else if let errorMessage = recommendedFontWeightResult.error {
+                                Text("Error: \(errorMessage)")
+                                    .foregroundColor(.red)
+                            }
                         }
                         
                         CodeBlock(code: """
@@ -370,6 +489,15 @@ struct AccessibilityDemo: View {
     @State private var foregroundColor = Color.black
     @State private var backgroundColor = Color.white
     
+    private var contrastRatioResult: (value: Double?, error: String?) {
+        do {
+            let value = try GarnishMath.contrastRatio(between: foregroundColor, and: backgroundColor)
+            return (value, nil)
+        } catch {
+            return (nil, error.localizedDescription)
+        }
+    }
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 30) {
@@ -381,25 +509,27 @@ struct AccessibilityDemo: View {
                         ColorPicker("Foreground Color", selection: $foregroundColor)
                         ColorPicker("Background Color", selection: $backgroundColor)
                         
-                        let contrastRatio = (try? GarnishMath.contrastRatio(between: foregroundColor, and: backgroundColor)) ?? 1.0
+                        let contrastRatio = contrastRatioResult.value ?? 1.0
                         let meetsAA = GarnishMath.meetsWCAGAA(contrastRatio)
                         let meetsAAA = GarnishMath.meetsWCAGAAA(contrastRatio)
                         
                         // Visual test
-                        VStack(spacing: 10) {
-                            Text("Large Text Sample")
-                                .font(.title)
-                                .foregroundColor(foregroundColor)
-                                .padding()
-                                .background(backgroundColor)
-                                .cornerRadius(8)
-                            
-                            Text("Normal text sample for readability testing")
-                                .font(.body)
-                                .foregroundColor(foregroundColor)
-                                .padding()
-                                .background(backgroundColor)
-                                .cornerRadius(8)
+                        if contrastRatioResult.error == nil {
+                            VStack(spacing: 10) {
+                                Text("Large Text Sample")
+                                    .font(.title)
+                                    .foregroundColor(foregroundColor)
+                                    .padding()
+                                    .background(backgroundColor)
+                                    .cornerRadius(8)
+                                
+                                Text("Normal text sample for readability testing")
+                                    .font(.body)
+                                    .foregroundColor(foregroundColor)
+                                    .padding()
+                                    .background(backgroundColor)
+                                    .cornerRadius(8)
+                            }
                         }
                         
                         // Compliance results
@@ -407,8 +537,12 @@ struct AccessibilityDemo: View {
                             HStack {
                                 Text("Contrast Ratio:")
                                 Spacer()
-                                Text(String(format: "%.2f:1", contrastRatio))
-                                    .fontDesign(.monospaced)
+                                if let errorMessage = contrastRatioResult.error {
+                                    Text("Error: \(errorMessage)").foregroundColor(.red)
+                                } else {
+                                    Text(String(format: "%.2f:1", contrastRatio))
+                                        .fontDesign(.monospaced)
+                                }
                             }
                             
                             HStack {

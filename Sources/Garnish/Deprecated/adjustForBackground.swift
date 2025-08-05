@@ -21,7 +21,7 @@ extension Garnish {
     /// // New way:
     /// let adjusted = Garnish.contrastingColor(.blue, against: .white)
     /// ```
-    @available(*, deprecated, message: "Use Garnish.contrastingColor(_:against:) instead")
+    @available(*, deprecated, message: "Use Garnish.contrastingColor(_:against:) instead – this legacy wrapper is non-throwing and returns the original color on error")
     public static func adjustForBackground(
         for color: Color,
         in scheme: ColorScheme? = nil,
@@ -37,12 +37,12 @@ extension Garnish {
             if debugStatements {
                 print("[Garnish] Warning: No background color provided. Using contrastingShade instead.")
             }
-            return contrastingShade(of: color)
+            return (try? contrastingShade(of: color)) ?? color
         }
         
         // Use the new standardized API
         let targetRatio = GarnishMath.defaultThreshold // Use WCAG AA standard
-        return contrastingColor(color, against: bgColor, targetRatio: targetRatio)
+        return (try? contrastingColor(color, against: bgColor, targetRatio: targetRatio)) ?? color
     }
     
 }

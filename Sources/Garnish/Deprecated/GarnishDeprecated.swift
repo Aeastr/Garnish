@@ -26,8 +26,8 @@ public extension Garnish {
     /// **DEPRECATED**: Use `GarnishMath.colorScheme(for:)` instead.
     @available(*, deprecated, message: "Use GarnishMath.colorScheme(for:) instead")
     static func determineColorScheme(_ color: Color) -> ColorScheme {
-        // colorScheme(for:) doesn't throw, so this is safe
-        return GarnishMath.colorScheme(for: color)
+        // Maintain non-throwing behavior with fallback
+        return (try? GarnishMath.colorScheme(for: color)) ?? .light
     }
     
     /// **DEPRECATED**: Use `GarnishMath.contrastRatio(between:and:)` instead.
@@ -42,12 +42,12 @@ public extension Garnish {
     /// **DEPRECATED**: Use `contrastingShade(of:)` instead.
     @available(*, deprecated, message: "Use contrastingShade(of:) instead")
     static func contrastingForeground(for background: Color) -> Color {
-        return contrastingShade(of: background)
+        return (try? contrastingShade(of: background)) ?? background
     }
     
     /// **DEPRECATED**: Use `contrastingColor(_:against:)` instead.
     @available(*, deprecated, message: "Use contrastingColor(_:against:) instead")
     static func adjustForBackground(for color: Color, with backgroundColor: Color) -> Color {
-        return contrastingColor(color, against: backgroundColor)
+        return (try? contrastingColor(color, against: backgroundColor)) ?? color
     }
 }
