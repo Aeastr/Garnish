@@ -169,8 +169,4 @@ struct GarnishModifierCon: ViewModifier {
 }
 
 
-#Preview{
-    if #available(iOS 16.4, *) {
-        GarnishModifierExampels()
-    }
-}
+// Preview removed - demo view was moved to new GarnishDemo.swift

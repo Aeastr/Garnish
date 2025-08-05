@@ -76,7 +76,7 @@ public class Garnish {
         #endif
         
         let platformColor = PlatformColor(color)
-        let currentRatio = GarnishMath.contrastRatio(between: color, and: background, using: method)
+        let currentRatio = try GarnishMath.contrastRatio(between: color, and: background)
         
         // If contrast is already sufficient, return original color
         if currentRatio >= targetRatio {
@@ -96,7 +96,7 @@ public class Garnish {
         for _ in 0..<maxIterations {
             let testBlend = (lowBlend + highBlend) / 2.0
             let testColor = platformColor.blend(with: contrastingBase, ratio: testBlend)
-            let testRatio = GarnishMath.contrastRatio(between: Color(testColor), and: background, using: method)
+            let testRatio = try GarnishMath.contrastRatio(between: Color(testColor), and: background)
             
             if testRatio >= targetRatio {
                 bestBlend = testBlend
@@ -114,8 +114,6 @@ public class Garnish {
         let result = platformColor.blend(with: contrastingBase, ratio: bestBlend)
         return Color(result)
     }
-    
-
     
     /// Quick accessibility check.
     public static func hasGoodContrast(_ color1: Color, _ color2: Color) -> Bool {

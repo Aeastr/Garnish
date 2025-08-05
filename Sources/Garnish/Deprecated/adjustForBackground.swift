@@ -46,16 +46,3 @@ extension Garnish {
     }
     
 }
-
-#Preview{
-    if #available(iOS 16.4, *) {
-        GarnishModifierExampels()
-    }
-}
-
-
-#Preview{
-    if #available(iOS 16.4, *) {
-        GarnishTestView()
-    }
-}

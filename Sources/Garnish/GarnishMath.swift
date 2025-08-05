@@ -115,8 +115,10 @@ public class GarnishMath {
     ///   - color1: First color
     ///   - color2: Second color
     /// - Returns: Contrast ratio (1.0 to 21.0, where higher is better contrast)
-    public static func contrastRatio(between color1: Color, and color2: Color) -> CGFloat {
-        let l1 = relativeLuminance(of: color1)
+    /// - Throws: `GarnishError` if color analysis fails
+    public static func contrastRatio(between color1: Color, and color2: Color) throws -> CGFloat {
+        let l1 = try relativeLuminance(of: color1)
+        let l2 = try relativeLuminance(of: color2)
         let maxLum = max(l1, l2)
         let minLum = min(l1, l2)
         
@@ -146,8 +148,9 @@ public class GarnishMath {
     ///   - threshold: The brightness threshold (default: 0.5)
     ///   - method: The brightness calculation method to use
     /// - Returns: ColorClassification (.light or .dark)
-    public static func classify(_ color: Color, threshold: CGFloat = 0.5, using method: BrightnessMethod = .luminance) -> ColorClassification {
-        return brightness(of: color, using: method) > threshold ? .light : .dark
+    /// - Throws: `GarnishError` if color analysis fails
+    public static func classify(_ color: Color, threshold: CGFloat = 0.5, using method: BrightnessMethod = .luminance) throws -> ColorClassification {
+        return try brightness(of: color, using: method) > threshold ? .light : .dark
     }
     
     /// Convenience function: Determines the optimal ColorScheme for a given color.

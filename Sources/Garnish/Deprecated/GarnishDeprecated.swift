@@ -9,9 +9,10 @@ public extension Garnish {
     /// **DEPRECATED**: Use `GarnishMath.classify(_:)` instead.
     @available(*, deprecated, message: "Use GarnishMath.classify(_:) instead")
     static func isLightColor(_ color: Color, debug: Bool = false) -> Bool {
-        let result = GarnishMath.classify(color) == .light
+        let result = (try? GarnishMath.classify(color)) == .light
         if debug {
-            print("is light \(GarnishMath.relativeLuminance(of: color))")
+            let luminance = (try? GarnishMath.relativeLuminance(of: color)) ?? 0.0
+            print("is light \(luminance)")
         }
         return result
     }
