@@ -43,7 +43,124 @@ Garnish.contrastingColor(_ color: Color, against: Color) -> Color
 - **Decision**: Offer both brightness calculation methods with luminance as default
 - **Decision**: Simplify threshold parameters - eliminate separate light/dark thresholds
 - **Decision**: Use standard WCAG thresholds as defaults
-- **Decision**: No migration strategy needed - low current usage, users want updates ? ( i am literally the only user atp)
+- **Decision**: No migration strategy needed - low current usage, users want updates
+
+### 2025-08-05 - Function Audit Complete
+**Existing Functions Categorized:**
+
+** Core Use Case 1 (Monochromatic - same color, different shade):**
+- `contrastingForeground()` - Takes background color, returns contrasting version of same color **(DEPRECATED)**
+- `colorBase()` - DEPRECATED/COMMENTED OUT - was for blending with base colors **(REMOVE)**
+
+** Core Use Case 2 (Bi-chromatic - two different colors):**
+- `adjustForBackground()` - Takes color + background, adjusts color for contrast **(DEPRECATED)**
+
+** Utility Functions Review:**
+- `relativeLuminance()` - WCAG compliant luminance calculation **(KEEP)**
+- `brightness()` - Simple RGB averaging (r+g+b)/3 **(KEEP)** - useful for non-accessibility cases
+- `luminanceContrastRatio()` - Contrast ratio between two colors **(RENAME to `contrastRatio`)**
+- `isLightColor()` / `isDarkColor()` - Color classification **(REPLACE with enum-returning function)**
+- `determineColorScheme()` - Auto-detect light/dark scheme **(KEEP, but rename to `colorScheme(for:)`)**
+
+** UI/UX Features:**
+- `recommendedFontWeight()` - Font weight based on contrast **(KEEP)** - useful feature
+- `garnishModifier` - SwiftUI view modifiers **(KEEP)** - good UX feature
+- Color extensions (brightness adjustment, hex conversion, etc.) **(REVIEW INDIVIDUALLY)**
+
+** Problems Identified:**
+- Multiple threshold systems (3.0, 3.5, 4.5) - need standardization
+- Default parameter overreach (backgroundColor defaults)
+- Inconsistent brightness calculations
+- Complex parameter sets (lightBlendRatio, darkBlendRatio, etc.)
+
+### 2025-08-05 - Standardized Foundation Implemented
+**New Files Created:**
+- `GarnishMath.swift` - Standardized mathematical utilities
+  - Single source of truth for luminance/brightness calculations
+  - WCAG-compliant contrast ratio calculations
+  - Unified threshold system (4.5:1 AA, 7:1 AAA)
+  - Support for both luminance and RGB brightness methods
+- `Garnish.swift` - Refactored main API (converted from struct to class)
+  - `contrastingShade(of:)` - Monochromatic contrast (Use Case 1)
+  - `contrastingColor(_:against:)` - Bi-chromatic contrast (Use Case 2) 
+  - Simplified parameters, no default background overreach
+  - Binary search algorithm for optimal contrast ratios
+  - Delegates utility functions to GarnishMath for consistency
+- `GarnishColor.swift` - Color manipulation utilities
+  - Standardized blending functions
+  - Brightness/luminance adjustment methods
+  - Hex conversion utilities
+
+**Key Improvements:**
+✅ Eliminated multiple threshold systems - now uses single WCAG standards
+✅ Removed inappropriate default parameters
+✅ Consistent brightness calculation methods with user choice
+✅ Clean, purpose-driven API matching the two core use cases
+✅ Proper separation of concerns (math, core API, utilities)
+
+### 2025-08-05 - Legacy Functions Refactored
+**Functions Updated:**
+- `adjustForBackground.swift` - Now deprecated, delegates to `contrastingColor(_:against:)`
+  - Removed complex parameter sets (lightBlendRatio, darkBlendRatio, etc.)
+  - Fixed inappropriate default parameter behavior
+  - Uses WCAG AA standard thresholds
+- `contrastingForeground.swift` - Now deprecated, delegates to `contrastingShade(of:)`
+  - Simplified to use standardized math foundation
+  - Cleaner API with consistent behavior
+
+**Key Improvements:**
+✅ Eliminated problematic default background parameters
+✅ All legacy functions now use standardized GarnishMath calculations
+✅ Clear deprecation warnings with migration examples
+✅ Backward compatibility maintained while encouraging new API adoption
+
+### 2025-08-05 - Function Renames and Cleanup
+**Utility Functions Renamed for Clarity:**
+- `luminanceContrastRatio()` → `contrastRatio()` **(RENAMED)** - cleaner, shorter name
+- `determineColorScheme()` → `colorScheme(for:)` **(RENAMED)** - more intuitive naming
+- `isLightColor()` / `isDarkColor()` → `classify()` **(REPLACED)** - single function returning enum
+
+**New Enum-Based Color Classification:**
+- Added `GarnishMath.ColorClassification` enum (.light, .dark)
+- `classify(_:)` returns enum instead of separate boolean functions
+- Cleaner API: `let classification = Garnish.classify(.blue)`
+
+**Functions Marked for Status:**
+- `relativeLuminance()` **(KEEP)** - WCAG standard
+- `brightness()` **(KEEP)** - useful for non-accessibility cases  
+- `recommendedFontWeight()` **(KEEP)** - useful UI feature
+- `garnishModifier` **(KEEP)** - good UX feature
+- `colorBase()` **(REMOVE)** - already commented out
+
+**Key Improvements:**
+✅ Eliminated redundant boolean functions in favor of enum-based classification
+✅ Cleaner, more intuitive function names
+✅ All legacy functions deprecated with clear migration paths
+✅ Maintained backward compatibility while encouraging modern API usage
+
+### 2025-08-05 - Organizational Cleanup: Deprecated Functions
+**Better Project Structure:**
+- Created `Sources/Garnish/Deprecated/` folder for all deprecated functionality
+- Moved standalone deprecated files:
+  - `adjustForBackground.swift` → `Deprecated/adjustForBackground.swift`
+  - `contrastingForeground.swift` → `Deprecated/contrastingForeground.swift`
+  - `colorBase(dep).swift` → `Deprecated/colorBase(dep).swift`
+- Created extension files for class-based deprecated methods:
+  - `Deprecated/GarnishDeprecated.swift` - Main Garnish class deprecated methods
+  - `Deprecated/GarnishMathDeprecated.swift` - GarnishMath class deprecated methods
+- Added `Deprecated/README.md` with migration guide and timeline
+
+**Cleaned Main Classes:**
+- Removed deprecated methods from `Garnish.swift` (now in extension)
+- Removed deprecated methods from `GarnishMath.swift` (now in extension)
+- Main classes now contain only current, non-deprecated API
+
+**Key Improvements:**
+✅ Much cleaner project structure - deprecated code isolated
+✅ Main classes are now clean and focused on current API
+✅ Deprecated functions still work but are properly organized
+✅ Clear migration path documented in Deprecated/README.md
+✅ Eliminated the terrible "Garnish Functions" folder structure
 
 ---
 
