@@ -37,6 +37,20 @@ public extension Garnish {
         return (try? GarnishMath.contrastRatio(between: c1, and: c2)) ?? 1.0
     }
     
+    @available(*, deprecated, message: "Use GarnishMath.relativeLuminance(of:) instead – this legacy wrapper is non-throwing and returns 0 on error")
+    static func relativeLuminance(of color: Color) -> CGFloat {
+        #if canImport(UIKit)
+        return (try? UIColor(color).relativeLuminance()) ?? 0
+        #elseif os(macOS)
+        return (try? NSColor(color).relativeLuminance() ?? 0)
+        #endif
+    }
+    
+    @available(*, deprecated, message: "Use GarnishMath.brightness(of: method:) instead – this legacy wrapper is non-throwing and returns 0 on error")
+    static func brightness(of color: Color) -> CGFloat {
+        return (try? GarnishMath.rgbBrightness(of: color)) ?? 0
+    }
+    
     // MARK: - Legacy Core Functions (Deprecated)
     
     /// **DEPRECATED**: Use `contrastingShade(of:)` instead.

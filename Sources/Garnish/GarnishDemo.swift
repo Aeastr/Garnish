@@ -10,7 +10,7 @@
 
 import SwiftUI
 
-@available(iOS 16.0, macOS 14.0, visionOS 1.0, *)
+@available(iOS 16.1, macOS 14.0, visionOS 1.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 public struct GarnishDemoApp: View {
@@ -36,18 +36,22 @@ public struct GarnishDemoApp: View {
                         .navigationBarTitleDisplayMode(.large)
                         #endif
                 } else {
-                    ContentUnavailableView(
-                        "Select a Demo",
-                        systemImage: "paintpalette",
-                        description: Text("Choose a demo from the sidebar to see Garnish in action")
-                    )
+                    if #available(iOS 17.0, *) {
+                        ContentUnavailableView(
+                            "Select a Demo",
+                            systemImage: "paintpalette",
+                            description: Text("Choose a demo from the sidebar to see Garnish in action")
+                        )
+                    } else {
+                        Text("Select a Demo")
+                    }
                 }
             }
         }
     }
 }
 
-@available(iOS 16.0, macOS 14.0, visionOS 1.0, *)
+@available(iOS 16.1, macOS 14.0, visionOS 1.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 enum DemoSection: CaseIterable {
@@ -90,7 +94,7 @@ enum DemoSection: CaseIterable {
 }
 
 // MARK: - Core API Demo
-@available(iOS 16.0, macOS 14.0, visionOS 1.0, *)
+@available(iOS 16.1, macOS 14.0, visionOS 1.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 struct CoreAPIDemo: View {
@@ -195,7 +199,7 @@ struct CoreAPIDemo: View {
 }
 
 // MARK: - Math Utilities Demo
-@available(iOS 16.0, macOS 14.0, visionOS 1.0, *)
+@available(iOS 16.1, macOS 14.0, visionOS 1.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 struct MathUtilitiesDemo: View {
@@ -349,7 +353,7 @@ struct MathUtilitiesDemo: View {
 }
 
 // MARK: - Color Extensions Demo
-@available(iOS 16.0, macOS 14.0, visionOS 1.0, *)
+@available(iOS 16.1, macOS 14.0, visionOS 1.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 struct ColorExtensionsDemo: View {
@@ -469,7 +473,7 @@ struct ColorExtensionsDemo: View {
 }
 
 // MARK: - Font Weight Demo
-@available(iOS 16.0, macOS 14.0, visionOS 1.0, *)
+@available(iOS 16.1, macOS 14.0, visionOS 1.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 struct FontWeightDemo: View {
@@ -527,7 +531,7 @@ struct FontWeightDemo: View {
 }
 
 // MARK: - Accessibility Demo
-@available(iOS 16.0, macOS 14.0, visionOS 1.0, *)
+@available(iOS 16.1, macOS 14.0, visionOS 1.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 struct AccessibilityDemo: View {
@@ -698,7 +702,7 @@ extension Font.Weight {
 }
 
 // MARK: - Preview
-@available(iOS 16.0, macOS 14.0, visionOS 1.0, *)
+@available(iOS 16.1, macOS 14.0, visionOS 1.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 #Preview {

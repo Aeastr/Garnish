@@ -15,7 +15,8 @@ import AppKit
 /// Type alias for the platform-specific color.
 typealias PlatformColor = NSColor
 #endif
-
+   
+    
 public extension Color {
     /// Adjusts the brightness of a color using standardized RGB brightness calculation.
     /// Uses the same method as GarnishColor.adjustBrightness for consistency.
