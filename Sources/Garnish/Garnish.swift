@@ -115,33 +115,6 @@ public class Garnish {
         return Color(result)
     }
     
-    // MARK: - Utility Functions (Delegated to GarnishMath)
-    
-    /// Calculates relative luminance using WCAG 2.1 standards.
-    public static func relativeLuminance(of color: Color) -> CGFloat {
-        return GarnishMath.relativeLuminance(of: color)
-    }
-    
-    /// Calculates brightness using simple RGB averaging.
-    public static func brightness(of color: Color) -> CGFloat {
-        return GarnishMath.brightness(of: color)
-    }
-    
-    /// Classifies a color as light or dark.
-    public static func classify(_ color: Color) -> GarnishMath.ColorClassification {
-        return GarnishMath.classify(color)
-    }
-    
-    /// Determines optimal color scheme for a color.
-    public static func colorScheme(for color: Color) -> ColorScheme {
-        return GarnishMath.colorScheme(for: color)
-    }
-    
-    /// Computes contrast ratio between two colors.
-    public static func contrastRatio(between c1: Color, and c2: Color) -> CGFloat {
-        return GarnishMath.contrastRatio(between: c1, and: c2)
-    }
-    
 
     
     /// Quick accessibility check.

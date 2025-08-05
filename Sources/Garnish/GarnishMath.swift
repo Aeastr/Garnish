@@ -157,21 +157,21 @@ public class GarnishMath {
         return brightness(of: color, using: method) > threshold ? .light : .dark
     }
     
-    /// Determines the optimal color scheme for a given color.
+    /// Convenience function: Determines the optimal ColorScheme for a given color.
+    /// Equivalent to: `classify(color, using: method).colorScheme`
     ///
     /// - Parameters:
-    ///   - color: The color to evaluate
+    ///   - color: The color to analyze
     ///   - method: The brightness calculation method to use
-    /// - Returns: .light if the color is light, .dark if the color is dark
+    /// - Returns: .light or .dark ColorScheme
     public static func colorScheme(for color: Color, using method: BrightnessMethod = .luminance) -> ColorScheme {
         return classify(color, using: method).colorScheme
     }
     
-
-    
     // MARK: - Contrast Validation
     
-    /// Checks if two colors meet WCAG AA contrast requirements.
+    /// Convenience function: Checks if two colors meet WCAG AA contrast requirements.
+    /// Equivalent to: `contrastRatio(between: color1, and: color2) >= wcagAAThreshold`
     ///
     /// - Parameters:
     ///   - color1: First color

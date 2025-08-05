@@ -33,7 +33,7 @@ Garnish.contrastingColor(_ color: Color, against: Color) -> Color
 
 ## Changes Made
 
-### 2025-08-05 - Initial Refactor Planning
+### 20:00 - Initial Refactor Planning
 - Created this changelog to track refactor progress
 - Identified math inconsistencies:
   - `Garnish.brightness()` uses simple RGB averaging: `(r + g + b) / 3.0`
@@ -45,7 +45,7 @@ Garnish.contrastingColor(_ color: Color, against: Color) -> Color
 - **Decision**: Use standard WCAG thresholds as defaults
 - **Decision**: No migration strategy needed - low current usage, users want updates
 
-### 2025-08-05 - Function Audit Complete
+### 20:05 - Function Audit Complete
 **Existing Functions Categorized:**
 
 ** Core Use Case 1 (Monochromatic - same color, different shade):**
@@ -73,7 +73,7 @@ Garnish.contrastingColor(_ color: Color, against: Color) -> Color
 - Inconsistent brightness calculations
 - Complex parameter sets (lightBlendRatio, darkBlendRatio, etc.)
 
-### 2025-08-05 - Standardized Foundation Implemented
+### 20:10 - Standardized Math Foundation Implemented
 **New Files Created:**
 - `GarnishMath.swift` - Standardized mathematical utilities
   - Single source of truth for luminance/brightness calculations
@@ -98,7 +98,7 @@ Garnish.contrastingColor(_ color: Color, against: Color) -> Color
 ✅ Clean, purpose-driven API matching the two core use cases
 ✅ Proper separation of concerns (math, core API, utilities)
 
-### 2025-08-05 - Legacy Functions Refactored
+### 20:12 - Core API Refactorions Refactored
 **Functions Updated:**
 - `adjustForBackground.swift` - Now deprecated, delegates to `contrastingColor(_:against:)`
   - Removed complex parameter sets (lightBlendRatio, darkBlendRatio, etc.)
@@ -138,7 +138,7 @@ Garnish.contrastingColor(_ color: Color, against: Color) -> Color
 ✅ All legacy functions deprecated with clear migration paths
 ✅ Maintained backward compatibility while encouraging modern API usage
 
-### 2025-08-05 - Organizational Cleanup: Deprecated Functions
+### 20:16 - Organizational Cleanup: Deprecated Functions
 **Better Project Structure:**
 - Created `Sources/Garnish/Deprecated/` folder for all deprecated functionality
 - Moved standalone deprecated files:
@@ -161,6 +161,50 @@ Garnish.contrastingColor(_ color: Color, against: Color) -> Color
 ✅ Deprecated functions still work but are properly organized
 ✅ Clear migration path documented in Deprecated/README.md
 ✅ Eliminated the terrible "Garnish Functions" folder structure
+
+### 20:17 - API Cleanup: Removed Unnecessary Delegation Functions
+**Cleaner Main API:**
+- Removed pointless one-liner delegation functions from `Garnish.swift`:
+  - `relativeLuminance(of:)` → Users call `GarnishMath.relativeLuminance(of:)` directly
+  - `brightness(of:)` → Users call `GarnishMath.brightness(of:)` directly
+  - `classify(_:)` → Users call `GarnishMath.classify(_:)` directly
+  - `colorScheme(for:)` → Users call `GarnishMath.colorScheme(for:)` directly
+  - `contrastRatio(between:and:)` → Users call `GarnishMath.contrastRatio(between:and:)` directly
+
+**Marked Legitimate Convenience Functions:**
+- Added "Convenience function" comments to `GarnishMath.swift` functions that add real value:
+  - `colorScheme(for:)` - Saves users from knowing about `.colorScheme` property
+  - `meetsWCAGAA(_:_:)` - Saves users from remembering the 4.5 threshold
+
+**Fixed Deprecated Extensions:**
+- Updated `GarnishDeprecated.swift` to reference correct functions (`GarnishMath.*` instead of removed `Garnish.*`)
+- Ensured all deprecated functions still work but point to the real implementations
+
+**Key Improvements:**
+✅ `Garnish` class now focused only on core use cases + one convenience method
+✅ Clear distinction between delegation (removed) vs convenience (kept)
+✅ Users call utility functions directly from `GarnishMath` where they belong
+✅ Deprecated functions still work and point to correct implementations
+✅ Much cleaner, more logical API structure
+
+### 20:19 - Color Extensions Standardization
+**Cleaned Up Color Extensions:**
+- Refactored `Color Extensions.swift` to remove inconsistent brightness methods:
+  - Removed `adjustedBrightness(by:)` with RGB multiplication logic
+  - Removed `adjustedBrightness(for:by:)` with scheme-based complexity
+  - Removed `adjustingLuminance(by:)` with HSB manipulation
+- Replaced with clean, standardized methods that delegate to `GarnishColor`:
+  - `adjustedBrightness(by:)` → calls `GarnishColor.adjustBrightness(of:by:)`
+  - `adjustedLuminance(by:)` → calls `GarnishColor.adjustLuminance(of:by:)`
+- Kept useful `toHex(alpha:)` function as-is
+- `UI Color Extensions.swift` already clean - contains essential `blend(with:ratio:)` and `relativeLuminance()` functions
+
+**Key Improvements:**
+✅ Eliminated multiple confusing brightness calculation methods
+✅ Color extensions now consistent with standardized GarnishColor utilities
+✅ Clean delegation pattern - extensions are thin wrappers around core utilities
+✅ Maintained useful hex conversion functionality
+✅ All color manipulation now uses the same mathematical foundation
 
 ---
 

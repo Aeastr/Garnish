@@ -6,8 +6,8 @@ public extension Garnish {
     
     // MARK: - Legacy Utility Functions (Deprecated)
     
-    /// **DEPRECATED**: Use `classify(_:)` instead.
-    @available(*, deprecated, message: "Use Garnish.classify(_:) instead")
+    /// **DEPRECATED**: Use `GarnishMath.classify(_:)` instead.
+    @available(*, deprecated, message: "Use GarnishMath.classify(_:) instead")
     static func isLightColor(_ color: Color, debug: Bool = false) -> Bool {
         let result = GarnishMath.classify(color) == .light
         if debug {
@@ -16,20 +16,20 @@ public extension Garnish {
         return result
     }
     
-    /// **DEPRECATED**: Use `classify(_:)` instead.
-    @available(*, deprecated, message: "Use Garnish.classify(_:) instead")
+    /// **DEPRECATED**: Use `GarnishMath.classify(_:)` instead.
+    @available(*, deprecated, message: "Use GarnishMath.classify(_:) instead")
     static func isDarkColor(_ color: Color) -> Bool {
         return GarnishMath.classify(color) == .dark
     }
     
-    /// **DEPRECATED**: Use `colorScheme(for:)` instead.
-    @available(*, deprecated, message: "Use Garnish.colorScheme(for:) instead")
+    /// **DEPRECATED**: Use `GarnishMath.colorScheme(for:)` instead.
+    @available(*, deprecated, message: "Use GarnishMath.colorScheme(for:) instead")
     static func determineColorScheme(_ color: Color) -> ColorScheme {
         return GarnishMath.colorScheme(for: color)
     }
     
-    /// **DEPRECATED**: Use `contrastRatio(between:and:)` instead.
-    @available(*, deprecated, message: "Use Garnish.contrastRatio(between:and:) instead")
+    /// **DEPRECATED**: Use `GarnishMath.contrastRatio(between:and:)` instead.
+    @available(*, deprecated, message: "Use GarnishMath.contrastRatio(between:and:) instead")
     static func luminanceContrastRatio(between c1: Color, and c2: Color) -> CGFloat {
         return GarnishMath.contrastRatio(between: c1, and: c2)
     }
