@@ -40,7 +40,8 @@ public class GarnishColor {
     ///   - color: The color to adjust
     ///   - percentage: Adjustment percentage (-1.0 to 1.0, where positive lightens, negative darkens)
     /// - Returns: Color with adjusted brightness
-    public static func adjustBrightness(of color: Color, by percentage: CGFloat) -> Color {
+    /// - Throws: `GarnishError.colorSpaceConversionFailed` if color cannot be converted to RGB color space
+    public static func adjustBrightness(of color: Color, by percentage: CGFloat) throws -> Color {
         #if canImport(UIKit)
         typealias PlatformColor = UIColor
         #elseif os(macOS)
@@ -49,7 +50,19 @@ public class GarnishColor {
         
         let platformColor = PlatformColor(color)
         var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        
+        #if canImport(UIKit)
         platformColor.getRed(&r, green: &g, blue: &b, alpha: &a)
+        #elseif os(macOS)
+        // For NSColor, ensure we're in RGB color space to avoid dynamic color issues
+        guard let rgbColor = platformColor.usingColorSpace(.deviceRGB) else {
+            throw GarnishError.colorSpaceConversionFailed(color, targetSpace: "deviceRGB")
+        }
+        r = rgbColor.redComponent
+        g = rgbColor.greenComponent
+        b = rgbColor.blueComponent
+        a = rgbColor.alphaComponent
+        #endif
         
         let factor = 1.0 + percentage
         let newR = min(max(r * factor, 0), 1)
@@ -99,7 +112,8 @@ public class GarnishColor {
     ///   - color: The color to convert
     ///   - includeAlpha: Whether to include alpha channel (default: false)
     /// - Returns: Hexadecimal string (e.g., "FF0000" for red)
-    public static func toHex(_ color: Color, includeAlpha: Bool = false) -> String {
+    /// - Throws: `GarnishError.colorComponentExtractionFailed` or `GarnishError.colorSpaceConversionFailed` if color processing fails
+    public static func toHex(_ color: Color, includeAlpha: Bool = false) throws -> String {
         #if canImport(UIKit)
         typealias PlatformColor = UIColor
         #elseif os(macOS)
@@ -107,18 +121,32 @@ public class GarnishColor {
         #endif
         
         let platformColor = PlatformColor(color)
+        
+        #if canImport(UIKit)
         guard let components = platformColor.cgColor.components else {
-            return "000000"
+            throw GarnishError.colorComponentExtractionFailed(color)
         }
         
         guard components.count >= 3 else {
-            return "000000"
+            throw GarnishError.colorComponentExtractionFailed(color)
         }
         
         let r = Float(components[0])
         let g = Float(components[1])
         let b = Float(components[2])
         let a = components.count >= 4 ? Float(components[3]) : 1.0
+        
+        #elseif os(macOS)
+        // For NSColor, ensure we're in RGB color space to avoid dynamic color issues
+        guard let rgbColor = platformColor.usingColorSpace(.deviceRGB) else {
+            throw GarnishError.colorSpaceConversionFailed(color, targetSpace: "deviceRGB")
+        }
+        
+        let r = Float(rgbColor.redComponent)
+        let g = Float(rgbColor.greenComponent)
+        let b = Float(rgbColor.blueComponent)
+        let a = Float(rgbColor.alphaComponent)
+        #endif
         
         if includeAlpha {
             return String(format: "%02lX%02lX%02lX%02lX",

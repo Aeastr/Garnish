@@ -358,6 +358,15 @@ struct ColorExtensionsDemo: View {
         }
     }
     
+    private var adjustedBrightnessResult: (color: Color?, error: String?) {
+        do {
+            let color = try baseColor.adjustedBrightness(by: CGFloat(brightnessAdjustment))
+            return (color, nil)
+        } catch {
+            return (nil, error.localizedDescription)
+        }
+    }
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 30) {
@@ -373,12 +382,26 @@ struct ColorExtensionsDemo: View {
                             Slider(value: $brightnessAdjustment, in: -1...1, step: 0.1)
                         }
                         
-                        // adjustedBrightness returns Color, no throwing assumed
-                        let adjustedColor = baseColor.adjustedBrightness(by: CGFloat(brightnessAdjustment))
-                        
                         HStack(spacing: 20) {
                             ColorSwatch(color: baseColor, label: "Original")
-                            ColorSwatch(color: adjustedColor, label: "Adjusted")
+                            if let adjustedColor = adjustedBrightnessResult.color {
+                                ColorSwatch(color: adjustedColor, label: "Adjusted")
+                            } else {
+                                VStack {
+                                    Text("Error")
+                                        .foregroundColor(.red)
+                                        .font(.caption)
+                                    if let error = adjustedBrightnessResult.error {
+                                        Text(error)
+                                            .foregroundColor(.red)
+                                            .font(.caption2)
+                                            .multilineTextAlignment(.center)
+                                    }
+                                }
+                                .frame(width: 80, height: 60)
+                                .background(Color.red.opacity(0.1))
+                                .cornerRadius(8)
+                            }
                         }
                         
                         CodeBlock(code: """
