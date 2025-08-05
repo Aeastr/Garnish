@@ -154,27 +154,27 @@ public class GarnishMath {
     }
     
     /// Convenience function: Determines the optimal ColorScheme for a given color.
-    /// Equivalent to: `classify(color, using: method).colorScheme`
     ///
     /// - Parameters:
     ///   - color: The color to analyze
     ///   - method: The brightness calculation method to use
     /// - Returns: .light or .dark ColorScheme
-    public static func colorScheme(for color: Color, using method: BrightnessMethod = .luminance) -> ColorScheme {
-        return classify(color, using: method).colorScheme
+    /// - Throws: `GarnishError` if color analysis fails
+    public static func colorScheme(for color: Color, using method: BrightnessMethod = .luminance) throws -> ColorScheme {
+        return try classify(color, using: method).colorScheme
     }
     
     // MARK: - Contrast Validation
     
     /// Convenience function: Checks if two colors meet WCAG AA contrast requirements.
-    /// Equivalent to: `contrastRatio(between: color1, and: color2) >= wcagAAThreshold`
     ///
     /// - Parameters:
     ///   - color1: First color
     ///   - color2: Second color
     /// - Returns: True if contrast ratio >= 4.5:1
-    public static func meetsWCAGAA(_ color1: Color, _ color2: Color) -> Bool {
-        return contrastRatio(between: color1, and: color2) >= wcagAAThreshold
+    /// - Throws: `GarnishError` if color analysis fails
+    public static func meetsWCAGAA(_ color1: Color, _ color2: Color) throws -> Bool {
+        return try contrastRatio(between: color1, and: color2) >= wcagAAThreshold
     }
     
     /// Checks if two colors meet WCAG AAA contrast requirements.
@@ -183,7 +183,8 @@ public class GarnishMath {
     ///   - color1: First color
     ///   - color2: Second color
     /// - Returns: True if contrast ratio >= 7:1
-    public static func meetsWCAGAAA(_ color1: Color, _ color2: Color) -> Bool {
-        return contrastRatio(between: color1, and: color2) >= wcagAAAThreshold
+    /// - Throws: `GarnishError` if color analysis fails
+    public static func meetsWCAGAAA(_ color1: Color, _ color2: Color) throws -> Bool {
+        return try contrastRatio(between: color1, and: color2) >= wcagAAAThreshold
     }
 }

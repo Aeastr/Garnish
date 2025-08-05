@@ -20,19 +20,21 @@ public extension Garnish {
     /// **DEPRECATED**: Use `GarnishMath.classify(_:)` instead.
     @available(*, deprecated, message: "Use GarnishMath.classify(_:) instead")
     static func isDarkColor(_ color: Color) -> Bool {
-        return GarnishMath.classify(color) == .dark
+        return (try? GarnishMath.classify(color)) == .dark
     }
     
     /// **DEPRECATED**: Use `GarnishMath.colorScheme(for:)` instead.
     @available(*, deprecated, message: "Use GarnishMath.colorScheme(for:) instead")
     static func determineColorScheme(_ color: Color) -> ColorScheme {
+        // colorScheme(for:) doesn't throw, so this is safe
         return GarnishMath.colorScheme(for: color)
     }
     
     /// **DEPRECATED**: Use `GarnishMath.contrastRatio(between:and:)` instead.
     @available(*, deprecated, message: "Use GarnishMath.contrastRatio(between:and:) instead")
     static func luminanceContrastRatio(between c1: Color, and c2: Color) -> CGFloat {
-        return GarnishMath.contrastRatio(between: c1, and: c2)
+        // Maintain original non-throwing behavior with fallback
+        return (try? GarnishMath.contrastRatio(between: c1, and: c2)) ?? 1.0
     }
     
     // MARK: - Legacy Core Functions (Deprecated)

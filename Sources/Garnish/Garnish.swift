@@ -123,10 +123,4 @@ public class Garnish {
 
 
 
-#Preview{
-    if #available(iOS 16.4, *) {
-        GarnishTestView()
-    } else {
-        GarnishTestViewLeg()
-    }
-}
+// Preview removed - demo views were moved to new GarnishDemo.swift

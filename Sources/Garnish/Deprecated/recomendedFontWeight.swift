@@ -43,7 +43,7 @@ extension Garnish{
         }
         
         // Use the new standardized math functions
-        let contrast = GarnishMath.contrastRatio(between: color, and: backgroundColor)
+        let contrast = try GarnishMath.contrastRatio(between: color, and: backgroundColor)
         
         if debugStatements {
             print("[Debug] Background: \(backgroundColor), Foreground: \(color), Contrast: \(contrast)")
@@ -75,7 +75,4 @@ extension Garnish{
 }
 
 
-@available(iOS 16.4, *)
-#Preview {
-    FontDemo()
-}
+// Preview removed - demo view was moved to new GarnishDemo.swift
