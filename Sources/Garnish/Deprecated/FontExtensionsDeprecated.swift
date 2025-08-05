@@ -62,14 +62,6 @@ public extension Color {
     
     /// **DEPRECATED**: Use `color.contrastingShade()` extension method instead.
     /// 
-    /// **Migration Path**: Use the new extension method:
-    /// ```swift
-    /// // Old way:
-    /// let foreground = color.constratingForegroud()
-    /// 
-    /// // New way:
-    /// let foreground = try color.contrastingShade()
-    /// ```
     /// 
     /// Returns a contrasting foreground color for this background color.
     /// Note: This method has a typo in the name and uses deprecated API internally.

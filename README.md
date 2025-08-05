@@ -1,80 +1,114 @@
 <div align="center">
   <img width="300" height="300" src="/assets/icon.png" alt="Garnish Logo">
   <h1><b>Garnish</b></h1>
-  <p>
-    Garnish helps you calculate some ideal colors for text and UI elements in light and dark themes, ensuring contrast and visual harmony based on luminance.
-    <br>
-    <i>Compatible with iOS 15.0 and later</i>
-  </p>
+  <p>A Swift package for iOS and macOS that provides intelligent color utilities for accessibility, contrast optimization, and visual harmony.</p>
 </div>
 
-
-
-![This image contains 15 rounded rectangles arranged in a 3x5 grid, each showcasing a unique background color with centered text that reads “Foreground Color.” The rectangles display a variety of colors. The text “Foreground Color” adjusts in contrast against each background to maintain visibility](assets/example1.png)
-
-## Features
-- **Dynamic Background Colors**: Automatically adjust colors for light or dark themes with customizable blending.
-- **Contrast-Optimized Foreground Colors**: Ensure text is readable against any background.
-- **Color Utilities**: Access brightness, luminance, and contrast ratio calculations.
-- **Blending & Manipulation**: Blend colors dynamically and adjust brightness for visual balance.
-
-## Join the Kyo Discord
-
-[Join the Kyo Discord](https://discord.gg/6NHhAvwbXV) to discuss features, share feedback, or connect with other users. It's a great place to collaborate and engage with the community.
-
----
-
-## Getting Started
-
-### Installation
-Garnish is available as a Swift Package. Add it to your project using the following steps:
-
-1. In Xcode, go to **File > Add Packages...**
-2. Enter the repository URL: `[https://github.com/Aeastr/Garnish.git]`
-3. Add the package to your desired targets.
-
----
-
-## Examples
-
-### Generate a Color for typical backgrounds 
-Adjust a color to create a background that adapts to the current color scheme.
-
-```swift
-let backgroundColor = Garnish.adjustForBackground(for: .blue, in: .light)
-```
-
-### Generate a Foreground Color
-Ensure text or elements are readable against a given background using `contrastingForeground`.
-```swift
-let foregroundColor = Garnish.contrastingForeground(for: .blue)
-```
-
-> More Examples in Docs and Demo in [Sources/Garnish/Demo.swift](Sources/Garnish/Demo.swift)
+<div align="center">
+  <a href="https://swift.org">
+    <img src="https://img.shields.io/badge/Swift-5.9-orange.svg" alt="Swift Version">
+  </a>
+  <a href="https://www.apple.com/ios/">
+    <img src="https://img.shields.io/badge/iOS-14.0%2B-blue.svg" alt="iOS 14.0+">
+  </a>  
+  <a href="https://www.apple.com/macos/">
+    <img src="https://img.shields.io/badge/macOS-13.3%2B-blue.svg" alt="macOS 13.3+">
+  </a>
+  <a href="https://www.apple.com/tvos/">
+    <img src="https://img.shields.io/badge/tvOS-14.0%2B-blue.svg" alt="tvOS 14.0+">
+  </a>
+  <a href="https://www.apple.com/watchos/">
+    <img src="https://img.shields.io/badge/watchOS-7.0%2B-blue.svg" alt="watchOS 7.0+">
+  </a>
+  <a href="https://www.apple.com/visionos/">
+    <img src="https://img.shields.io/badge/visionOS-1.0%2B-blue.svg" alt="visionOS 1.0+">
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT">
+  </a>
+</div>
 
 ---
 
-## Documentation Index
 
-Explore detailed documentation for each function and extension under the [`docs/`](docs/) directory:
+## **What is Garnish?**
 
-- [Dynamic Background Colors (`adjustForBackground`)](docs/adjustForBackground.md)
-- [Dynamic Color Adjustment (`colorBase`)](docs/colorBase.md)
-- [Contrast-Optimized Foregrounds (`contrastingForeground`)](docs/contrastingForeground.md)
-- [Relative Luminance (`relativeLuminance`)](docs/relativeLuminance.md)
-- [Brightness Calculation (`brightness`)](docs/brightness.md)
-- [Determine Color Scheme (`determineColorScheme`)](docs/determineColorScheme.md)
-- [Contrast Ratio (`contrastRatio`)](docs/contrastRatio.md)
-- [UIColor Extensions (`blend`, `relativeLuminance`)](docs/UIColorExtensions.md)
+Garnish is a comprehensive Swift package that provides intelligent color utilities for:
+- **Contrast Optimization** - Generate colors that meet WCAG accessibility standards
+- **Dynamic Color Adaptation** - Colors that work beautifully in light and dark themes
+- **Mathematical Color Analysis** - Precise luminance, brightness, and contrast calculations
+- **Smart Color Generation** - Create contrasting shades and optimized color combinations
+
+![Color examples showing various background colors with optimized foreground text](assets/example1.png)
+
+## **Core Features**
+
+### 🎨 **Smart Color Generation** - Intelligent Contrast
+Generate contrasting colors that maintain visual harmony:
+
+| ![Contrasting Shades](assets/contrastingShades.png) | ![Color Optimization](assets/colorOptimization.png) | ![Dynamic Themes](assets/dynamicThemes.png) |
+|:---:|:---:|:---:|
+| **Contrasting Shades** | **Color Optimization** | **Dynamic Themes** |
+| Same-hue contrasting colors | Optimize colors against backgrounds | Light and dark theme adaptation |
+
+### ♿ **Accessibility & WCAG Compliance** - Standards Built-in
+Ensure your colors meet accessibility requirements:
+- WCAG AA and AAA contrast ratio validation
+- Real-time contrast calculations
+- Accessibility-first color recommendations
+- Font weight optimization for readability
+
+## **Documentation**
+
+**📖 [Complete Documentation](https://github.com/Aeastr/Garnish/wiki)** available in the Garnish Wiki
 
 ---
 
-## Contribution
+## Playground Demos
 
-We welcome contributions to enhance Garnish! Feel free to open issues or submit pull requests.
+Garnish comes with a bundled demo app that lets you explore Garnish in action. Open the Xcode workspace, select the `GarnishDemo` target, and press **Run** to try it out.
+
+### Core API Demo
+
+![Core API Demo](assets/CoreAPIDemo.png)
+
+The **Core API** tab demonstrates monochromatic and bi-chromatic contrast generation with live color previews.
+
+### Color Extensions Demo
+
+![Color Extensions Demo](assets/ColorExtensionsDemo.png)
+
+The **Color Extensions** tab showcases brightness adjustment, hex conversion, and convenience methods with real-time feedback.
+
+### Accessibility Demo
+
+![Accessibility Demo](assets/AccessibilityDemo.png)
+
+The **Accessibility** tab provides WCAG compliance checking with visual contrast examples and pass/fail indicators.
 
 ---
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is released under the MIT License. See [LICENSE](LICENSE) for details.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## Support
+
+If you like this project, please consider giving it a ⭐️
+
+---
+
+## Where to find me:  
+- here, obviously.  
+- [Twitter](https://x.com/AetherAurelia)  
+- [Threads](https://www.threads.net/@aetheraurelia)  
+- [Bluesky](https://bsky.app/profile/aethers.world)  
+- [Join the Kyo Discord](https://discord.gg/6NHhAvwbXV)
+
+---
+
+<p align="center">Built with 🍏🎨🌈 by Aether</p>
