@@ -55,7 +55,7 @@ struct GarnishModifierExampels: View {
                     VStack{
                         TitleSection(title: "With foregroundColor, backgroundColor", description: "Ensures foreground color is visible agaisnt background color, on parameter allows you to specify which areas of the view should be affected")
                         
-                        CodeBlock(code: Text("`.garnish(foregroundColor, backgroundColor, on: .all)`"))
+                        CodeBlockLeg(code: Text("`.garnish(foregroundColor, backgroundColor, on: .all)`"))
                         
                         Text("Default")
                             .frame(maxWidth: .infinity)
@@ -67,7 +67,7 @@ struct GarnishModifierExampels: View {
                             .padding(.vertical, 8)
                             .padding(.horizontal, 16)
                         
-                        CodeBlock(code: Text("`.garnish(foregroundColor, backgroundColor, on: .foreground)`"))
+                        CodeBlockLeg(code: Text("`.garnish(foregroundColor, backgroundColor, on: .foreground)`"))
                         
                         Text("Foreground")
                             .frame(maxWidth: .infinity)
@@ -84,7 +84,7 @@ struct GarnishModifierExampels: View {
                             .padding(.vertical, 8)
                             .padding(.horizontal, 16)
                         
-                        CodeBlock(code: Text("`.garnish(foregroundColor, backgroundColor, on: .background)`"))
+                        CodeBlockLeg(code: Text("`.garnish(foregroundColor, backgroundColor, on: .background)`"))
                         
                         Text("Background")
                             .frame(maxWidth: .infinity)
@@ -104,7 +104,7 @@ struct GarnishModifierExampels: View {
                     VStack{
                         TitleSection(title: "With single Color", description: "Ensures foreground color is visible agaisnt itself, on parameter allows you to specify which areas of the view should be affected")
                         
-                        CodeBlock(code: Text("`.garnish(color, on: .all)`"))
+                        CodeBlockLeg(code: Text("`.garnish(color, on: .all)`"))
                         
                         Text("Default")
                             .frame(maxWidth: .infinity)
@@ -116,7 +116,7 @@ struct GarnishModifierExampels: View {
                             .padding(.vertical, 8)
                             .padding(.horizontal, 16)
                         
-                        CodeBlock(code: Text("`.garnish(color, on: .foreground)`"))
+                        CodeBlockLeg(code: Text("`.garnish(color, on: .foreground)`"))
                         
                         Text("Foreground")
                             .frame(maxWidth: .infinity)
@@ -133,7 +133,7 @@ struct GarnishModifierExampels: View {
                             .padding(.vertical, 8)
                             .padding(.horizontal, 16)
                         
-                        CodeBlock(code: Text("`.garnish(color, on: .background)`"))
+                        CodeBlockLeg(code: Text("`.garnish(color, on: .background)`"))
                         
                         Text("Background")
                             .frame(maxWidth: .infinity)
@@ -171,22 +171,23 @@ struct FontDemo: View {
                     }
             }
             else{
-                NavigationSplitView{
-                    HStack{
-                        GarnishSheet(inputColor: $inputColor, backgroundColor: $backgroundColor, colorScheme: $colorScheme, blendAmount: $blendAmount, detent: $detent)
-                            .padding(.top, 10)
-                            .frame(idealWidth: 250, maxWidth: 300)
-                        
-                    }
-                    .ignoresSafeArea()
-                    .padding(.top, 200)
-                }
-                detail:{
+                HStack{
+                    GarnishSheet(inputColor: $inputColor, backgroundColor: $backgroundColor, colorScheme: $colorScheme, blendAmount: $blendAmount, detent: $detent)
+                        .padding(.top, 10)
+                        .background{
+                            Color(.secondarySystemBackground)
+                                .ignoresSafeArea()
+                        }
+                        .clipShape(.rect(cornerRadius: 20))
+                        .padding(20)
+                        .frame(idealWidth: 250, maxWidth: 300)
                     
                     main
                         .frame(maxWidth: 550)
                         .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.top, 50)
                 }
+                .ignoresSafeArea()
             }
         }
     }
@@ -273,6 +274,7 @@ struct FontDemo: View {
                         
                         VStack{
                             Text("Adjusted Foreground + BG")
+                                .fontWeight(Color.primary.recommendedFontWeight(in: colorScheme))
                                 .frame(maxWidth: .infinity)
                                 .multilineTextAlignment(.center)
                             
@@ -325,7 +327,8 @@ struct FontDemo: View {
                         }
                         
                         VStack{
-                            Text(("Contrast Foreground"))
+                            Text("Adjusted Foreground + BG")
+                                .fontWeight(Color.primary.recommendedFontWeight(in: colorScheme))
                                 .frame(maxWidth: .infinity)
                                 .multilineTextAlignment(.center)
                             
@@ -380,6 +383,7 @@ struct FontDemo: View {
                         
                         VStack{
                             Text("Custom Foreground + BG")
+                                .fontWeight(Color.primary.recommendedFontWeight(in: colorScheme))
                                 .frame(maxWidth: .infinity)
                                 .multilineTextAlignment(.center)
                             
@@ -427,20 +431,12 @@ struct GarnishTestView: View {
                     // Tinted Base Color
                     VStack(alignment: .leading, spacing: 15){
                         VStack(alignment: .leading, spacing: 15){
-#if canImport(UIKit)
-            Color(.systemBackground)
-#elseif os(macOS)
-            Color(NSColor.windowBackgroundColor)
-#endif
+                            Color(.systemBackground)
                             TitleSection(title: "Adjust for System Background", description: "Use .garnish(foregroundColor, backgroundColor) to adjust the color of a view based on its background color. Here your inputColor is adjusted to match the system background color.")
                             
                             HStack{
                                 Text("Adjusted")
-#if canImport(UIKit)
                                     .garnish(inputColor, Color(.systemBackground))
-#elseif os(macOS)
-                                    .garnish(inputColor, Color(.windowBackgroundColor))
-#endif
                                     .frame(maxWidth: .infinity)
                                 
                                 Divider()
@@ -453,7 +449,7 @@ struct GarnishTestView: View {
                             HStack(spacing: 0){
                                 
                                 UnevenRoundedRectangle(topLeadingRadius: 25, bottomLeadingRadius: 25, bottomTrailingRadius: 0, topTrailingRadius: 0, style: .continuous)
-                                    .garnish(inputColor, Color.systemBackground)
+                                    .garnish(inputColor, Color(.systemBackground))
                                 
                                 
                                 UnevenRoundedRectangle(topLeadingRadius: 0, bottomLeadingRadius: 0, bottomTrailingRadius: 25, topTrailingRadius: 25, style: .continuous)
@@ -464,13 +460,13 @@ struct GarnishTestView: View {
                             
                             HStack(spacing: 30){
                                 
-                                CodeBlock(code: Text("`.garnish(inputColor, Color(.systemBackground))`"))
+                                CodeBlockLeg(code: Text("`.garnish(inputColor, Color(.systemBackground))`"))
                                 
                                 
                                 Divider()
                                     .padding(.vertical, 5)
                                 
-                                CodeBlock(code: Text("`.foregroundStyle(inputColor)`"))
+                                CodeBlockLeg(code: Text("`.foregroundStyle(inputColor)`"))
                             }
                             .padding(.horizontal, 10)
                         }
@@ -514,14 +510,14 @@ struct GarnishTestView: View {
                             
                             HStack(alignment: .top, spacing: 30){
                                 
-                                CodeBlock(code: Text("`.garnish(inputColor, backgroundColor)`"))
+                                CodeBlockLeg(code: Text("`.garnish(inputColor, backgroundColor)`"))
                                 
                                 
                                 Divider()
                                 
                                 VStack{
-                                    CodeBlock(code: Text("`.foregroundStyle(inputColor)`"))
-                                    CodeBlock(code: Text("`.background(backgroundColor)`"))
+                                    CodeBlockLeg(code: Text("`.foregroundStyle(inputColor)`"))
+                                    CodeBlockLeg(code: Text("`.background(backgroundColor)`"))
                                 }
                             }
                             .padding(.horizontal, 10)
@@ -560,7 +556,8 @@ struct GarnishTestView: View {
                         .padding(.horizontal, 20)
                         .padding(.vertical, 25)
                         .background(
-                            ColorRectangle(color: inputColor)
+                            RoundedRectangle(cornerRadius: 25)
+                                .fill(inputColor)
                         )
                     }
                     .padding(.horizontal, 20)
@@ -601,9 +598,7 @@ struct GarnishTestView: View {
             //                Color.clear.frame(height: 10)
             //            })
             //            .navigationTitle("Garnish")
-            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
-            #endif
             //            .sheet(isPresented: .constant(true)) {
             //                GarnishSheet(inputColor: $inputColor, backgroundColor: $backgroundColor, colorScheme: $colorScheme, blendAmount: $blendAmount, detent: $detent)
             //            }
@@ -638,11 +633,7 @@ struct TitleSection: View {
                     .opacity(0.7)
                     .font(.caption)
                     .padding(8)
-#if canImport(UIKit)
                     .background(Color(.secondarySystemBackground))
-#elseif os(macOS)
-                    .background(Color(NSColor.windowBackgroundColor))
-                #endif
                     .clipShape(.rect(cornerRadius: 10))
                     .overlay {
                         RoundedRectangle(cornerRadius: 10)
@@ -655,7 +646,7 @@ struct TitleSection: View {
 }
 
 @available(iOS 15.0, *)
-struct CodeBlock: View {
+struct CodeBlockLeg: View {
     var code: Text
     
     var body: some View{
@@ -664,11 +655,7 @@ struct CodeBlock: View {
             .font(.caption)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(8)
-#if canImport(UIKit)
             .background(Color(.secondarySystemBackground))
-#elseif os(macOS)
-            .background(Color(NSColor.windowBackgroundColor))
-#endif
             .clipShape(.rect(cornerRadius: 10))
             .overlay {
                 RoundedRectangle(cornerRadius: 10)
@@ -700,8 +687,8 @@ struct GarnishSheet: View {
                                              Color(red: 0.8, green: 0.3, blue: 0.4),
                                              Color(red: 150/255, green: 240/255, blue: 180/255),
                                              Color(red: 200/255, green: 210/255, blue: 240/255),
-                                             Color.primary,
-                                             Color.systemBackground,
+                                             Color.white,
+                                             Color.black,
                                              Color.teal,
                 ]
                 
@@ -800,29 +787,10 @@ struct GarnishSheet: View {
         .interactiveDismissDisabled()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background{
-#if canImport(UIKit)
             Color(.secondarySystemBackground)
                 .ignoresSafeArea()
-#elseif os(macOS)
-            Color(.windowBackgroundColor)
-                .ignoresSafeArea()
-            #else
-            Color.primary
-#endif
         }
         .colorScheme(colorScheme)
         .preferredColorScheme(colorScheme)
-    }
-}
-
-extension Color {
-    static var systemBackground: Color {
-        #if canImport(UIKit)
-        return Color(UIColor.systemBackground)
-        #elseif os(macOS)
-        return Color(NSColor.windowBackgroundColor)
-        #else
-        return Color.systemBackground // Fallback if needed
-        #endif
     }
 }
