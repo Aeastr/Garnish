@@ -44,13 +44,16 @@ internal extension UIColor {
     ///
     /// Example:
     /// ```swift
-    /// let luminance = UIColor.red.relativeLuminance()
+    /// let luminance = try UIColor.red.relativeLuminance()
     /// ```
     ///
     /// - Returns: A value between 0.0 and 1.0 representing the relative luminance.
-    func relativeLuminance() -> CGFloat {
+    /// - Throws: `GarnishError.colorComponentExtractionFailed` if color components cannot be extracted
+    func relativeLuminance() throws -> CGFloat {
         var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
-        getRed(&r, green: &g, blue: &b, alpha: &a)
+        guard getRed(&r, green: &g, blue: &b, alpha: &a) else {
+            throw GarnishError.colorComponentExtractionFailed(Color(self))
+        }
         
         func lum(_ v: CGFloat) -> CGFloat {
             // Apply sRGB companding.
@@ -108,13 +111,16 @@ internal extension NSColor {
     ///
     /// Example:
     /// ```swift
-    /// let luminance = NSColor.red.relativeLuminance()
+    /// let luminance = try NSColor.red.relativeLuminance()
     /// ```
     ///
     /// - Returns: A value between 0.0 and 1.0 representing the relative luminance.
-    func relativeLuminance() -> CGFloat {
+    /// - Throws: `GarnishError.colorSpaceConversionFailed` if color cannot be converted to RGB color space
+    func relativeLuminance() throws -> CGFloat {
         // Ensure the color is in the device RGB color space.
-        guard let color = usingColorSpace(.deviceRGB) else { return 0 }
+        guard let color = usingColorSpace(.deviceRGB) else {
+            throw GarnishError.colorSpaceConversionFailed(Color(self), targetSpace: "deviceRGB")
+        }
         
         let r = color.redComponent
         let g = color.greenComponent

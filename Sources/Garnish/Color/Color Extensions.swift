@@ -40,31 +40,23 @@ public extension Color {
     /// - Parameter alpha: If `true` returns an 8-character hex including the alpha
     ///                    component, otherwise returns a 6-character hex string.
     /// - Returns: A hexadecimal string for the color.
-    func toHex(alpha: Bool = false) -> String {
+    /// - Throws: `GarnishError.colorComponentExtractionFailed` if color components cannot be extracted
+    func toHex(alpha: Bool = false) throws -> String {
         // Convert SwiftUI Color to a platform-specific color.
         let platformColor = PlatformColor(self)
         
         guard let components = platformColor.cgColor.components else {
-            print("Error: Unable to retrieve color components. `cgColor` might be nil.")
-            return "DAD7CD"
+            throw GarnishError.colorComponentExtractionFailed(self)
         }
         
-        if components.count < 3 {
-            print("Error: Insufficient color components. Expected at least 3 components, " +
-                  "but found \(components.count).")
-            return "DAD7CD"
+        guard components.count >= 3 else {
+            throw GarnishError.colorComponentExtractionFailed(self)
         }
         
         let r = Float(components[0])
         let g = Float(components[1])
         let b = Float(components[2])
-        var a = Float(1.0)
-        
-        if components.count >= 4 {
-            a = Float(components[3])
-        } else {
-            print("Warning: Alpha component not found. Using default alpha value of 1.0.")
-        }
+        let a = components.count >= 4 ? Float(components[3]) : Float(1.0)
         
         if alpha {
             return String(format: "%02lX%02lX%02lX%02lX",

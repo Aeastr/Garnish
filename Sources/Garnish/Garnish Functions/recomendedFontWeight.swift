@@ -8,45 +8,56 @@
 import SwiftUI
 
 extension Garnish{
+    /// Recommends an appropriate font weight based on the contrast between foreground and background colors.
+    /// 
+    /// - Parameters:
+    ///   - color: The foreground color (text color)
+    ///   - backgroundColor: The background color to contrast against
+    ///   - fontWeightRange: Array of font weights to choose from (must not be empty)
+    ///   - debugStatements: Whether to print debug information
+    /// - Returns: Recommended font weight from the provided range
+    /// - Throws: `GarnishError.missingRequiredParameter` if backgroundColor is nil
+    ///           `GarnishError.invalidParameter` if fontWeightRange is empty
     public static func recommendedFontWeight(
         for color: Color,
-        in scheme: ColorScheme? = nil,
-        with backgroundColor: Color? = nil,
+        with backgroundColor: Color,
         fontWeightRange: [Font.Weight] = [.regular, .semibold],
         debugStatements: Bool = false
-    ) -> Font.Weight {
-        let bgColor = backgroundColor ?? (scheme == .dark ? Color.systemBackground : Color.primary)
+    ) throws -> Font.Weight {
         
-        // Determine scheme dynamically based on the background color's brightness
-        let calcScheme: ColorScheme = isLightColor(bgColor, debug: debugStatements) ? .light : .dark
-        
-        // Compute contrast ratio
-        let contrast = self.luminanceContrastRatio(between: color, and: bgColor)
-        
-        if debugStatements {
-            print("[Debug] Background: \(bgColor), Foreground: \(color), Contrast: \(contrast), calcScheme \(calcScheme)")
+        // Validate font weight range
+        guard !fontWeightRange.isEmpty else {
+            throw GarnishError.invalidParameter("fontWeightRange", value: fontWeightRange)
         }
         
-        // Define thresholds for font weight adjustments
+        // Use the new standardized math functions
+        let contrast = GarnishMath.contrastRatio(between: color, and: backgroundColor)
+        
+        if debugStatements {
+            print("[Debug] Background: \(backgroundColor), Foreground: \(color), Contrast: \(contrast)")
+        }
+        
+        // Define thresholds for font weight adjustments using WCAG standards
         let heavyWeightThreshold: CGFloat = 3.0 // Use heavier weights for very low contrast
-        let lightWeightThreshold: CGFloat = 3.5 // Use lighter weights for sufficient contrast
+        let lightWeightThreshold: CGFloat = GarnishMath.wcagAAThreshold // Use WCAG AA threshold
         
         // Decide font weight based on contrast thresholds
         if contrast < heavyWeightThreshold {
             if debugStatements {
                 print("[Debug] Contrast \(contrast) is very low, recommending heaviest weight in range.")
             }
-            return fontWeightRange.last ?? .bold // Default to heaviest in the range
+            return fontWeightRange.last! // Safe because we validated array is not empty
         } else if contrast < lightWeightThreshold {
             if debugStatements {
                 print("[Debug] Contrast \(contrast) is medium, recommending middle weight in range.")
             }
-            return fontWeightRange[safe: fontWeightRange.count / 2] ?? .regular // Default to middle weight in the range
+            let middleIndex = fontWeightRange.count / 2
+            return fontWeightRange[middleIndex]
         } else {
             if debugStatements {
                 print("[Debug] Contrast \(contrast) is sufficient, recommending lightest weight in range.")
             }
-            return fontWeightRange.first ?? .light // Default to lightest in the range
+            return fontWeightRange.first! // Safe because we validated array is not empty
         }
     }
 }

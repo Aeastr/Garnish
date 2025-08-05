@@ -206,6 +206,34 @@ Garnish.contrastingColor(_ color: Color, against: Color) -> Color
 ✅ Maintained useful hex conversion functionality
 ✅ All color manipulation now uses the same mathematical foundation
 
+### 20:24 - Error Handling Implementation (In Progress)
+**Replaced Silent Failures with Proper Error Throwing:**
+- Created `GarnishError.swift` with comprehensive error types:
+  - `colorComponentExtractionFailed` - when color components can't be extracted
+  - `colorSpaceConversionFailed` - when color space conversion fails
+  - `missingRequiredParameter` - when required parameters are missing
+  - `invalidParameter` - when parameter values are invalid
+  - `invalidColorCalculation` - when calculations produce invalid results
+
+**Functions Updated to Use Error Throwing:**
+- ✅ `Color.toHex(alpha:)` - now throws instead of returning "DAD7CD" fallback
+- ✅ `recommendedFontWeight(for:with:)` - now requires backgroundColor, throws on empty fontWeightRange
+- ✅ `UIColor/NSColor.relativeLuminance()` - now throws instead of returning 0
+- ✅ `GarnishMath.relativeLuminance(of:)` - updated to handle throwing platform extensions
+- 🔄 `GarnishMath.brightness(of:using:)` - partially updated, needs completion
+- 🔄 `GarnishMath.contrastRatio(between:and:)` - needs updating to handle throwing dependencies
+
+**Key Improvements:**
+✅ No more silent failures that hide problems from developers
+✅ Clear, descriptive error messages with recovery suggestions
+✅ Proper parameter validation (e.g., non-empty arrays, required parameters)
+✅ Functions now fail fast and explicitly when something goes wrong
+
+**Still In Progress:**
+- Complete cascade of error handling through all dependent functions
+- Update all calling code to handle the new throwing behavior
+- Test error handling paths
+
 ---
 
 ## Next Steps

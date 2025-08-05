@@ -37,18 +37,19 @@ public class GarnishMath {
     ///
     /// Example:
     /// ```swift
-    /// let luminance = GarnishMath.relativeLuminance(of: .blue)
+    /// let luminance = try GarnishMath.relativeLuminance(of: .blue)
     /// ```
     ///
     /// - Parameter color: The input color to analyze
     /// - Returns: A value between 0.0 and 1.0 representing the relative luminance
-    public static func relativeLuminance(of color: Color) -> CGFloat {
+    /// - Throws: `GarnishError.colorComponentExtractionFailed` or `GarnishError.colorSpaceConversionFailed`
+    public static func relativeLuminance(of color: Color) throws -> CGFloat {
         #if canImport(UIKit)
-        return UIColor(color).relativeLuminance()
+        return try UIColor(color).relativeLuminance()
         #elseif os(macOS)
-        return NSColor(color).relativeLuminance()
+        return try NSColor(color).relativeLuminance()
         #else
-        return 0
+        throw GarnishError.colorComponentExtractionFailed(color)
         #endif
     }
     
@@ -57,37 +58,44 @@ public class GarnishMath {
     ///
     /// Example:
     /// ```swift
-    /// let brightness = GarnishMath.brightness(of: .blue)
+    /// let brightness = try GarnishMath.rgbBrightness(of: .blue)
     /// ```
     ///
     /// - Parameter color: The input color to analyze
     /// - Returns: A value between 0.0 and 1.0 representing the brightness
-    public static func brightness(of color: Color) -> CGFloat {
+    /// - Throws: `GarnishError.colorComponentExtractionFailed` if color components cannot be extracted
+    public static func rgbBrightness(of color: Color) throws -> CGFloat {
         #if canImport(UIKit)
-        let platformColor = UIColor(color)
-        #elseif os(macOS)
-        let platformColor = NSColor(color)
-        #endif
-        
-        var r: CGFloat = 0
-        var g: CGFloat = 0
-        var b: CGFloat = 0
-        platformColor.getRed(&r, green: &g, blue: &b, alpha: nil)
+        let uiColor = UIColor(color)
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        guard uiColor.getRed(&r, green: &g, blue: &b, alpha: &a) else {
+            throw GarnishError.colorComponentExtractionFailed(color)
+        }
         return (r + g + b) / 3.0
+        #elseif os(macOS)
+        let nsColor = NSColor(color)
+        guard let rgbColor = nsColor.usingColorSpace(.deviceRGB) else {
+            throw GarnishError.colorSpaceConversionFailed(color, targetSpace: "deviceRGB")
+        }
+        return (rgbColor.redComponent + rgbColor.greenComponent + rgbColor.blueComponent) / 3.0
+        #else
+        throw GarnishError.colorComponentExtractionFailed(color)
+        #endif
     }
     
     /// Calculates brightness using the specified method.
     ///
     /// - Parameters:
-    ///   - color: The input color to analyze
-    ///   - method: The calculation method to use (default: .luminance)
-    /// - Returns: A value between 0.0 and 1.0 representing the brightness
-    public static func brightness(of color: Color, using method: BrightnessMethod = .luminance) -> CGFloat {
+    ///   - color: The color to analyze
+    ///   - method: The calculation method to use
+    /// - Returns: A value between 0.0 and 1.0 representing brightness
+    /// - Throws: `GarnishError` if color component extraction fails
+    public static func brightness(of color: Color, using method: BrightnessMethod = .luminance) throws -> CGFloat {
         switch method {
         case .luminance:
-            return relativeLuminance(of: color)
+            return try relativeLuminance(of: color)
         case .rgb:
-            return brightness(of: color)
+            return try rgbBrightness(of: color)
         }
     }
     
@@ -109,24 +117,9 @@ public class GarnishMath {
     /// - Returns: Contrast ratio (1.0 to 21.0, where higher is better contrast)
     public static func contrastRatio(between color1: Color, and color2: Color) -> CGFloat {
         let l1 = relativeLuminance(of: color1)
-        let l2 = relativeLuminance(of: color2)
         let maxLum = max(l1, l2)
         let minLum = min(l1, l2)
-        return (maxLum + 0.05) / (minLum + 0.05)
-    }
-    
-    /// Computes contrast ratio using the specified brightness method.
-    ///
-    /// - Parameters:
-    ///   - color1: First color
-    ///   - color2: Second color
-    ///   - method: The brightness calculation method to use
-    /// - Returns: Contrast ratio based on the specified method
-    public static func contrastRatio(between color1: Color, and color2: Color, using method: BrightnessMethod) -> CGFloat {
-        let l1 = brightness(of: color1, using: method)
-        let l2 = brightness(of: color2, using: method)
-        let maxLum = max(l1, l2)
-        let minLum = min(l1, l2)
+        
         return (maxLum + 0.05) / (minLum + 0.05)
     }
     
