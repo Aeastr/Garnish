@@ -234,6 +234,34 @@ Garnish.contrastingColor(_ color: Color, against: Color) -> Color
 - Update all calling code to handle the new throwing behavior
 - Test error handling paths
 
+### 20:31 - Extensions Folder Consolidation
+**Eliminated Extension Overlap and Improved Organization:**
+- Created dedicated `Sources/Garnish/Extensions/` folder for all extensions
+- Consolidated scattered extensions from multiple locations:
+  - `Color/Color Extensions.swift` → `Extensions/ColorExtensions.swift`
+  - `Color/UI Color Extensions.swift` → `Extensions/UIColorExtensions.swift`
+  - `Garnish Functions/Garnish Color Extensions.swift` → `Extensions/ColorConvenienceExtensions.swift` (updated)
+  - `Garnish Functions/Garnish Font Exntensions.swift` → `Extensions/FontExtensions.swift` (updated)
+- Removed empty `Color/` folder
+- Added `Extensions/README.md` with clear documentation and usage examples
+
+**Fixed Issues in Extensions:**
+- ✅ Fixed typos: "Garnish Font Exntensions" → "FontExtensions", "constratingForegroud" → "contrastingShade"
+- ✅ Updated deprecated function calls to use new API:
+  - `Garnish.contrastingForeground(for:)` → `Garnish.contrastingShade(of:)`
+  - `Garnish.adjustForBackground(for:in:)` → `Garnish.contrastingColor(_:against:)`
+- ✅ Improved method names: `constratingForegroud()` → `contrastingShade()`, `adjustedForeground()` → `optimized(against:)`
+- ✅ Added proper error handling to font weight extension
+- ✅ Better parameter naming: `recommendedFontWeight(against:)` instead of complex optional parameters
+
+**Key Improvements:**
+✅ All extensions now in one logical location
+✅ Eliminated duplicate and overlapping extension files
+✅ Fixed deprecated function calls throughout extensions
+✅ Clean, consistent naming and organization
+✅ Proper documentation and usage examples
+✅ Extensions use modern, standardized API
+
 ---
 
 ## Next Steps
