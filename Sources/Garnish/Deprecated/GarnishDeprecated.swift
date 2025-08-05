@@ -42,7 +42,7 @@ public extension Garnish {
         #if canImport(UIKit)
         return (try? UIColor(color).relativeLuminance()) ?? 0
         #elseif os(macOS)
-        return (try? NSColor(color).relativeLuminance() ?? 0)
+        return (try? NSColor(color).relativeLuminance()) ?? 0
         #endif
     }
     
