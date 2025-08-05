@@ -8,6 +8,17 @@
 import SwiftUI
 
 extension Garnish{
+    /// **DEPRECATED**: This function will be removed in a future version.
+    /// 
+    /// **Migration Path**: Use the extension method instead:
+    /// ```swift
+    /// // Old way:
+    /// let weight = try Garnish.recommendedFontWeight(for: textColor, with: backgroundColor)
+    /// 
+    /// // New way:
+    /// let weight = try textColor.recommendedFontWeight(against: backgroundColor)
+    /// ```
+    /// 
     /// Recommends an appropriate font weight based on the contrast between foreground and background colors.
     /// 
     /// - Parameters:
@@ -18,6 +29,7 @@ extension Garnish{
     /// - Returns: Recommended font weight from the provided range
     /// - Throws: `GarnishError.missingRequiredParameter` if backgroundColor is nil
     ///           `GarnishError.invalidParameter` if fontWeightRange is empty
+    @available(*, deprecated, message: "Use textColor.recommendedFontWeight(against: backgroundColor) extension method instead")
     public static func recommendedFontWeight(
         for color: Color,
         with backgroundColor: Color,

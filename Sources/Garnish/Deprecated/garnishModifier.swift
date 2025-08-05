@@ -3,11 +3,15 @@
 //  Garnish
 //
 //  Created by Aether on 19/12/2024.
+//  DEPRECATED: SwiftUI modifiers violate API responsibility boundaries
 //
 
 import SwiftUI
 
-/// Specifies which parts of a view should be affected by the `garnish` modifier.
+/// **DEPRECATED**: This enum will be removed in a future version.
+/// The SwiftUI modifiers that used this enum violated API responsibility boundaries.
+/// Users should control their own UI styling and use Garnish only for color calculations.
+@available(*, deprecated, message: "Use Garnish color calculation methods directly and apply colors manually")
 public enum GarnishScope {
     /// Adjust the foreground elements of the view.
     case foreground
@@ -17,7 +21,9 @@ public enum GarnishScope {
     case all
 }
 
-/// Describes the mode for determining contrasting colors for garnish operations.
+/// **DEPRECATED**: This enum will be removed in a future version.
+/// The SwiftUI modifiers that used this enum violated API responsibility boundaries.
+@available(*, deprecated, message: "Use Garnish color calculation methods directly")
 public enum GarnishMode {
     /// Automatically determine a contrasting color for the given input color.
     case autoContrast
@@ -28,21 +34,28 @@ public enum GarnishMode {
 extension View {
     // MARK: - Single Color Garnish
     
-    /// Applies a single color to a view and ensures that foreground elements remain visible against this color.
-    ///
-    /// This modifier determines the appropriate foreground color to ensure adequate contrast against the provided `color`. You can also specify which areas of the view (foreground, background, or both) should be adjusted.
-    ///
+    /// **DEPRECATED**: This modifier will be removed in a future version.
+    /// 
+    /// **Why Deprecated**: This modifier violates API responsibility boundaries by automatically
+    /// applying UI styling decisions that should be controlled by the user.
+    /// 
+    /// **Migration Path**: Use Garnish for color calculations only, then apply colors manually:
+    /// ```swift
+    /// // Old way:
+    /// Text("Hello").garnish(.blue, on: .all)
+    /// 
+    /// // New way:
+    /// let contrastingColor = Garnish.contrastingShade(of: .blue)
+    /// Text("Hello")
+    ///     .foregroundColor(contrastingColor)
+    ///     .background(.blue)
+    /// ```
+    /// 
     /// - Parameters:
     ///   - color: The main color to apply.
     ///   - scope: The part(s) of the view to be adjusted. Defaults to `.foreground`.
-    ///
     /// - Returns: A modified view with a contrasting foreground color and optionally a background color, depending on `scope`.
-    ///
-    /// # Example
-    /// ```swift
-    /// Text("Hello, World!")
-    ///     .garnish(.blue, on: .all) // Ensures blue foreground contrasts well against blue background.
-    /// ```
+    @available(*, deprecated, message: "Use Garnish.contrastingShade(of:) and apply colors manually")
     public func garnish(
         _ color: Color,
         on scope: GarnishScope = .all
@@ -52,22 +65,29 @@ extension View {
     
     // MARK: - Foreground and Background Garnish
     
-    /// Applies a foreground and background color to a view, ensuring the foreground color remains visible against the background.
-    ///
-    /// This modifier takes two colors: one for the foreground and one for the background. It ensures that the chosen foreground color is adjusted to have good contrast against the specified background color. The `scope` parameter lets you control which areas (foreground, background, or both) should be altered.
-    ///
+    /// **DEPRECATED**: This modifier will be removed in a future version.
+    /// 
+    /// **Why Deprecated**: This modifier violates API responsibility boundaries by automatically
+    /// applying UI styling decisions that should be controlled by the user.
+    /// 
+    /// **Migration Path**: Use Garnish for color calculations only, then apply colors manually:
+    /// ```swift
+    /// // Old way:
+    /// Text("Welcome").garnish(.white, .black, on: .all)
+    /// 
+    /// // New way:
+    /// let contrastingColor = Garnish.contrastingColor(of: .white, against: .black)
+    /// Text("Welcome")
+    ///     .foregroundColor(contrastingColor)
+    ///     .background(.black)
+    /// ```
+    /// 
     /// - Parameters:
     ///   - foreground: The intended foreground color.
     ///   - background: The intended background color.
     ///   - scope: The parts of the view to adjust. Defaults to `.all`.
-    ///
     /// - Returns: A view with a foreground color that contrasts appropriately with the given background, depending on `scope`.
-    ///
-    /// # Example
-    /// ```swift
-    /// Text("Welcome")
-    ///     .garnish(.white, .black, on: .all) // White text on a black background with ensured contrast.
-    /// ```
+    @available(*, deprecated, message: "Use Garnish.contrastingColor(of:against:) and apply colors manually")
     public func garnish(
         _ foreground: Color,
         _ background: Color,
