@@ -6,9 +6,13 @@
 //  Demo app showcasing the refactored Garnish API
 //
 
+#if DEBUG
+
 import SwiftUI
 
-@available(iOS 16.0, macOS 14.0, tvOS 16.0, watchOS 9.0, *)
+@available(iOS 16.0, macOS 14.0, visionOS 1.0, *)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 public struct GarnishDemoApp: View {
     @State private var selectedDemo: DemoSection? = .coreAPI
     
@@ -43,6 +47,9 @@ public struct GarnishDemoApp: View {
     }
 }
 
+@available(iOS 16.0, macOS 14.0, visionOS 1.0, *)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 enum DemoSection: CaseIterable {
     case coreAPI
     case mathUtilities
@@ -83,6 +90,9 @@ enum DemoSection: CaseIterable {
 }
 
 // MARK: - Core API Demo
+@available(iOS 16.0, macOS 14.0, visionOS 1.0, *)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 struct CoreAPIDemo: View {
     @State private var inputColor = Color.blue
     @State private var backgroundColor = Color.white
@@ -185,6 +195,9 @@ struct CoreAPIDemo: View {
 }
 
 // MARK: - Math Utilities Demo
+@available(iOS 16.0, macOS 14.0, visionOS 1.0, *)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 struct MathUtilitiesDemo: View {
     @State private var color1 = Color.blue
     @State private var color2 = Color.red
@@ -336,6 +349,9 @@ struct MathUtilitiesDemo: View {
 }
 
 // MARK: - Color Extensions Demo
+@available(iOS 16.0, macOS 14.0, visionOS 1.0, *)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 struct ColorExtensionsDemo: View {
     @State private var baseColor = Color.blue
     @State private var brightnessAdjustment: Double = 0.2
@@ -453,6 +469,9 @@ struct ColorExtensionsDemo: View {
 }
 
 // MARK: - Font Weight Demo
+@available(iOS 16.0, macOS 14.0, visionOS 1.0, *)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 struct FontWeightDemo: View {
     @State private var textColor = Color.primary
     @State private var backgroundColor = Color.white
@@ -508,6 +527,9 @@ struct FontWeightDemo: View {
 }
 
 // MARK: - Accessibility Demo
+@available(iOS 16.0, macOS 14.0, visionOS 1.0, *)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 struct AccessibilityDemo: View {
     @State private var foregroundColor = Color.black
     @State private var backgroundColor = Color.white
@@ -676,7 +698,11 @@ extension Font.Weight {
 }
 
 // MARK: - Preview
-@available(iOS 16.0, macOS 14.0, tvOS 16.0, watchOS 9.0, *)
+@available(iOS 16.0, macOS 14.0, visionOS 1.0, *)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 #Preview {
     GarnishDemoApp()
 }
+
+#endif
