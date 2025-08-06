@@ -22,14 +22,14 @@ public extension Garnish {
     /// // New way:
     /// let foreground = Garnish.contrastingShade(of: .blue)
     /// ```
-    @available(*, deprecated, message: "Use Garnish.contrastingShade(of:) instead")
+    @available(*, deprecated, message: "Use Garnish.contrastingShade(of:) instead - blendAmount no longer controls blend.")
     public static func contrastingForeground(
         for background: Color,
         threshold: CGFloat = 0.5,
         blendAmount: CGFloat = 0.8
     ) -> Color {
         // Use the new standardized API with equivalent behavior
-        return (try? contrastingShade(of: background, blendAmount: blendAmount)) ?? background
+        return (try? contrastingShade(of: background)) ?? background
     }
 }
 

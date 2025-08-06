@@ -20,8 +20,8 @@ public extension Color {
     /// - Parameter blendAmount: How much to blend toward the contrasting base (0.0-1.0, default: 0.8)
     /// - Returns: A contrasting shade of this color
     /// - Throws: `GarnishError` if color analysis fails
-    func contrastingShade(blendAmount: CGFloat = 0.8) throws -> Color {
-        return try Garnish.contrastingShade(of: self, blendAmount: blendAmount)
+    func contrastingShade() throws -> Color {
+        return try Garnish.contrastingShade(of: self)
     }
     
     /// Returns an optimized version of this color that works well against the specified background.

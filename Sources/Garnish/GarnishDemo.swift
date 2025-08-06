@@ -31,9 +31,9 @@ public struct GarnishDemoApp: View {
             Group {
                 if let selectedDemo = selectedDemo {
                     selectedDemo.view
-                        .background(Color(.systemGroupedBackground))
                         .navigationTitle(selectedDemo.title)
                         #if os(iOS)
+                        .background(Color(.systemGroupedBackground))
                         .navigationBarTitleDisplayMode(.inline)
                         #endif
                 } else {
