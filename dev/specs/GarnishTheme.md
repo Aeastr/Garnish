@@ -305,27 +305,25 @@ static func setCurrentTheme(_ theme: GarnishTheme) {
 
 ---
 
-### CoreData Schema
+### CoreData Schema (Updated)
 
 **Theme Entity:** (GarnishTheme)
 - `name: String` (unique)
 - `createdAt: Date`
 - `updatedAt: Date`
-- `primaryLight: Color` (transformable)
-- `primaryDark: Color` (transformable)
-- `secondaryLight: Color` (transformable)
-- `secondaryDark: Color` (transformable)
-- `tertiaryLight: Color` (transformable)
-- `tertiaryDark: Color` (transformable)
-- `backgroundColorLight: Color` (transformable)
-- `backgroundColorDark: Color` (transformable)
-- Relationship: `customColors` → CustomColor (one-to-many, cascade delete)
+- Relationship: `colors` → ThemeColor (one-to-many, cascade delete)
 
-**CustomColor Entity:** (GarnishThemeColor)
-- `key: String` (e.g., "accent", "highlight")
+**ThemeColor Entity:** (GarnishThemeColor)
+- `key: String` (e.g., "primary", "secondary", "tertiary", "backgroundColor", "accent", "highlight")
 - `lightColor: Color` (transformable)
 - `darkColor: Color` (transformable)
 - Relationship: `theme` → Theme (many-to-one)
+
+**Benefits of Unified Approach:**
+- All colors handled consistently (standard and custom)
+- Easy to add new standard colors without schema changes
+- Simpler code - one method handles all color access
+- Better for future schema evolution
 
 **Package Integration:**
 - Package includes `.xcdatamodel` file

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24270" systemVersion="25A5306g" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="GarnishThemeColor" representedClassName="GarnishThemeColor" syncable="YES" codeGenerationType="class">
+        <attribute name="darkColor" optional="YES" attributeType="Transformable" valueTransformerName="ColorTransformer"/>
+        <attribute name="key" optional="YES" attributeType="String"/>
+        <attribute name="lightColor" optional="YES" attributeType="Transformable" valueTransformerName="ColorTransformer"/>
+        <relationship name="theme" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GarnishThemeEntity" inverseName="colors" inverseEntity="GarnishThemeEntity"/>
+    </entity>
+    <entity name="GarnishThemeEntity" representedClassName="GarnishThemeEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="colors" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GarnishThemeColor" inverseName="theme" inverseEntity="GarnishThemeColor"/>
+    </entity>
+</model>
