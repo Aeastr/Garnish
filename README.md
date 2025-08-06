@@ -45,7 +45,7 @@ Garnish is a comprehensive Swift package that provides intelligent color utiliti
 ### 🎨 **Smart Color Generation** - Intelligent Contrast
 Generate contrasting colors that maintain visual harmony:
 
-| ![Auto Contrast](assets/autoContrast.png) | ![Color Math](assets/colorMath.png) | ![Color Analysis](assets/colorAnalysis.png) |
+| ![Auto Contrast](assets/readme/autoContrast.png) | ![Color Math](assets/readme/colorMath.png) | ![Color Analysis](assets/readme/colorAnalysis.png) |
 |:---:|:---:|:---:|
 | **Auto Contrast** | **Color Math** | **Color Analysis** |
 | Automatically generate readable text colors from any background | Calculate luminance, brightness, and contrast ratios with WCAG standards | Classify colors as light/dark and validate accessibility compliance |
@@ -65,27 +65,33 @@ Ensure your colors meet accessibility requirements:
 
 ## Playground Demos
 
-Garnish comes with a bundled demo app that lets you explore Garnish in action. Open the Xcode workspace, select the `GarnishDemo` target, and press **Run** to try it out.
+Garnish comes with a bundled demo app that lets you explore Garnish in action. Open the Xcode workspace, select the `GarnishPlayground` target, and press **Run** to try it out.
 
-### Core API Demo
+### Garnish Base Demo
 
-![Core API Demo](assets/CoreAPIDemo.png)
+| ![Core API Demo](assets/readme/CoreAPIDemo.png) | ![Math Utilities Demo](assets/readme/MathUtilitiesDemo.png) | ![Color Extensions Demo](assets/readme/ColorExtensionsDemo.png) |
+|:---:|:---:|:---:|
+| **Core API** | **Math Utilities** | **Color Extensions** |
+| Monochromatic and bi-chromatic contrast generation with live color previews | Color mathematics, luminance calculations, and contrast ratio computations | Brightness adjustment, hex conversion, and convenience methods with real-time feedback |
 
-The **Core API** tab demonstrates monochromatic and bi-chromatic contrast generation with live color previews.
+| ![Font Weight Demo](assets/readme/FontWeightDemo.png) | ![Accessibility Demo](assets/readme/AccessibilityDemo.png) |
+|:---:|:---:|
+| **Font Weight** | **Accessibility** |
+| Dynamic font weight optimization based on contrast ratios and accessibility requirements | WCAG compliance checking with visual contrast examples and pass/fail indicators |
 
-### Color Extensions Demo
 
-![Color Extensions Demo](assets/ColorExtensionsDemo.png)
+### GarnishTheme Demo
 
-The **Color Extensions** tab showcases brightness adjustment, hex conversion, and convenience methods with real-time feedback.
 
-### Accessibility Demo
+| ![Theme Demo](assets/readme/ThemeDemo.png) | ![Built-in Themes](assets/readme/ThemeBuiltIn.png) | ![Current Theme](assets/readme/ThemeCurrent.png) |
+|:---:|:---:|:---:|
+| **Registering Themes** | **Built-in Themes** | **Current Theme API** |
+| Register and manage themes in your app | Explore and use built-in themes | Access and update the current theme at runtime |
 
-![Accessibility Demo](assets/AccessibilityDemo.png)
-
-The **Accessibility** tab provides WCAG compliance checking with visual contrast examples and pass/fail indicators.
-
----
+| ![Custom Themes](assets/readme/ThemeCustom.png) | ![Color Keys](assets/readme/ThemeColorKeys.png) | ![Theme Comparison](assets/readme/ThemeComparison.png) |
+|:---:|:---:|:---:|
+| **Custom Themes** | **Color Keys System** | **Theme Comparison** |
+| Create and preview your own custom themes | Use color keys for flexible theme color mapping | Compare multiple themes side-by-side |
 
 ## License
 
