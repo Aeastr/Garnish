@@ -1,0 +1,53 @@
+{
+  "fill" : {
+    "automatic-gradient" : "display-p3:0.40784,0.77255,0.87451,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "fill" : {
+            "solid" : "srgb:1.00000,1.00000,1.00000,1.00000"
+          },
+          "image-name" : "􀪫.svg",
+          "name" : "􀪫",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              90,
+              90
+            ]
+          }
+        },
+        {
+          "fill" : {
+            "solid" : "display-p3:0.58364,0.89719,0.97464,1.00000"
+          },
+          "image-name" : "􀪫.svg",
+          "name" : "􀪫"
+        }
+      ],
+      "position" : {
+        "scale" : 1,
+        "translation-in-points" : [
+          -45,
+          -45
+        ]
+      },
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}
