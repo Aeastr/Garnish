@@ -83,22 +83,31 @@ theme.setColor("accent", Color.green)
 let accent = try theme.color("accent") // ✅ Safe, throws if undefined
 ```
 
-**Option 2: Keyed Subscript with Error Throwing**
+**Option 2: Keyed Subscript with Error Throwing (PREFERRED)**
 ```swift
 enum ColorKey {
     case primary, secondary, tertiary, backgroundColor
     case custom(String)
 }
 
+// Users extend ColorKey for their app (recommended)
+extension ColorKey {
+    static let accent = ColorKey.custom("accent")
+    static let highlight = ColorKey.custom("highlight")
+}
+
 let theme = GarnishTheme.create("MyTheme")
 
 // Setting defines the key automatically
 theme[.primary] = Color.blue
-theme[.custom("accent")] = Color.green
+theme[.accent] = Color.green // Type-safe with extension
 
-// Access throws for undefined keys
-let primary = try theme[.primary] // ✅ Safe access
-let accent = try theme[.custom("accent")] // ✅ Safe access
+// Current theme fast access
+let currentPrimary = GarnishTheme.current.primary
+let currentAccent = try GarnishTheme.current[.accent]
+
+// Both extension and string access supported
+theme[.custom("dynamic")] = Color.red // For dynamic cases
 ```
 
 **Option 3: Method Chaining Definition**
@@ -206,3 +215,48 @@ userDarkTheme.setColor(.primary, Color.purple) // Override one color
 - How do we migrate from existing theming solutions?
 - Backwards compatibility with FlavorKit-style APIs
 - Import/export functionality for theme sharing
+
+---
+
+### Updated Design Decisions
+
+Based on feedback and requirements:
+
+**1. Dual Theme Storage System:**
+```swift
+// Built-in themes (no CoreData needed)
+let defaultTheme = GarnishTheme.builtin("Default")
+let darkTheme = GarnishTheme.builtin("Dark")
+
+// User themes (CoreData)
+let customTheme = GarnishTheme.create("MyTheme")
+```
+
+**2. Light/Dark Variants (Manual):**
+```swift
+theme[.primary] = Color.blue
+theme[.primaryLight] = Color.lightBlue  // Manual for now
+theme[.primaryDark] = Color.darkBlue    // Manual for now
+
+// TODO: Add automatic variant generation
+// theme.generateVariants(for: .primary)
+```
+
+**3. Performance-First Current Theme:**
+```swift
+// O(1) access for current theme
+GarnishTheme.current.primary           // Direct property access
+GarnishTheme.current.backgroundColor   // No try needed for standard colors
+try GarnishTheme.current[.accent]      // try only for custom colors
+```
+
+**4. Flexible Schema Support:**
+- Themes can have different ColorKey schemas
+- Extensions provide type safety and consistency
+- String-based access available for dynamic needs
+- Strict validation: accessing undefined colors throws errors
+
+**5. Hybrid Persistence:**
+- **Built-in themes**: Hardcoded, no database needed
+- **User themes**: CoreData for persistence
+- **Current selection**: AppStorage for theme name + in-memory cache for colors
