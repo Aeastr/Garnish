@@ -244,10 +244,52 @@ theme[.primaryDark] = Color.darkBlue    // Manual for now
 
 **3. Performance-First Current Theme:**
 ```swift
-// O(1) access for current theme
-GarnishTheme.current.primary           // Direct property access
-GarnishTheme.current.backgroundColor   // No try needed for standard colors
-try GarnishTheme.current[.accent]      // try only for custom colors
+// In-memory cache of current theme colors
+private var primaryColorLight: Color?
+private var primaryColorDark: Color?
+private var secondaryColorLight: Color?
+private var secondaryColorDark: Color?
+private var customColors: [String: (light: Color?, dark: Color?)] = [:]
+
+// Smart accessors that require ColorScheme parameter
+func primary(for scheme: ColorScheme) throws -> Color {
+    let color = scheme == .light ? primaryColorLight : primaryColorDark
+    guard let color = color else {
+        throw GarnishThemeError.colorNotCached(.primary, scheme: scheme)
+    }
+    return color
+}
+
+func color(_ key: ColorKey, for scheme: ColorScheme) throws -> Color {
+    switch key {
+    case .primary: return try primary(for: scheme)
+    case .secondary: return try secondary(for: scheme)
+    case .custom(let name):
+        let colors = customColors[name]
+        let color = scheme == .light ? colors?.light : colors?.dark
+        guard let color = color else {
+            throw GarnishThemeError.colorNotCached(key, scheme: scheme)
+        }
+        return color
+    }
+}
+
+// Cache population when theme switches
+static func setCurrentTheme(_ theme: GarnishTheme) {
+    // Built-in themes: direct Color access
+    if let builtin = theme as? BuiltinTheme {
+        current.primaryColorLight = builtin.primaryLight
+        current.primaryColorDark = builtin.primaryDark
+    }
+    // User themes: load from CoreData with color transformer
+    else {
+        current.primaryColorLight = theme.primaryLight  // Uses color transformer
+        current.primaryColorDark = theme.primaryDark
+    }
+    
+    // Store theme name for app restart
+    UserDefaults.standard.set(theme.name, forKey: "currentTheme")
+}
 ```
 
 **4. Flexible Schema Support:**
