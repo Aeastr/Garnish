@@ -74,7 +74,7 @@ public class Garnish {
         using method: GarnishMath.BrightnessMethod = .luminance,
         targetRatio: CGFloat = GarnishMath.defaultThreshold,
         harmonize: Bool = false,
-        harmonyStrength: CGFloat = 0.4
+        harmonyStrength: CGFloat = 0.8
     ) throws -> Color {
         #if canImport(UIKit)
         typealias PlatformColor = UIColor
@@ -82,15 +82,18 @@ public class Garnish {
         typealias PlatformColor = NSColor
         #endif
         
-        let platformColor = PlatformColor(color)
-        let currentRatio = try GarnishMath.contrastRatio(between: color, and: background)
+        // Step 1: Apply harmony first (if requested)
+        let startingColor = harmonize ? try self.harmonize(color, with: background, adjustmentStrength: harmonyStrength) : color
         
-        // If contrast is already sufficient, return original color
+        let platformColor = PlatformColor(startingColor)
+        let currentRatio = try GarnishMath.contrastRatio(between: startingColor, and: background)
+        
+        // If contrast is already sufficient, return the harmonized color
         if currentRatio >= targetRatio {
-            return color
+            return startingColor
         }
         
-        // Determine which direction to adjust (toward black or white)
+        // Step 2: Now optimize for contrast while preserving harmony
         let backgroundIsLight = try GarnishMath.classify(background, using: method) == .light
         let contrastingBase: PlatformColor = backgroundIsLight ? .black : .white
         
@@ -118,15 +121,8 @@ public class Garnish {
             }
         }
         
-        let contrastedColor = platformColor.blend(with: contrastingBase, ratio: bestBlend)
-        let finalColor = Color(contrastedColor)
-        
-        // Apply harmony adjustment if requested
-        if harmonize {
-            return try self.harmonize(finalColor, with: background, adjustmentStrength: harmonyStrength)
-        } else {
-            return finalColor
-        }
+        let finalColor = platformColor.blend(with: contrastingBase, ratio: bestBlend)
+        return Color(finalColor)
     }
     
     /// Quick accessibility check.
@@ -161,7 +157,7 @@ public class Garnish {
         hueWeight: CGFloat = 0.5,
         temperatureWeight: CGFloat = 0.3,
         chromaWeight: CGFloat = 0.2,
-        adjustmentStrength: CGFloat = 0.6
+        adjustmentStrength: CGFloat = 0.8
     ) throws -> Color {
         let originalLCH = try GarnishMath.rgbToLCH(color)
         let referenceLCH = try GarnishMath.rgbToLCH(referenceColor)
@@ -276,5 +272,7 @@ public class Garnish {
 }
 
 
-
-// Preview removed - demo views were moved to new GarnishDemo.swift
+@available(iOS 17, *)
+#Preview{
+    HarmonyDemo()
+}

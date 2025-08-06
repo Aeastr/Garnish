@@ -103,8 +103,8 @@ enum DemoSection: CaseIterable {
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 struct CoreAPIDemo: View {
-    @State private var inputColor = Color(red: 0.54, green: 0.22, blue: 0.89)
-    @State private var backgroundColor = Color(red: 0.12, green: 0.01, blue: 0.88)
+    @State private var inputColor = Color(hue: 0.01, saturation: 0.33, brightness: 0.94)
+    @State private var backgroundColor = Color(hue: 0.01, saturation: 0.70, brightness: 0.92)
     
     private var monochromaticContrastResult: (shade: Color?, error: String?) {
         do {
@@ -271,6 +271,7 @@ struct HarmonyDemo: View {
     @State private var colorToHarmonize = Color.blue
     @State private var referenceColor = Color.red
     @State private var adjustmentStrength: Double = 0.6
+    @State private var enableHarmony: Bool = true
     
     private var harmonizeResult: (color: Color?, error: String?) {
         do {
@@ -315,7 +316,7 @@ struct HarmonyDemo: View {
             let color = try Garnish.contrastingColor(
                 colorToHarmonize,
                 against: referenceColor,
-                harmonize: true
+                harmonize: enableHarmony
             )
             return (color, nil)
         } catch {
@@ -470,13 +471,16 @@ struct HarmonyDemo: View {
                     title: "Harmonized Contrasting Color",
                     description: "Combine good contrast with color harmony in one step"
                 ) {
+                    Toggle(isOn: $enableHarmony) {
+                        Text("Enable")
+                    }
                     VStack(spacing: 20) {
                         CodeBlock(
                             code: """
                             let harmonizedContrasting = try Garnish.contrastingColor(
                                 colorToHarmonize, 
                                 against: referenceColor, 
-                                harmonize: true
+                                harmonize: \(enableHarmony)
                             )
                             """,
                             colorMappings: [
