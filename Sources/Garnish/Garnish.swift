@@ -33,52 +33,8 @@ public class Garnish {
         using method: GarnishMath.BrightnessMethod = .luminance,
         targetRatio: CGFloat = GarnishMath.defaultThreshold
     ) throws -> Color {
-        #if canImport(UIKit)
-        typealias PlatformColor = UIColor
-        #elseif os(macOS)
-        typealias PlatformColor = NSColor
-        #endif
-        
-        let platformColor = PlatformColor(color)
-        let currentRatio = try GarnishMath.contrastRatio(between: color, and: color)
-        
-        // If somehow the color already contrasts with itself sufficiently, return it
-        if currentRatio >= targetRatio {
-            return color
-        }
-        
-        let isLight = try GarnishMath.classify(color, using: method) == .light
-        
-        // Choose contrasting base: black for light colors, white for dark colors
-        let contrastingBase: PlatformColor = isLight ? .black : .white
-        
-        // Binary search for the right blend amount to achieve target contrast
-        var lowBlend: CGFloat = 0.0
-        var highBlend: CGFloat = 1.0
-        var bestBlend: CGFloat = 0.5
-        let maxIterations = 10
-        
-        for _ in 0..<maxIterations {
-            let testBlend = (lowBlend + highBlend) / 2.0
-            let testColor = platformColor.blend(with: contrastingBase, ratio: testBlend)
-            let testRatio = try GarnishMath.contrastRatio(between: Color(testColor), and: color)
-            
-            if testRatio >= targetRatio {
-                bestBlend = testBlend
-                highBlend = testBlend
-            } else {
-                lowBlend = testBlend
-            }
-            
-            // If we're close enough, break early
-            if abs(testRatio - targetRatio) < 0.1 {
-                break
-            }
-            
-            print("ratio:\(testRatio) blend:\(bestBlend)")
-        }
-        let result = platformColor.blend(with: contrastingBase, ratio: bestBlend)
-        return Color(result)
+        // contrastingShade is just contrastingColor against itself
+        return try contrastingColor(color, against: color, using: method, targetRatio: targetRatio)
     }
     
     /// Optimizes one color to work well against another background.
@@ -116,30 +72,54 @@ public class Garnish {
             return color
         }
         
-        // Determine which direction to adjust (toward black or white)
-        let backgroundIsLight = try GarnishMath.classify(background, using: method) == .light
-        let contrastingBase: PlatformColor = backgroundIsLight ? .black : .white
+        // Try both black and white to see which gives better contrast against the background
+        let blackBase: PlatformColor = .black
+        let whiteBase: PlatformColor = .white
+        
+        // Test a moderate blend with both bases to see which direction works better
+        let testBlendAmount: CGFloat = 0.5
+        let blackTest = platformColor.blend(with: blackBase, ratio: testBlendAmount)
+        let whiteTest = platformColor.blend(with: whiteBase, ratio: testBlendAmount)
+        
+        let blackRatio = try GarnishMath.contrastRatio(between: Color(blackTest), and: background)
+        let whiteRatio = try GarnishMath.contrastRatio(between: Color(whiteTest), and: background)
+        
+        // Choose the direction that gives better contrast
+        let contrastingBase = blackRatio > whiteRatio ? blackBase : whiteBase
         
         // Binary search for the right blend amount to achieve target contrast
         var lowBlend: CGFloat = 0.0
         var highBlend: CGFloat = 1.0
-        var bestBlend: CGFloat = 0.5
-        let maxIterations = 10
+        var bestBlend: CGFloat = 0.0
+        var bestRatio: CGFloat = 0.0
+        let maxIterations = 5
         
         for _ in 0..<maxIterations {
             let testBlend = (lowBlend + highBlend) / 2.0
             let testColor = platformColor.blend(with: contrastingBase, ratio: testBlend)
             let testRatio = try GarnishMath.contrastRatio(between: Color(testColor), and: background)
             
-            if testRatio >= targetRatio {
+            // Always update best if this is better than previous best
+            if testRatio >= targetRatio && (bestRatio < targetRatio || testBlend < bestBlend) {
                 bestBlend = testBlend
-                highBlend = testBlend
-            } else {
-                lowBlend = testBlend
+                bestRatio = testRatio
             }
             
-            // If we're close enough, break early
-            if abs(testRatio - targetRatio) < 0.1 {
+            if testRatio >= targetRatio {
+                // We have enough contrast, try with less blending
+                highBlend = testBlend
+            } else {
+                // Not enough contrast, need more blending
+                lowBlend = testBlend
+                // If we don't have a valid solution yet, this is our current best
+                if bestRatio < targetRatio {
+                    bestBlend = testBlend
+                    bestRatio = testRatio
+                }
+            }
+            
+            // If we're close enough to target, break early
+            if bestRatio >= targetRatio && abs(bestRatio - targetRatio) < 0.1 {
                 break
             }
         }
