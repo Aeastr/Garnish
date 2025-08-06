@@ -45,10 +45,10 @@ Garnish is a comprehensive Swift package that provides intelligent color utiliti
 ### 🎨 **Smart Color Generation** - Intelligent Contrast
 Generate contrasting colors that maintain visual harmony:
 
-| ![Contrasting Shades](assets/contrastingShades.png) | ![Color Optimization](assets/colorOptimization.png) | ![Dynamic Themes](assets/dynamicThemes.png) |
+| ![Auto Contrast](assets/autoContrast.png) | ![Color Math](assets/colorMath.png) | ![Color Analysis](assets/colorAnalysis.png) |
 |:---:|:---:|:---:|
-| **Contrasting Shades** | **Color Optimization** | **Dynamic Themes** |
-| Same-hue contrasting colors | Optimize colors against backgrounds | Light and dark theme adaptation |
+| **Auto Contrast** | **Color Math** | **Color Analysis** |
+| Automatically generate readable text colors from any background | Calculate luminance, brightness, and contrast ratios with WCAG standards | Classify colors as light/dark and validate accessibility compliance |
 
 ### ♿ **Accessibility & WCAG Compliance** - Standards Built-in
 Ensure your colors meet accessibility requirements:
