@@ -1,0 +1,97 @@
+{
+  "fill" : {
+    "automatic-gradient" : "display-p3:0.50195,0.24413,0.85498,1.00000"
+  },
+  "groups" : [
+    {
+      "blur-material" : 0.1,
+      "hidden" : false,
+      "layers" : [
+        {
+          "fill" : {
+            "solid" : "extended-gray:1.00000,1.00000"
+          },
+          "glass" : true,
+          "image-name" : "TopLeadingBit.png",
+          "name" : "TopLeadingBit",
+          "opacity" : 1,
+          "position" : {
+            "scale" : 0.25,
+            "translation-in-points" : [
+              -145,
+              -145
+            ]
+          }
+        },
+        {
+          "fill" : {
+            "solid" : "extended-gray:1.00000,1.00000"
+          },
+          "glass" : true,
+          "image-name" : "BottomTrailingBit.png",
+          "name" : "BottomTrailingBit",
+          "opacity" : 1,
+          "position" : {
+            "scale" : 0.25,
+            "translation-in-points" : [
+              145,
+              145
+            ]
+          }
+        }
+      ],
+      "opacity" : 0.8,
+      "position" : {
+        "scale" : 1,
+        "translation-in-points" : [
+          0,
+          0
+        ]
+      },
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.6
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.43
+      }
+    },
+    {
+      "blur-material" : null,
+      "hidden" : false,
+      "layers" : [
+        {
+          "fill" : {
+            "solid" : "extended-gray:1.00000,1.00000"
+          },
+          "image-name" : "grid.png",
+          "name" : "Grid)",
+          "opacity" : 0.4,
+          "position" : {
+            "scale" : 0.5,
+            "translation-in-points" : [
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "none",
+        "opacity" : 0.5
+      },
+      "specular" : false,
+      "translucency" : {
+        "enabled" : false,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="300" height="300" src="/assets/icon.png" alt="Garnish Logo">
+  <img width="270" height="270" src="/assets/icon.png" alt="Garnish Logo">
   <h1><b>Garnish</b></h1>
   <p>A Swift package for iOS and macOS that provides intelligent color utilities for accessibility, contrast optimization, and visual harmony.</p>
 </div>
