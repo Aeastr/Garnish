@@ -158,3 +158,51 @@ class GarnishTheme {
 ```
 
 **Question:** Is the AppStorage caching worth the complexity, or would a simple in-memory cache suffice for most use cases?
+
+---
+
+### Implementation Considerations & Edge Cases
+
+**Theme Validation:**
+```swift
+// What happens when loading a theme with missing colors?
+let theme = try GarnishTheme.load("PartialTheme") // Has primary, missing secondary
+let secondary = try theme.secondary // Should this throw or generate a fallback?
+```
+
+**Schema Evolution:**
+- How do we handle apps that add new color requirements over time?
+- Should themes auto-expand to include new standard colors?
+- What about deprecated color keys?
+
+**Custom Color Key Conflicts:**
+```swift
+// App defines custom "accent" color
+theme.setCustom("accent", Color.blue)
+
+// Later, Garnish adds "accent" as a standard color
+// How do we handle this naming collision?
+```
+
+**Theme Inheritance/Composition:**
+```swift
+// Should we support theme inheritance?
+let darkTheme = GarnishTheme.create("Dark")
+let userDarkTheme = GarnishTheme.createFrom(darkTheme, name: "MyDark")
+userDarkTheme.setColor(.primary, Color.purple) // Override one color
+```
+
+**Performance Considerations:**
+- Should color access be `O(1)` or is `O(log n)` acceptable?
+- How many themes should we expect apps to have? (10s, 100s, 1000s?)
+- Should we lazy-load theme colors or preload everything?
+
+**Thread Safety:**
+- Multiple threads accessing/modifying themes
+- SwiftUI view updates when themes change
+- Atomic operations for theme switching
+
+**Migration Strategy:**
+- How do we migrate from existing theming solutions?
+- Backwards compatibility with FlavorKit-style APIs
+- Import/export functionality for theme sharing
