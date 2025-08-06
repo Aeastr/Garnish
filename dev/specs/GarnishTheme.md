@@ -302,3 +302,32 @@ static func setCurrentTheme(_ theme: GarnishTheme) {
 - **Built-in themes**: Hardcoded, no database needed
 - **User themes**: CoreData for persistence
 - **Current selection**: AppStorage for theme name + in-memory cache for colors
+
+---
+
+### CoreData Schema
+
+**Theme Entity:** (GarnishTheme)
+- `name: String` (unique)
+- `createdAt: Date`
+- `updatedAt: Date`
+- `primaryLight: Color` (transformable)
+- `primaryDark: Color` (transformable)
+- `secondaryLight: Color` (transformable)
+- `secondaryDark: Color` (transformable)
+- `tertiaryLight: Color` (transformable)
+- `tertiaryDark: Color` (transformable)
+- `backgroundColorLight: Color` (transformable)
+- `backgroundColorDark: Color` (transformable)
+- Relationship: `customColors` → CustomColor (one-to-many, cascade delete)
+
+**CustomColor Entity:** (GarnishThemeColor)
+- `key: String` (e.g., "accent", "highlight")
+- `lightColor: Color` (transformable)
+- `darkColor: Color` (transformable)
+- Relationship: `theme` → Theme (many-to-one)
+
+**Package Integration:**
+- Package includes `.xcdatamodel` file
+- Apps integrate the CoreData stack via provided container
+- Custom Color transformer handles Color ↔ Data conversion
