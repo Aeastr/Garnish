@@ -44,3 +44,4 @@ fastlane/test_output
 # Other IDE or temporary files
 *.swp
 *.lock
+assets/Post.png

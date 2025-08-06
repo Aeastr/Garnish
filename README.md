@@ -38,8 +38,6 @@ Garnish is a comprehensive Swift package that provides intelligent color utiliti
 - **Mathematical Color Analysis** - Precise luminance, brightness, and contrast calculations
 - **Smart Color Generation** - Create contrasting shades and optimized color combinations
 
-![Color examples showing various background colors with optimized foreground text](assets/example1.png)
-
 ## **Core Features**
 
 ### 🎨 **Smart Color Generation** - Intelligent Contrast
@@ -65,25 +63,13 @@ Ensure your colors meet accessibility requirements:
 
 ## Playground Demos
 
-Garnish comes with a bundled demo app that lets you explore Garnish in action. Open the Xcode workspace, select the `GarnishDemo` target, and press **Run** to try it out.
+Garnish comes with a bundled demo app that lets you explore Garnish in action. Open the Xcode workspace, select the `GarnishPlayground` target, and press **Run** to try it out.
 
-### Core API Demo
-
-![Core API Demo](assets/CoreAPIDemo.png)
-
-The **Core API** tab demonstrates monochromatic and bi-chromatic contrast generation with live color previews.
-
-### Color Extensions Demo
-
-![Color Extensions Demo](assets/ColorExtensionsDemo.png)
-
-The **Color Extensions** tab showcases brightness adjustment, hex conversion, and convenience methods with real-time feedback.
-
-### Accessibility Demo
-
-![Accessibility Demo](assets/AccessibilityDemo.png)
-
-The **Accessibility** tab provides WCAG compliance checking with visual contrast examples and pass/fail indicators.
+| Demo Tab              | Description                                                                                                 |
+|-----------------------|-------------------------------------------------------------------------------------------------------------|
+| **Core API**          | Demonstrates monochromatic and bi-chromatic contrast generation with live color previews.                   |
+| **Color Extensions**  | Showcases brightness adjustment, hex conversion, and convenience methods with real-time feedback.           |
+| **Accessibility**     | Provides WCAG compliance checking with visual contrast examples and pass/fail indicators.                   |
 
 ---
 
