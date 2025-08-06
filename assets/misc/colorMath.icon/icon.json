@@ -6,6 +6,9 @@
     {
       "layers" : [
         {
+          "fill" : {
+            "solid" : "srgb:1.00000,1.00000,1.00000,1.00000"
+          },
           "image-name" : "􃈟.svg",
           "name" : "􃈟"
         }
