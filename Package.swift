@@ -16,14 +16,26 @@ let package = Package(
             name: "Garnish",
             targets: ["Garnish"]
         ),
+        .library(
+            name: "GarnishTheme",
+            targets: ["GarnishTheme"]
+        ),
     ],
     targets: [
         .target(
             name: "Garnish"
         ),
+        .target(
+            name: "GarnishTheme",
+            dependencies: ["Garnish"]
+        ),
         .testTarget(
             name: "GarnishTests",
             dependencies: ["Garnish"]
+        ),
+        .testTarget(
+            name: "GarnishThemeTests",
+            dependencies: ["GarnishTheme"]
         ),
     ]
 )
