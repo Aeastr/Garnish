@@ -30,7 +30,6 @@
 
 ---
 
-
 ## **What is Garnish?**
 
 Garnish is a comprehensive Swift package that provides intelligent color utilities for:
