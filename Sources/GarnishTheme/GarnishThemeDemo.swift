@@ -60,7 +60,7 @@ private extension GarnishThemeDemoApp {
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 public struct GarnishThemeDemoApp: View {
-    @State private var selectedDemo: ThemeDemoSection?
+    @State private var selectedDemo: ThemeDemoSection? = .registeringThemes
     
     public init() {
         // Set up demo themes for demonstration
