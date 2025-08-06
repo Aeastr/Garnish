@@ -88,7 +88,12 @@ public class GarnishTheme {
     
     // MARK: - Theme Management
     
-    /// Create a new user theme
+    /// Get all available built-in theme names
+    public static var availableBuiltInThemes: [String] {
+        return builtInThemeNames
+    }
+    
+    /// Create a new user theme (basic creation)
     public static func create(_ name: String) throws -> GarnishThemeEntity {
         // Check if theme already exists
         if builtInThemes[name] != nil {
@@ -100,6 +105,28 @@ public class GarnishTheme {
         }
         
         return try GarnishThemePersistence.shared.createTheme(name: name)
+    }
+    
+    /// Create a new user theme with colors
+    public static func createUserTheme(named name: String, colors: [ColorKey: [ColorScheme: Color]]) throws -> GarnishThemeEntity {
+        let theme = try create(name)
+        
+        // Set colors for the theme
+        for (colorKey, colorSchemeMap) in colors {
+            let lightColor = colorSchemeMap[.light]
+            let darkColor = colorSchemeMap[.dark]
+            try GarnishThemePersistence.shared.setColor(for: theme, key: colorKey, light: lightColor, dark: darkColor)
+        }
+        
+        // Save the theme
+        try GarnishThemePersistence.shared.save()
+        
+        return theme
+    }
+    
+    /// Load all user themes
+    public static func loadUserThemes() throws -> [GarnishThemeEntity] {
+        return try GarnishThemePersistence.shared.fetchAllThemes()
     }
     
     /// Load a theme by name (built-in or user)

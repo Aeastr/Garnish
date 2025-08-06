@@ -11,8 +11,7 @@ public class GarnishThemePersistence {
     public static let shared = GarnishThemePersistence()
     
     private init() {
-        // Register the color transformer
-        ColorTransformer.register()
+        // No transformers needed - using native Double attributes
     }
     
     /// The persistent container for GarnishTheme data
@@ -54,7 +53,7 @@ public class GarnishThemePersistence {
         
         if context.hasChanges {
             do {
-                try context.save()
+                try? context.save()
             } catch {
                 throw GarnishThemeError.coreDataError(error)
             }
@@ -154,7 +153,7 @@ public extension GarnishThemePersistence {
     
     /// Set a color for a theme
     func setColor(for theme: GarnishThemeEntity, key: ColorKey, light: Color?, dark: Color?) throws {
-        theme.setColors(for: key, light: light, dark: dark)
+        try theme.setColors(for: key, light: light, dark: dark)
         theme.touch()
     }
     
