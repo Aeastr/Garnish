@@ -10,7 +10,7 @@
 
 import SwiftUI
 
-@available(iOS 16.1, macOS 14.0, visionOS 1.0, *)
+@available(iOS 17, macOS 14.0, visionOS 1.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 public struct GarnishDemoApp: View {
@@ -31,9 +31,10 @@ public struct GarnishDemoApp: View {
             Group {
                 if let selectedDemo = selectedDemo {
                     selectedDemo.view
+                        .background(Color(.systemGroupedBackground))
                         .navigationTitle(selectedDemo.title)
                         #if os(iOS)
-                        .navigationBarTitleDisplayMode(.large)
+                        .navigationBarTitleDisplayMode(.inline)
                         #endif
                 } else {
                     if #available(iOS 17.0, *) {
@@ -51,7 +52,7 @@ public struct GarnishDemoApp: View {
     }
 }
 
-@available(iOS 16.1, macOS 14.0, visionOS 1.0, *)
+@available(iOS 17, macOS 14.0, visionOS 1.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 enum DemoSection: CaseIterable {
@@ -94,13 +95,13 @@ enum DemoSection: CaseIterable {
 }
 
 // MARK: - Core API Demo
-@available(iOS 16.1, macOS 14.0, visionOS 1.0, *)
+@available(iOS 17, macOS 14.0, visionOS 1.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 struct CoreAPIDemo: View {
-    @State private var inputColor = Color.blue
-    @State private var backgroundColor = Color.white
-
+    @State private var inputColor = Color(red: 0.54, green: 0.22, blue: 0.89)
+    @State private var backgroundColor = Color(red: 0.12, green: 0.01, blue: 0.88)
+    
     private var monochromaticContrastResult: (shade: Color?, error: String?) {
         do {
             let shade = try Garnish.contrastingShade(of: inputColor)
@@ -121,38 +122,67 @@ struct CoreAPIDemo: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 30) {
+            VStack(spacing: 20) {
                 DemoSectionView(
                     title: "Monochromatic Contrast",
                     description: "Get a contrasting shade of the same color"
                 ) {
-                    VStack(spacing: 15) {
+                    VStack(spacing: 20) {
+                        
+                        
+                        CodeBlock(
+                            code: """
+                            let contrastingShade = try Garnish.contrastingShade(of: inputColor)
+                            """,
+                            colorMappings: [
+                                "contrastingShade": monochromaticContrastResult.shade ?? .gray,
+                                "inputColor": inputColor
+                            ]
+                        )
+                        
+                        Divider()
+                        
                         ColorPicker("Input Color", selection: $inputColor)
-                        
-                        HStack(spacing: 20) {
-                            ColorSwatch(color: inputColor, label: "Original")
-                            if let shade = monochromaticContrastResult.shade {
-                                ColorSwatch(color: shade, label: "Contrasting Shade")
-                            }
-                        }
-                        
-                        CodeBlock(code: """
-                        let contrastingShade = try Garnish.contrastingShade(of: inputColor)
-                        """)
                         
                         if let errorMessage = monochromaticContrastResult.error {
                             Text("Error: \(errorMessage)").foregroundColor(.red)
                         }
-                        
-                        // Demo usage
-                        if let shade = monochromaticContrastResult.shade {
-                            VStack {
-                                Text("Sample Text")
-                                    .foregroundColor(shade)
+                        ScrollView(.horizontal){
+                            HStack{
+                                if let shade = monochromaticContrastResult.shade {
+                                    Text("Contrasting Shade")
+                                        .font(.body.weight(.semibold))
+                                        .foregroundColor(shade)
+                                        .padding()
+                                        .background(inputColor)
+                                        .clipShape(RoundedRectangle(cornerRadius: 27))
+                                    
+                                        Text("Contrasting Shade")
+                                            .font(.body.weight(.semibold))
+                                            .foregroundColor(inputColor)
+                                            .padding()
+                                            .background(shade)
+                                            .clipShape(RoundedRectangle(cornerRadius: 27))
+                                }
+                                
+                                Divider()
+                                    .padding(.vertical, 8)
+                                
+                                Text("White")
+                                    .font(.body.weight(.semibold))
+                                    .foregroundColor(.white)
                                     .padding()
                                     .background(inputColor)
-                                    .cornerRadius(8)
+                                    .clipShape(RoundedRectangle(cornerRadius: 27))
+                                Text("Black")
+                                    .font(.body.weight(.semibold))
+                                    .foregroundColor(.black)
+                                    .padding()
+                                    .background(inputColor)
+                                    .clipShape(RoundedRectangle(cornerRadius: 27))
+                                
                             }
+                            .fixedSize(horizontal: false, vertical: true)
                         }
                     }
                 }
@@ -161,34 +191,65 @@ struct CoreAPIDemo: View {
                     title: "Bi-chromatic Contrast",
                     description: "Optimize one color against another"
                 ) {
-                    VStack(spacing: 15) {
+                    VStack(spacing: 20) {
+                        
+                        CodeBlock(
+                            code: """
+                            let optimizedColor = try Garnish.contrastingColor(inputColor, against: backgroundColor)
+                            """,
+                            colorMappings: [
+                                "optimizedColor": bichromaticContrastResult.color ?? .gray,
+                                "inputColor": inputColor,
+                                "backgroundColor": backgroundColor
+                            ]
+                        )
+                        
+                        Divider()
+                        
                         ColorPicker("Foreground Color", selection: $inputColor)
+                        
                         ColorPicker("Background Color", selection: $backgroundColor)
-                        
-                        HStack(spacing: 20) {
-                            ColorSwatch(color: inputColor, label: "Original")
-                            if let optimized = bichromaticContrastResult.color {
-                                ColorSwatch(color: optimized, label: "Optimized")
-                            }
-                        }
-                        
-                        CodeBlock(code: """
-                        let optimizedColor = try Garnish.contrastingColor(of: inputColor, against: backgroundColor)
-                        """)
                         
                         if let errorMessage = bichromaticContrastResult.error {
                             Text("Error: \(errorMessage)").foregroundColor(.red)
                         }
                         
-                        // Demo usage
-                        if let optimized = bichromaticContrastResult.color {
-                            VStack {
-                                Text("Sample Text")
-                                    .foregroundColor(optimized)
+                        ScrollView(.horizontal){
+                            HStack{
+                                if let shade = bichromaticContrastResult.color {
+                                    Text("Contrasting Shade")
+                                        .font(.body.weight(.semibold))
+                                        .foregroundColor(shade)
+                                        .padding()
+                                        .background(backgroundColor)
+                                        .clipShape(RoundedRectangle(cornerRadius: 27))
+                                    
+                                        Text("Contrasting Shade")
+                                            .font(.body.weight(.semibold))
+                                            .foregroundColor(backgroundColor)
+                                            .padding()
+                                            .background(shade)
+                                            .clipShape(RoundedRectangle(cornerRadius: 27))
+                                }
+                                
+                                Divider()
+                                    .padding(.vertical, 8)
+                                
+                                Text("White")
+                                    .font(.body.weight(.semibold))
+                                    .foregroundColor(.white)
                                     .padding()
                                     .background(backgroundColor)
-                                    .cornerRadius(8)
+                                    .clipShape(RoundedRectangle(cornerRadius: 27))
+                                Text("Black")
+                                    .font(.body.weight(.semibold))
+                                    .foregroundColor(.black)
+                                    .padding()
+                                    .background(backgroundColor)
+                                    .clipShape(RoundedRectangle(cornerRadius: 27))
+                                
                             }
+                            .fixedSize()
                         }
                     }
                 }
@@ -199,7 +260,7 @@ struct CoreAPIDemo: View {
 }
 
 // MARK: - Math Utilities Demo
-@available(iOS 16.1, macOS 14.0, visionOS 1.0, *)
+@available(iOS 17, macOS 14.0, visionOS 1.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 struct MathUtilitiesDemo: View {
@@ -244,7 +305,7 @@ struct MathUtilitiesDemo: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 30) {
+            VStack(spacing: 40) {
                 DemoSectionView(
                     title: "Color Analysis",
                     description: "Mathematical properties of colors"
@@ -288,9 +349,23 @@ struct MathUtilitiesDemo: View {
                                 }
                             }
                         }
-                        .padding()
-                        .background(Color.secondary.opacity(0.1))
-                        .cornerRadius(8)
+                        .padding(20)
+                        .background(
+                            RoundedRectangle(cornerRadius: 27)
+                                .fill(.regularMaterial)
+                                .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 2)
+                        )
+                        
+                        CodeBlock(
+                            code: """
+                            let luminance = try GarnishMath.relativeLuminance(of: color)
+                            let brightness = try GarnishMath.brightness(of: color)
+                            let colorScheme = try GarnishMath.colorScheme(for: color)
+                            """,
+                            colorMappings: [
+                                "color": color1
+                            ]
+                        )
                     }
                 }
                 
@@ -332,9 +407,24 @@ struct MathUtilitiesDemo: View {
                                     .foregroundColor(meetsAAA ? .green : .red)
                             }
                         }
-                        .padding()
-                        .background(Color.secondary.opacity(0.1))
-                        .cornerRadius(8)
+                        .padding(20)
+                        .background(
+                            RoundedRectangle(cornerRadius: 27)
+                                .fill(.regularMaterial)
+                                .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 2)
+                        )
+                        
+                        CodeBlock(
+                            code: """
+                            let ratio = try GarnishMath.contrastRatio(between: color1, and: color2)
+                            let meetsAA = GarnishMath.meetsWCAGAA(ratio)
+                            let meetsAAA = GarnishMath.meetsWCAGAAA(ratio)
+                            """,
+                            colorMappings: [
+                                "color1": color1,
+                                "color2": color2
+                            ]
+                        )
                         
                         if contrastRatioResult.error == nil {
                             // Visual demonstration
@@ -342,7 +432,7 @@ struct MathUtilitiesDemo: View {
                                 .foregroundColor(color1)
                                 .padding()
                                 .background(color2)
-                                .cornerRadius(8)
+                                .clipShape(RoundedRectangle(cornerRadius: 27))
                         }
                     }
                 }
@@ -353,7 +443,7 @@ struct MathUtilitiesDemo: View {
 }
 
 // MARK: - Color Extensions Demo
-@available(iOS 16.1, macOS 14.0, visionOS 1.0, *)
+@available(iOS 17, macOS 14.0, visionOS 1.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 struct ColorExtensionsDemo: View {
@@ -389,7 +479,7 @@ struct ColorExtensionsDemo: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 30) {
+            VStack(spacing: 40) {
                 DemoSectionView(
                     title: "Color Adjustments",
                     description: "Modify colors using extensions"
@@ -420,13 +510,19 @@ struct ColorExtensionsDemo: View {
                                 }
                                 .frame(width: 80, height: 60)
                                 .background(Color.red.opacity(0.1))
-                                .cornerRadius(8)
+                                .clipShape(RoundedRectangle(cornerRadius: 27))
                             }
                         }
                         
-                        CodeBlock(code: """
-                        let adjustedColor = baseColor.adjustedBrightness(by: \(String(format: "%.1f", brightnessAdjustment)))
-                        """)
+                        CodeBlock(
+                            code: """
+                            let adjustedColor = baseColor.adjustedBrightness(by: \(String(format: "%.1f", brightnessAdjustment)))
+                            """,
+                            colorMappings: [
+                                "adjustedColor": adjustedBrightnessResult.color ?? .gray,
+                                "baseColor": baseColor
+                            ]
+                        )
                     }
                 }
                 
@@ -461,9 +557,12 @@ struct ColorExtensionsDemo: View {
                                 }
                             }
                         }
-                        .padding()
-                        .background(Color.secondary.opacity(0.1))
-                        .cornerRadius(8)
+                        .padding(20)
+                        .background(
+                            RoundedRectangle(cornerRadius: 27)
+                                .fill(.regularMaterial)
+                                .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 2)
+                        )
                     }
                 }
             }
@@ -473,7 +572,7 @@ struct ColorExtensionsDemo: View {
 }
 
 // MARK: - Font Weight Demo
-@available(iOS 16.1, macOS 14.0, visionOS 1.0, *)
+@available(iOS 17, macOS 14.0, visionOS 1.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 struct FontWeightDemo: View {
@@ -491,7 +590,7 @@ struct FontWeightDemo: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 30) {
+            VStack(spacing: 40) {
                 DemoSectionView(
                     title: "Recommended Font Weight",
                     description: "Optimal font weight based on contrast"
@@ -508,7 +607,7 @@ struct FontWeightDemo: View {
                                     .foregroundColor(textColor)
                                     .padding()
                                     .background(backgroundColor)
-                                    .cornerRadius(8)
+                                    .clipShape(RoundedRectangle(cornerRadius: 27))
                                 
                                 Text("Recommended: \(fontWeight.description)")
                                     .font(.caption)
@@ -519,9 +618,15 @@ struct FontWeightDemo: View {
                             }
                         }
                         
-                        CodeBlock(code: """
-                        let fontWeight = try textColor.recommendedFontWeight(against: backgroundColor)
-                        """)
+                        CodeBlock(
+                            code: """
+                            let fontWeight = try textColor.recommendedFontWeight(against: backgroundColor)
+                            """,
+                            colorMappings: [
+                                "textColor": textColor,
+                                "backgroundColor": backgroundColor
+                            ]
+                        )
                     }
                 }
             }
@@ -531,7 +636,7 @@ struct FontWeightDemo: View {
 }
 
 // MARK: - Accessibility Demo
-@available(iOS 16.1, macOS 14.0, visionOS 1.0, *)
+@available(iOS 17, macOS 14.0, visionOS 1.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 struct AccessibilityDemo: View {
@@ -549,7 +654,7 @@ struct AccessibilityDemo: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 30) {
+            VStack(spacing: 40) {
                 DemoSectionView(
                     title: "WCAG Compliance",
                     description: "Check accessibility standards"
@@ -570,14 +675,14 @@ struct AccessibilityDemo: View {
                                     .foregroundColor(foregroundColor)
                                     .padding()
                                     .background(backgroundColor)
-                                    .cornerRadius(8)
+                                    .clipShape(RoundedRectangle(cornerRadius: 27))
                                 
                                 Text("Normal text sample for readability testing")
                                     .font(.body)
                                     .foregroundColor(foregroundColor)
                                     .padding()
                                     .background(backgroundColor)
-                                    .cornerRadius(8)
+                                    .clipShape(RoundedRectangle(cornerRadius: 27))
                             }
                         }
                         
@@ -608,9 +713,12 @@ struct AccessibilityDemo: View {
                                     .foregroundColor(meetsAAA ? .green : .red)
                             }
                         }
-                        .padding()
-                        .background(Color.secondary.opacity(0.1))
-                        .cornerRadius(8)
+                        .padding(20)
+                        .background(
+                            RoundedRectangle(cornerRadius: 27)
+                                .fill(.regularMaterial)
+                                .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 2)
+                        )
                     }
                 }
             }
@@ -620,6 +728,9 @@ struct AccessibilityDemo: View {
 }
 
 // MARK: - Helper Views
+@available(iOS 17, macOS 14.0, visionOS 1.0, *)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 struct DemoSectionView<Content: View>: View {
     let title: String
     let description: String
@@ -632,20 +743,30 @@ struct DemoSectionView<Content: View>: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 15) {
-            VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text(title)
-                    .font(.headline)
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.primary)
                 Text(description)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(nil)
             }
             
             content
         }
-        .padding()
-        .background(Color.secondary.opacity(0.05))
-        .cornerRadius(12)
+        .safeAreaPadding(24)
+        .background(
+            RoundedRectangle(cornerRadius: 27)
+                .fill(.background)
+                .shadow(color: Color.black.opacity(0.02), radius: 1, x: 0, y: 1)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 27)
+                .stroke(Color.primary.opacity(0.04), lineWidth: 0.5)
+        )
     }
 }
 
@@ -654,32 +775,121 @@ struct ColorSwatch: View {
     let label: String
     
     var body: some View {
-        VStack(spacing: 8) {
-            RoundedRectangle(cornerRadius: 8)
+        VStack(spacing: 12) {
+            RoundedRectangle(cornerRadius: 15)
                 .fill(color)
-                .frame(width: 80, height: 60)
+                .frame(width: 90, height: 70)
+                .shadow(color: color.opacity(0.2), radius: 4, x: 0, y: 2)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.primary.opacity(0.2), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 15)
+                        .stroke(Color.primary.opacity(0.06), lineWidth: 0.5)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 15)
+                        .stroke(
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.3), Color.clear],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            ),
+                            lineWidth: 1
+                        )
                 )
             
             Text(label)
                 .font(.caption)
+                .fontWeight(.medium)
                 .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
         }
     }
 }
 
+@available(iOS 17, macOS 14.0, visionOS 1.0, *)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 struct CodeBlock: View {
     let code: String
+    let colorMappings: [String: Color]
+    
+    init(code: String, colorMappings: [String: Color] = [:]) {
+        self.code = code
+        self.colorMappings = colorMappings
+    }
+    
+    private var attributedCode: AttributedString {
+        var attrString = AttributedString(code)
+        
+        // Apply syntax highlighting for keywords
+        let keywords = ["let", "var", "try", "func", "struct", "class", "enum", "import", "return"]
+        for keyword in keywords {
+            if let range = attrString.range(of: keyword) {
+                attrString[range].foregroundColor = .purple
+                attrString[range].font = .system(.callout, design: .monospaced, weight: .semibold)
+            }
+        }
+        
+        // Style specific type names manually for better reliability
+        let typeNames = ["Garnish", "GarnishMath", "Color", "CGFloat", "Double"]
+        for typeName in typeNames {
+            if let range = attrString.range(of: typeName) {
+                attrString[range].foregroundColor = .teal
+                attrString[range].font = .system(.callout, design: .monospaced, weight: .medium)
+            }
+        }
+        
+        
+        // Apply color mappings for variables (sort by length descending to avoid partial matches)
+        let sortedMappings = colorMappings.sorted { $0.key.count > $1.key.count }
+        for (variable, color) in sortedMappings {
+            if let range = attrString.range(of: variable) {
+                attrString[range].foregroundColor = color
+                attrString[range].font = .system(.callout, design: .monospaced, weight: .medium)
+                
+                // Use Garnish to calculate contrasting background
+                if let contrastingShade = try? Garnish.contrastingShade(of: color) {
+                    attrString[range].backgroundColor = contrastingShade.opacity(0.7)
+                } else {
+                    attrString[range].backgroundColor = color.opacity(0.15)
+                }
+            }
+        }
+        
+        return attrString
+    }
     
     var body: some View {
-        Text(code)
-            .font(.system(.caption, design: .monospaced))
-            .padding(8)
-            .background(Color.secondary.opacity(0.1))
-            .cornerRadius(6)
-            .frame(maxWidth: .infinity, alignment: .leading)
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Text("Swift")
+                    .font(.caption2)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Image(systemName: "swift")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+            .padding(.bottom, 8)
+            
+            Divider()
+                .padding(.horizontal, 16)
+            
+            Text(attributedCode)
+                .padding(16)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 17)
+                .fill(.thickMaterial)
+                .shadow(color: Color.black.opacity(0.03), radius: 2, x: 0, y: 1)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 17)
+                .stroke(Color.primary.opacity(0.06), lineWidth: 0.5)
+        )
     }
 }
 
@@ -702,7 +912,7 @@ extension Font.Weight {
 }
 
 // MARK: - Preview
-@available(iOS 16.1, macOS 14.0, visionOS 1.0, *)
+@available(iOS 17, macOS 14.0, visionOS 1.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 #Preview {
