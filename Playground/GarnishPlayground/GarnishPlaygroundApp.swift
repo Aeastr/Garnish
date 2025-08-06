@@ -12,7 +12,14 @@ import GarnishTheme
 struct GarnishPlaygroundApp: App {
     var body: some Scene {
         WindowGroup {
-            GarnishThemeDemoApp()
+            TabView {
+                Tab("Base", systemImage: "paintpalette") {
+                    GarnishDemoApp()
+                }
+                Tab("Theme", systemImage: "wand.and.stars") {
+                    GarnishThemeDemoApp()
+                }
+            }
         }
     }
 }

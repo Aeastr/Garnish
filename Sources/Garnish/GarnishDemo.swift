@@ -14,7 +14,7 @@ import SwiftUI
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 public struct GarnishDemoApp: View {
-    @State private var selectedDemo: DemoSection? = .coreAPI
+    @State private var selectedDemo: DemoSection?
     
     public init() {}
     
@@ -311,6 +311,18 @@ struct MathUtilitiesDemo: View {
                     description: "Mathematical properties of colors"
                 ) {
                     VStack(spacing: 15) {
+                        
+                        CodeBlock(
+                            code: """
+                            let luminance = try GarnishMath.relativeLuminance(of: color)
+                            let brightness = try GarnishMath.brightness(of: color)
+                            let colorScheme = try GarnishMath.colorScheme(for: color)
+                            """,
+                            colorMappings: [
+                                "color": color1
+                            ]
+                        )
+                        
                         ColorPicker("Color to Analyze", selection: $color1)
                         
                         let colorScheme = colorSchemeResult.scheme
@@ -351,20 +363,9 @@ struct MathUtilitiesDemo: View {
                         }
                         .padding(20)
                         .background(
-                            RoundedRectangle(cornerRadius: 27)
+                            RoundedRectangle(cornerRadius: 17)
                                 .fill(.regularMaterial)
                                 .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 2)
-                        )
-                        
-                        CodeBlock(
-                            code: """
-                            let luminance = try GarnishMath.relativeLuminance(of: color)
-                            let brightness = try GarnishMath.brightness(of: color)
-                            let colorScheme = try GarnishMath.colorScheme(for: color)
-                            """,
-                            colorMappings: [
-                                "color": color1
-                            ]
                         )
                     }
                 }
@@ -479,58 +480,27 @@ struct ColorExtensionsDemo: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 40) {
-                DemoSectionView(
-                    title: "Color Adjustments",
-                    description: "Modify colors using extensions"
-                ) {
-                    VStack(spacing: 15) {
-                        ColorPicker("Base Color", selection: $baseColor)
-                        
-                        VStack {
-                            Text("Brightness Adjustment: \(brightnessAdjustment, specifier: "%.2f")")
-                            Slider(value: $brightnessAdjustment, in: -1...1, step: 0.1)
-                        }
-                        
-                        HStack(spacing: 20) {
-                            ColorSwatch(color: baseColor, label: "Original")
-                            if let adjustedColor = adjustedBrightnessResult.color {
-                                ColorSwatch(color: adjustedColor, label: "Adjusted")
-                            } else {
-                                VStack {
-                                    Text("Error")
-                                        .foregroundColor(.red)
-                                        .font(.caption)
-                                    if let error = adjustedBrightnessResult.error {
-                                        Text(error)
-                                            .foregroundColor(.red)
-                                            .font(.caption2)
-                                            .multilineTextAlignment(.center)
-                                    }
-                                }
-                                .frame(width: 80, height: 60)
-                                .background(Color.red.opacity(0.1))
-                                .clipShape(RoundedRectangle(cornerRadius: 27))
-                            }
-                        }
-                        
-                        CodeBlock(
-                            code: """
-                            let adjustedColor = baseColor.adjustedBrightness(by: \(String(format: "%.1f", brightnessAdjustment)))
-                            """,
-                            colorMappings: [
-                                "adjustedColor": adjustedBrightnessResult.color ?? .gray,
-                                "baseColor": baseColor
-                            ]
-                        )
-                    }
-                }
+            VStack(spacing: 20) {
+                
                 
                 DemoSectionView(
                     title: "Convenience Methods",
                     description: "Easy-to-use instance methods"
                 ) {
                     VStack(spacing: 15) {
+                        CodeBlock(
+                            code: """
+                            let hex = try baseColor.toHex()
+                            let contrastingColor = try baseColor.contrastingShade()
+                            """,
+                            colorMappings: [
+                                "baseColor": baseColor,
+                                "contrastingColor": contrastingShadeResult.color ?? .gray
+                            ]
+                        )
+                        
+                        Divider()
+                        
                         ColorPicker("Input Color", selection: $baseColor)
                         
                         VStack(alignment: .leading, spacing: 8) {
@@ -559,9 +529,106 @@ struct ColorExtensionsDemo: View {
                         }
                         .padding(20)
                         .background(
-                            RoundedRectangle(cornerRadius: 27)
+                            RoundedRectangle(cornerRadius: 17)
                                 .fill(.regularMaterial)
                                 .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 2)
+                        )
+                    }
+                }
+                
+                DemoSectionView(
+                    title: "Color Adjustments",
+                    description: "Modify colors using extensions"
+                ) {
+                    VStack(spacing: 15) {
+                        ColorPicker("Base Color", selection: $baseColor)
+                        
+                        VStack(spacing: 12) {
+                            HStack {
+                                Text("Brightness Adjustment")
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                Spacer()
+                                Text("\(brightnessAdjustment, specifier: "%.2f")")
+                                    .font(.subheadline)
+                                    .fontDesign(.monospaced)
+                                    .foregroundColor(.secondary)
+                            }
+                            Slider(value: $brightnessAdjustment, in: -1...1, step: 0.1)
+                                .tint(baseColor)
+                        }
+                        .padding(.bottom, 8)
+                        
+                        HStack(spacing: 12) {
+                            VStack(spacing: 8) {
+                                RoundedRectangle(cornerRadius: 15)
+                                    .fill(baseColor)
+                                    .frame(height: 70)
+                                    .shadow(color: baseColor.opacity(0.2), radius: 4, x: 0, y: 2)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 15)
+                                            .stroke(Color.primary.opacity(0.06), lineWidth: 0.5)
+                                    )
+                                
+                                Text("Original")
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            if let adjustedColor = adjustedBrightnessResult.color {
+                                VStack(spacing: 8) {
+                                    RoundedRectangle(cornerRadius: 15)
+                                        .fill(adjustedColor)
+                                        .frame(height: 70)
+                                        .shadow(color: adjustedColor.opacity(0.2), radius: 4, x: 0, y: 2)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 15)
+                                                .stroke(Color.primary.opacity(0.06), lineWidth: 0.5)
+                                        )
+                                    
+                                    Text("Adjusted")
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.secondary)
+                                }
+                            } else {
+                                VStack(spacing: 8) {
+                                    RoundedRectangle(cornerRadius: 15)
+                                        .fill(Color.red.opacity(0.1))
+                                        .frame(height: 70)
+                                        .overlay(
+                                            VStack {
+                                                Text("Error")
+                                                    .foregroundColor(.red)
+                                                    .font(.caption)
+                                                    .fontWeight(.medium)
+                                                if let error = adjustedBrightnessResult.error {
+                                                    Text(error)
+                                                        .foregroundColor(.red)
+                                                        .font(.caption2)
+                                                        .multilineTextAlignment(.center)
+                                                        .lineLimit(2)
+                                                }
+                                            }
+                                        )
+                                    
+                                    Text("Error")
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.red)
+                                }
+                            }
+                        }
+                        
+                        CodeBlock(
+                            code: """
+                            let adjustedColor = baseColor.adjustedBrightness(by: \(String(format: "%.1f", brightnessAdjustment)))
+                            """,
+                            colorMappings: [
+                                "adjustedColor": adjustedBrightnessResult.color ?? .gray,
+                                "baseColor": baseColor
+                            ]
                         )
                     }
                 }
