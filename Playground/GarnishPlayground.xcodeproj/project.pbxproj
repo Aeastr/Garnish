@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2D361B622E42A2F000567EAB /* Garnish in Frameworks */ = {isa = PBXBuildFile; productRef = 2D361B612E42A2F000567EAB /* Garnish */; };
+		2D4667982E43FCEC00DD41ED /* GarnishTheme in Frameworks */ = {isa = PBXBuildFile; productRef = 2D4667972E43FCEC00DD41ED /* GarnishTheme */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D361B622E42A2F000567EAB /* Garnish in Frameworks */,
+				2D4667982E43FCEC00DD41ED /* GarnishTheme in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -38,6 +40,7 @@
 			isa = PBXGroup;
 			children = (
 				2D361B3C2E42A23D00567EAB /* GarnishPlayground */,
+				2D4667962E43FCE600DD41ED /* Frameworks */,
 				2D361B3B2E42A23D00567EAB /* Products */,
 			);
 			sourceTree = "<group>";
@@ -48,6 +51,13 @@
 				2D361B3A2E42A23D00567EAB /* GarnishPlayground.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		2D4667962E43FCE600DD41ED /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -71,6 +81,7 @@
 			name = GarnishPlayground;
 			packageProductDependencies = (
 				2D361B612E42A2F000567EAB /* Garnish */,
+				2D4667972E43FCEC00DD41ED /* GarnishTheme */,
 			);
 			productName = GarnishPlayground;
 			productReference = 2D361B3A2E42A23D00567EAB /* GarnishPlayground.app */;
@@ -374,6 +385,11 @@
 		2D361B612E42A2F000567EAB /* Garnish */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Garnish;
+		};
+		2D4667972E43FCEC00DD41ED /* GarnishTheme */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2D361B602E42A2F000567EAB /* XCLocalSwiftPackageReference "../../Garnish" */;
+			productName = GarnishTheme;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -7,12 +7,12 @@
 
 import SwiftUI
 import Garnish
-
+import GarnishTheme
 @main
 struct GarnishPlaygroundApp: App {
     var body: some Scene {
         WindowGroup {
-            GarnishDemoApp()
+            GarnishThemeDemoApp()
         }
     }
 }

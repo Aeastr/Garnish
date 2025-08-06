@@ -1,7 +1,7 @@
 <div align="center">
   <img width="270" height="270" src="/assets/icon.png" alt="Garnish Logo">
   <h1><b>Garnish</b></h1>
-  <p>A Swift package for iOS and macOS that provides intelligent color utilities for accessibility, contrast optimization, and visual harmony.</p>
+  <p>A Swift package that provides intelligent color utilities for accessibility, contrast optimization, and visual harmony.</p>
 </div>
 
 <div align="center">
@@ -12,7 +12,7 @@
     <img src="https://img.shields.io/badge/iOS-14.0%2B-blue.svg" alt="iOS 14.0+">
   </a>  
   <a href="https://www.apple.com/macos/">
-    <img src="https://img.shields.io/badge/macOS-13.3%2B-blue.svg" alt="macOS 13.3+">
+    <img src="https://img.shields.io/badge/macOS-14%2B-blue.svg" alt="macOS 14.0+">
   </a>
   <a href="https://www.apple.com/tvos/">
     <img src="https://img.shields.io/badge/tvOS-14.0%2B-blue.svg" alt="tvOS 14.0+">
