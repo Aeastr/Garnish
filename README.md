@@ -45,7 +45,7 @@ Garnish is a comprehensive Swift package that provides intelligent color utiliti
 ### 🎨 **Smart Color Generation** - Intelligent Contrast
 Generate contrasting colors that maintain visual harmony:
 
-| ![Auto Contrast](assets/readme/autoContrast.png) | ![Color Math](assets/readme/colorMath.png) | ![Color Analysis](assets/readme/colorAnalysis.png) |
+| <img src="assets/readme/autoContrast.png" width="200" height="200" alt="Auto Contrast"> | <img src="assets/readme/colorMath.png" width="200" height="200" alt="Color Math"> | <img src="assets/readme/colorAnalysis.png" width="200" height="200" alt="Color Analysis"> |
 |:---:|:---:|:---:|
 | **Auto Contrast** | **Color Math** | **Color Analysis** |
 | Automatically generate readable text colors from any background | Calculate luminance, brightness, and contrast ratios with WCAG standards | Classify colors as light/dark and validate accessibility compliance |
@@ -69,12 +69,12 @@ Garnish comes with a bundled demo app that lets you explore Garnish in action. O
 
 ### Garnish Base Demo
 
-| ![Core API Demo](assets/readme/CoreAPIDemo.png) | ![Math Utilities Demo](assets/readme/MathUtilitiesDemo.png) | ![Color Extensions Demo](assets/readme/ColorExtensionsDemo.png) |
+| <img src="assets/readme/CoreAPIDemo.png" width="250" height="300" alt="Core API Demo"> | <img src="assets/readme/MathUtilitiesDemo.png" width="250" height="300" alt="Math Utilities Demo"> | <img src="assets/readme/ColorExtensionsDemo.png" width="250" height="300" alt="Color Extensions Demo"> |
 |:---:|:---:|:---:|
 | **Core API** | **Math Utilities** | **Color Extensions** |
 | Monochromatic and bi-chromatic contrast generation with live color previews | Color mathematics, luminance calculations, and contrast ratio computations | Brightness adjustment, hex conversion, and convenience methods with real-time feedback |
 
-| ![Font Weight Demo](assets/readme/FontWeightDemo.png) | ![Accessibility Demo](assets/readme/AccessibilityDemo.png) |
+| <img src="assets/readme/FontWeightDemo.png" width="350" height="300" alt="Font Weight Demo"> | <img src="assets/readme/AccessibilityDemo.png" width="350" height="300" alt="Accessibility Demo"> |
 |:---:|:---:|
 | **Font Weight** | **Accessibility** |
 | Dynamic font weight optimization based on contrast ratios and accessibility requirements | WCAG compliance checking with visual contrast examples and pass/fail indicators |
@@ -83,12 +83,12 @@ Garnish comes with a bundled demo app that lets you explore Garnish in action. O
 ### GarnishTheme Demo
 
 
-| ![Theme Demo](assets/readme/ThemeDemo.png) | ![Built-in Themes](assets/readme/ThemeBuiltIn.png) | ![Current Theme](assets/readme/ThemeCurrent.png) |
+| <img src="assets/readme/ThemeDemo.png" width="250" height="300" alt="Theme Demo"> | <img src="assets/readme/ThemeBuiltIn.png" width="250" height="300" alt="Built-in Themes"> | <img src="assets/readme/ThemeCurrent.png" width="250" height="300" alt="Current Theme"> |
 |:---:|:---:|:---:|
 | **Registering Themes** | **Built-in Themes** | **Current Theme API** |
 | Register and manage themes in your app | Explore and use built-in themes | Access and update the current theme at runtime |
 
-| ![Custom Themes](assets/readme/ThemeCustom.png) | ![Color Keys](assets/readme/ThemeColorKeys.png) | ![Theme Comparison](assets/readme/ThemeComparison.png) |
+| <img src="assets/readme/ThemeCustom.png" width="250" height="300" alt="Custom Themes"> | <img src="assets/readme/ThemeColorKeys.png" width="250" height="300" alt="Color Keys"> | <img src="assets/readme/ThemeComparison.png" width="250" height="300" alt="Theme Comparison"> |
 |:---:|:---:|:---:|
 | **Custom Themes** | **Color Keys System** | **Theme Comparison** |
 | Create and preview your own custom themes | Use color keys for flexible theme color mapping | Compare multiple themes side-by-side |
@@ -112,7 +112,7 @@ If you like this project, please consider giving it a ⭐️
 - [Twitter](https://x.com/AetherAurelia)  
 - [Threads](https://www.threads.net/@aetheraurelia)  
 - [Bluesky](https://bsky.app/profile/aethers.world)  
-- [Join the Kyo Discord](https://discord.gg/6NHhAvwbXV)
+- [Join the Discord](https://discord.gg/6NHhAvwbXV)
 
 ---
 
