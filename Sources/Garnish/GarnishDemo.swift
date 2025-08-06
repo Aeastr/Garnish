@@ -14,7 +14,7 @@ import SwiftUI
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 public struct GarnishDemoApp: View {
-    @State private var selectedDemo: DemoSection? = .coreAPI
+    @State private var selectedDemo: DemoSection?
     
     public init() {}
     

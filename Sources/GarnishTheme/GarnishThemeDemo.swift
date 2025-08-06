@@ -49,10 +49,21 @@ private extension GarnishThemeDemoApp {
         oceanTheme.setColor(.tertiary, Color(red: 0.5, green: 0.9, blue: 1.0), for: .dark)
         oceanTheme.setColor(.backgroundColor, Color(red: 0.05, green: 0.1, blue: 0.15), for: .dark)
         
+        let roseTheme = BuiltInTheme(name: "Rose")
+        roseTheme.setColor(.primary, Color(red: 0.9, green: 0.4, blue: 0.6), for: .light)      // Soft rose pink
+        roseTheme.setColor(.secondary, Color(red: 0.8, green: 0.5, blue: 0.7), for: .light)   // Muted lavender pink
+        roseTheme.setColor(.tertiary, Color(red: 0.7, green: 0.3, blue: 0.5), for: .light)    // Deeper rose
+        roseTheme.setColor(.backgroundColor, Color(red: 0.99, green: 0.97, blue: 0.98), for: .light) // Very light rose tint
+        roseTheme.setColor(.primary, Color(red: 0.95, green: 0.6, blue: 0.75), for: .dark)    // Brighter rose for dark mode
+        roseTheme.setColor(.secondary, Color(red: 0.85, green: 0.65, blue: 0.8), for: .dark)  // Soft pink-purple
+        roseTheme.setColor(.tertiary, Color(red: 0.8, green: 0.5, blue: 0.65), for: .dark)    // Medium rose
+        roseTheme.setColor(.backgroundColor, Color(red: 0.15, green: 0.1, blue: 0.12), for: .dark) // Dark with rose undertone
+        
         // Register the demo themes
         GarnishTheme.registerBuiltInTheme(defaultTheme)
         GarnishTheme.registerBuiltInTheme(darkTheme)
         GarnishTheme.registerBuiltInTheme(oceanTheme)
+        GarnishTheme.registerBuiltInTheme(roseTheme)
     }
 }
 
@@ -60,7 +71,7 @@ private extension GarnishThemeDemoApp {
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 public struct GarnishThemeDemoApp: View {
-    @State private var selectedDemo: ThemeDemoSection? = .registeringThemes
+    @State private var selectedDemo: ThemeDemoSection?
     
     public init() {
         // Set up demo themes for demonstration
@@ -320,10 +331,6 @@ struct BuiltInThemesDemo: View {
                         
                         if let theme = selectedTheme {
                             VStack(spacing: 15) {
-                                Text(theme.name)
-                                    .font(.title2)
-                                    .fontWeight(.semibold)
-                                
                                 ThemeCodeBlock(
                                     code: """
                                     let theme = GarnishTheme.builtin("\(theme.name)")!
@@ -335,12 +342,15 @@ struct BuiltInThemesDemo: View {
                                 Divider()
                                 
                                 // Color palette display
-                                VStack(spacing: 12) {
-                                    Text("Color Palette")
-                                        .font(.headline)
-                                        .fontWeight(.medium)
+                                VStack(alignment: .leading, spacing: 12) {
+                                    HStack {
+                                        Text("Color Palette")
+                                            .font(.headline)
+                                            .fontWeight(.medium)
+                                        Spacer()
+                                    }
                                     
-                                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 15) {
+                                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 1), spacing: 15) {
                                         ForEach([ColorKey.primary, .secondary, .tertiary, .backgroundColor], id: \.self) { colorKey in
                                             ThemeColorSwatch(
                                                 theme: theme,
@@ -432,9 +442,11 @@ struct CurrentThemeAPIDemo: View {
                         
                         Divider()
                         
-                        VStack(spacing: 15) {
+                        VStack(alignment: .leading, spacing: 15) {
                             HStack {
                                 Text("Color Scheme:")
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
                                 Spacer()
                                 Picker("Color Scheme", selection: $colorScheme) {
                                     Text("Light").tag(ColorScheme.light)
@@ -446,6 +458,8 @@ struct CurrentThemeAPIDemo: View {
                             
                             HStack {
                                 Text("Color Key:")
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
                                 Spacer()
                                 Picker("Color Key", selection: $selectedColorKey) {
                                     Text("Primary").tag(ColorKey.primary)
@@ -482,7 +496,7 @@ struct CurrentThemeAPIDemo: View {
                             themeName: GarnishTheme.current.name
                         )
                         
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 12) {
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 1), spacing: 12) {
                             ConvenienceMethodDemo(
                                 title: "Primary Light",
                                 code: "current.primary(for: .light)"
@@ -555,27 +569,77 @@ struct CustomThemesDemo: View {
                         
                         Divider()
                         
-                        VStack(spacing: 15) {
-                            TextField("Theme Name", text: $themeName)
-                                .textFieldStyle(.roundedBorder)
+                        VStack(alignment: .leading, spacing: 15) {
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack {
+                                    Text("Theme Name")
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                    Spacer()
+                                }
+                                TextField("Enter theme name", text: $themeName)
+                                    .textFieldStyle(.roundedBorder)
+                            }
                             
                             VStack(alignment: .leading, spacing: 12) {
-                                Text("Primary Colors")
-                                    .font(.headline)
-                                
                                 HStack {
-                                    ColorPicker("Light", selection: $primaryLightColor, supportsOpacity: false)
-                                    ColorPicker("Dark", selection: $primaryDarkColor, supportsOpacity: false)
+                                    Text("Primary Colors")
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                    Spacer()
+                                }
+                                
+                                HStack(spacing: 16) {
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        Text("Light")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                        ColorPicker("", selection: $primaryLightColor, supportsOpacity: false)
+                                            .labelsHidden()
+                                            .frame(height: 40)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        Text("Dark")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                        ColorPicker("", selection: $primaryDarkColor, supportsOpacity: false)
+                                            .labelsHidden()
+                                            .frame(height: 40)
+                                    }
+                                    .frame(maxWidth: .infinity)
                                 }
                             }
                             
                             VStack(alignment: .leading, spacing: 12) {
-                                Text("Secondary Colors")
-                                    .font(.headline)
-                                
                                 HStack {
-                                    ColorPicker("Light", selection: $secondaryLightColor, supportsOpacity: false)
-                                    ColorPicker("Dark", selection: $secondaryDarkColor, supportsOpacity: false)
+                                    Text("Secondary Colors")
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                    Spacer()
+                                }
+                                
+                                HStack(spacing: 16) {
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        Text("Light")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                        ColorPicker("", selection: $secondaryLightColor, supportsOpacity: false)
+                                            .labelsHidden()
+                                            .frame(height: 40)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        Text("Dark")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                        ColorPicker("", selection: $secondaryDarkColor, supportsOpacity: false)
+                                            .labelsHidden()
+                                            .frame(height: 40)
+                                    }
+                                    .frame(maxWidth: .infinity)
                                 }
                             }
                             
@@ -684,7 +748,7 @@ struct ColorKeysSystemDemo: View {
                             themeName: "ColorKey"
                         )
                         
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 12) {
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 1), spacing: 12) {
                             ForEach([ColorKey.primary, .secondary, .tertiary, .backgroundColor], id: \.self) { key in
                                 ColorKeyInfoCard(colorKey: key)
                             }
@@ -710,9 +774,17 @@ struct ColorKeysSystemDemo: View {
                             themeName: "Custom"
                         )
                         
-                        VStack(spacing: 12) {
-                            TextField("Custom Key Name", text: $customKeyName)
-                                .textFieldStyle(.roundedBorder)
+                        VStack(alignment: .leading, spacing: 12) {
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack {
+                                    Text("Custom Key Name")
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                    Spacer()
+                                }
+                                TextField("Enter custom key name", text: $customKeyName)
+                                    .textFieldStyle(.roundedBorder)
+                            }
                             
                             if !customKeyName.isEmpty {
                                 let customKey = ColorKey.custom(customKeyName)
@@ -743,6 +815,8 @@ struct ColorKeysSystemDemo: View {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Text("Selected Key:")
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
                                 Spacer()
                                 Picker("Key", selection: $selectedStandardKey) {
                                     Text("Primary").tag(ColorKey.primary)
@@ -755,13 +829,18 @@ struct ColorKeysSystemDemo: View {
                             
                             HStack {
                                 Text("String Value:")
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
                                 Spacer()
                                 Text("\"\(selectedStandardKey.stringValue)\"")
                                     .fontDesign(.monospaced)
+                                    .foregroundColor(.secondary)
                             }
                             
                             HStack {
                                 Text("Is Standard:")
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
                                 Spacer()
                                 Text(selectedStandardKey.isStandard ? "true" : "false")
                                     .fontDesign(.monospaced)
@@ -932,36 +1011,54 @@ struct ThemeColorSwatch: View {
     
     var body: some View {
         VStack(spacing: 12) {
-            HStack(spacing: 8) {
+            // Title
+            HStack {
+                Text(title)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(.primary)
+                Spacer()
+            }
+            
+            // Color squares
+            HStack(spacing: 12) {
                 if let lightColor = lightColor {
-                    Circle()
-                        .fill(lightColor)
-                        .frame(width: 40, height: 40)
-                        .shadow(color: lightColor.opacity(0.3), radius: 3, x: 0, y: 2)
-                        .overlay(
-                            Circle()
-                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                        )
+                    VStack(spacing: 8) {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(lightColor)
+                            .frame(height: 60)
+                            .shadow(color: lightColor.opacity(0.3), radius: 3, x: 0, y: 2)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                            )
+                        Text("Light")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
                 }
                 
                 if let darkColor = darkColor {
-                    Circle()
-                        .fill(darkColor)
-                        .frame(width: 40, height: 40)
-                        .shadow(color: darkColor.opacity(0.3), radius: 3, x: 0, y: 2)
-                        .overlay(
-                            Circle()
-                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                        )
+                    VStack(spacing: 8) {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(darkColor)
+                            .frame(height: 60)
+                            .shadow(color: darkColor.opacity(0.3), radius: 3, x: 0, y: 2)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                            )
+                        Text("Dark")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
                 }
+                
             }
-            
-            Text(title)
-                .font(.caption)
-                .fontWeight(.medium)
-                .foregroundColor(.secondary)
         }
-        .padding(16)
+        .padding(.top, 16)
+        .padding(.horizontal, 16)
+        .padding(.bottom, 12)
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .fill(.regularMaterial)
@@ -1020,29 +1117,33 @@ struct CurrentThemeColorDisplay: View {
     let colorScheme: ColorScheme
     
     var body: some View {
-        VStack(spacing: 12) {
-            Text("Sample Text")
-                .font(.title3)
-                .fontWeight(.semibold)
-                .foregroundColor(color)
-                .padding()
-                .background(
-                    colorScheme == .light ? Color.white : Color.black
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 20))
-            
+        VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Circle()
+                Text("\(colorKey.stringValue.capitalized) - \(colorScheme == .light ? "Light" : "Dark") Mode")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(.primary)
+                Spacer()
+            }
+            
+            HStack(spacing: 16) {
+                RoundedRectangle(cornerRadius: 8)
                     .fill(color)
-                    .frame(width: 30, height: 30)
-                    .shadow(color: color.opacity(0.3), radius: 2, x: 0, y: 1)
+                    .frame(width: 60, height: 40)
+                    .shadow(color: color.opacity(0.3), radius: 3, x: 0, y: 2)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                    )
                 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(colorKey.stringValue.capitalized)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Sample Text")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundColor(color)
+                    
+                    Text("Preview with current color")
                         .font(.caption)
-                        .fontWeight(.medium)
-                    Text("\(colorScheme == .light ? "Light" : "Dark") Mode")
-                        .font(.caption2)
                         .foregroundColor(.secondary)
                 }
                 
@@ -1111,43 +1212,100 @@ struct CustomThemePreview: View {
     let secondaryDark: Color
     
     var body: some View {
-        VStack(spacing: 16) {
-            Text("Preview")
-                .font(.headline)
-                .fontWeight(.medium)
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Text("Preview")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                Spacer()
+            }
             
-            HStack(spacing: 20) {
-                VStack(spacing: 8) {
-                    Text("Light Mode")
-                        .font(.caption)
-                        .fontWeight(.medium)
+            VStack(spacing: 12) {
+                // Primary colors
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Primary")
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .foregroundColor(.primary)
+                        Spacer()
+                    }
                     
-                    VStack(spacing: 4) {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(primaryLight)
-                            .frame(height: 30)
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(secondaryLight)
-                            .frame(height: 20)
+                    HStack(spacing: 12) {
+                        VStack(spacing: 4) {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(primaryLight)
+                                .frame(width: 60, height: 40)
+                                .shadow(color: primaryLight.opacity(0.3), radius: 3, x: 0, y: 2)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                )
+                            Text("Light")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        VStack(spacing: 4) {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(primaryDark)
+                                .frame(width: 60, height: 40)
+                                .shadow(color: primaryDark.opacity(0.3), radius: 3, x: 0, y: 2)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                )
+                            Text("Dark")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
                     }
                 }
-                .frame(maxWidth: .infinity)
                 
-                VStack(spacing: 8) {
-                    Text("Dark Mode")
-                        .font(.caption)
-                        .fontWeight(.medium)
+                // Secondary colors
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Secondary")
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .foregroundColor(.primary)
+                        Spacer()
+                    }
                     
-                    VStack(spacing: 4) {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(primaryDark)
-                            .frame(height: 30)
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(secondaryDark)
-                            .frame(height: 20)
+                    HStack(spacing: 12) {
+                        VStack(spacing: 4) {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(secondaryLight)
+                                .frame(width: 60, height: 40)
+                                .shadow(color: secondaryLight.opacity(0.3), radius: 3, x: 0, y: 2)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                )
+                            Text("Light")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        VStack(spacing: 4) {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(secondaryDark)
+                                .frame(width: 60, height: 40)
+                                .shadow(color: secondaryDark.opacity(0.3), radius: 3, x: 0, y: 2)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                )
+                            Text("Dark")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
                     }
                 }
-                .frame(maxWidth: .infinity)
             }
         }
         .padding(16)
@@ -1165,18 +1323,29 @@ struct ColorKeyInfoCard: View {
     let colorKey: ColorKey
     
     var body: some View {
-        VStack(spacing: 8) {
+        HStack(spacing: 16) {
             Image(systemName: colorKey.isStandard ? "key.fill" : "key.horizontal.fill")
                 .font(.title2)
                 .foregroundColor(colorKey.isStandard ? .blue : .orange)
+                .frame(width: 40)
             
-            Text(colorKey.stringValue)
-                .font(.headline)
-                .fontWeight(.medium)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(colorKey.stringValue)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(.primary)
+                
+                Text(colorKey.isStandard ? "Standard Key" : "Custom Key")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
             
             Text(colorKey.isStandard ? "Standard" : "Custom")
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .fontWeight(.medium)
+                .foregroundColor(colorKey.isStandard ? .blue : .orange)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
                 .background(
