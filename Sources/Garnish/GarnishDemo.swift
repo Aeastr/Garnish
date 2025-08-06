@@ -2,7 +2,7 @@
 //  GarnishDemo.swift
 //  Garnish
 //
-//  Created by Aether on 19/12/2024.
+//  Created by Aether on 06/08/2025
 //  Demo app showcasing the refactored Garnish API
 //
 
@@ -57,6 +57,7 @@ public struct GarnishDemoApp: View {
 @available(watchOS, unavailable)
 enum DemoSection: CaseIterable {
     case coreAPI
+    case harmony
     case mathUtilities
     case colorExtensions
     case fontWeight
@@ -65,6 +66,7 @@ enum DemoSection: CaseIterable {
     var title: String {
         switch self {
         case .coreAPI: return "Core API"
+        case .harmony: return "Color Harmony"
         case .mathUtilities: return "Math Utilities"
         case .colorExtensions: return "Color Extensions"
         case .fontWeight: return "Font Weight"
@@ -75,6 +77,7 @@ enum DemoSection: CaseIterable {
     var icon: String {
         switch self {
         case .coreAPI: return "paintpalette.fill"
+        case .harmony: return "waveform.path"
         case .mathUtilities: return "function"
         case .colorExtensions: return "square.3.layers.3d"
         case .fontWeight: return "textformat"
@@ -86,6 +89,7 @@ enum DemoSection: CaseIterable {
     var view: some View {
         switch self {
         case .coreAPI: CoreAPIDemo()
+        case .harmony: HarmonyDemo()
         case .mathUtilities: MathUtilitiesDemo()
         case .colorExtensions: ColorExtensionsDemo()
         case .fontWeight: FontWeightDemo()
@@ -251,6 +255,400 @@ struct CoreAPIDemo: View {
                             }
                             .fixedSize()
                         }
+                    }
+                }
+            }
+            .padding()
+        }
+    }
+}
+
+// MARK: - Harmony Demo
+@available(iOS 17, macOS 14.0, visionOS 1.0, *)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+struct HarmonyDemo: View {
+    @State private var colorToHarmonize = Color.blue
+    @State private var referenceColor = Color.red
+    @State private var adjustmentStrength: Double = 0.6
+    
+    private var harmonizeResult: (color: Color?, error: String?) {
+        do {
+            let harmonized = try Garnish.harmonize(
+                colorToHarmonize,
+                with: referenceColor,
+                adjustmentStrength: CGFloat(adjustmentStrength)
+            )
+            return (harmonized, nil)
+        } catch {
+            return (nil, error.localizedDescription)
+        }
+    }
+    
+    private var harmonyScoreResult: (score: Double?, error: String?) {
+        do {
+            let score = try GarnishMath.harmonyScore(
+                between: colorToHarmonize,
+                and: referenceColor
+            )
+            return (score, nil)
+        } catch {
+            return (nil, error.localizedDescription)
+        }
+    }
+    
+    private var harmonizedScoreResult: (score: Double?, error: String?) {
+        guard let harmonized = harmonizeResult.color else { return (nil, "No harmonized color") }
+        do {
+            let score = try GarnishMath.harmonyScore(
+                between: harmonized,
+                and: referenceColor
+            )
+            return (score, nil)
+        } catch {
+            return (nil, error.localizedDescription)
+        }
+    }
+    
+    private var contrastingColorResult: (color: Color?, error: String?) {
+        do {
+            let color = try Garnish.contrastingColor(
+                colorToHarmonize,
+                against: referenceColor,
+                harmonize: true
+            )
+            return (color, nil)
+        } catch {
+            return (nil, error.localizedDescription)
+        }
+    }
+    
+    private var regularContrastingResult: (color: Color?, error: String?) {
+        do {
+            let color = try Garnish.contrastingColor(
+                colorToHarmonize,
+                against: referenceColor,
+                harmonize: false
+            )
+            return (color, nil)
+        } catch {
+            return (nil, error.localizedDescription)
+        }
+    }
+    
+    private var harmonizedContrastingScores: (contrast: Double?, harmony: Double?, error: String?) {
+        guard let contrastingHarmonized = contrastingColorResult.color else {
+            return (nil, nil, "No color available")
+        }
+        do {
+            let contrastRatio = try GarnishMath.contrastRatio(
+                between: contrastingHarmonized,
+                and: referenceColor
+            )
+            let harmonyScore = try GarnishMath.harmonyScore(
+                between: contrastingHarmonized,
+                and: referenceColor
+            )
+            return (contrastRatio, harmonyScore, nil)
+        } catch {
+            return (nil, nil, error.localizedDescription)
+        }
+    }
+    
+    private var regularContrastingScores: (contrast: Double?, harmony: Double?, error: String?) {
+        guard let regularContrasting = regularContrastingResult.color else {
+            return (nil, nil, "No color available")
+        }
+        do {
+            let contrastRatio = try GarnishMath.contrastRatio(
+                between: regularContrasting,
+                and: referenceColor
+            )
+            let harmonyScore = try GarnishMath.harmonyScore(
+                between: regularContrasting,
+                and: referenceColor
+            )
+            return (contrastRatio, harmonyScore, nil)
+        } catch {
+            return (nil, nil, error.localizedDescription)
+        }
+    }
+    
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                DemoSectionView(
+                    title: "Color Harmonization",
+                    description: "Adjust one color to work aesthetically with another using LCH color theory"
+                ) {
+                    VStack(spacing: 20) {
+                        CodeBlock(
+                            code: """
+                            let harmonized = try Garnish.harmonize(colorToHarmonize, with: referenceColor)
+                            """,
+                            colorMappings: [
+                                "harmonized": harmonizeResult.color ?? .gray,
+                                "colorToHarmonize": colorToHarmonize,
+                                "referenceColor": referenceColor
+                            ]
+                        )
+                        
+                        Divider()
+                        
+                        ColorPicker("Color to Harmonize", selection: $colorToHarmonize)
+                        ColorPicker("Reference Color", selection: $referenceColor)
+                        
+                        VStack {
+                            Text("Adjustment Strength: \(adjustmentStrength, specifier: "%.2f")")
+                            Slider(value: $adjustmentStrength, in: 0.0...1.0, step: 0.1)
+                        }
+                        
+                        if let errorMessage = harmonizeResult.error {
+                            Text("Error: \(errorMessage)").foregroundColor(.red)
+                        }
+                        
+                        // Visual comparison
+                        VStack(spacing: 15) {
+                            HStack(spacing: 20) {
+                                VStack(spacing: 8) {
+                                    ColorSwatch(color: colorToHarmonize, label: "Original")
+                                    if let score = harmonyScoreResult.score {
+                                        Text("Score: \(String(format: "%.2f", score))")
+                                            .font(.caption2)
+                                            .fontDesign(.monospaced)
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+                                
+                                VStack(spacing: 8) {
+                                    if let harmonized = harmonizeResult.color {
+                                        ColorSwatch(color: harmonized, label: "Harmonized")
+                                        if let score = harmonizedScoreResult.score {
+                                            Text("Score: \(String(format: "%.2f", score))")
+                                                .font(.caption2)
+                                                .fontDesign(.monospaced)
+                                                .foregroundColor(.secondary)
+                                        }
+                                    } else {
+                                        ColorSwatch(color: .gray, label: "Error")
+                                    }
+                                }
+                                
+                                VStack(spacing: 8) {
+                                    ColorSwatch(color: referenceColor, label: "Reference")
+                                    Text("(Unchanged)")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            
+                            // Visual text examples
+                            ScrollView(.horizontal) {
+                                HStack(spacing: 15) {
+                                    if let harmonized = harmonizeResult.color {
+                                        Text("Harmonized Text")
+                                            .font(.headline)
+                                            .foregroundColor(harmonized)
+                                            .padding()
+                                            .background(referenceColor)
+                                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                                    }
+                                    
+                                    Text("Original Text")
+                                        .font(.headline)
+                                        .foregroundColor(colorToHarmonize)
+                                        .padding()
+                                        .background(referenceColor)
+                                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                DemoSectionView(
+                    title: "Harmonized Contrasting Color",
+                    description: "Combine good contrast with color harmony in one step"
+                ) {
+                    VStack(spacing: 20) {
+                        CodeBlock(
+                            code: """
+                            let harmonizedContrasting = try Garnish.contrastingColor(
+                                colorToHarmonize, 
+                                against: referenceColor, 
+                                harmonize: true
+                            )
+                            """,
+                            colorMappings: [
+                                "harmonizedContrasting": contrastingColorResult.color ?? .gray,
+                                "colorToHarmonize": colorToHarmonize,
+                                "referenceColor": referenceColor
+                            ]
+                        )
+                        
+                        Divider()
+                        
+                        if let errorMessage = contrastingColorResult.error {
+                            Text("Error: \(errorMessage)").foregroundColor(.red)
+                        }
+                        
+                        // Compare regular vs harmonized contrasting colors
+                        ScrollView(.horizontal) {
+                            HStack(spacing: 15) {
+                                if let contrastingHarmonized = contrastingColorResult.color {
+                                    VStack(spacing: 8) {
+                                        Text("Harmonized + Contrasted")
+                                            .font(.body.weight(.semibold))
+                                            .foregroundColor(contrastingHarmonized)
+                                            .padding()
+                                            .background(referenceColor)
+                                            .clipShape(RoundedRectangle(cornerRadius: 15))
+                                        
+                                        let scores = harmonizedContrastingScores
+                                        if let contrast = scores.contrast, let harmony = scores.harmony {
+                                            VStack(spacing: 4) {
+                                                Text("Contrast: \(String(format: "%.1f", contrast)):1")
+                                                    .font(.caption2)
+                                                    .fontDesign(.monospaced)
+                                                Text("Harmony: \(String(format: "%.2f", harmony))")
+                                                    .font(.caption2)
+                                                    .fontDesign(.monospaced)
+                                            }
+                                            .foregroundColor(.secondary)
+                                        } else {
+                                            Text("Error calculating scores")
+                                                .font(.caption2)
+                                                .foregroundColor(.red)
+                                        }
+                                    }
+                                }
+                                
+                                if let regularContrasting = regularContrastingResult.color {
+                                    VStack(spacing: 8) {
+                                        Text("Only Contrasted")
+                                            .font(.body.weight(.semibold))
+                                            .foregroundColor(regularContrasting)
+                                            .padding()
+                                            .background(referenceColor)
+                                            .clipShape(RoundedRectangle(cornerRadius: 15))
+                                        
+                                        let scores = regularContrastingScores
+                                        if let contrast = scores.contrast, let harmony = scores.harmony {
+                                            VStack(spacing: 4) {
+                                                Text("Contrast: \(String(format: "%.1f", contrast)):1")
+                                                    .font(.caption2)
+                                                    .fontDesign(.monospaced)
+                                                Text("Harmony: \(String(format: "%.2f", harmony))")
+                                                    .font(.caption2)
+                                                    .fontDesign(.monospaced)
+                                            }
+                                            .foregroundColor(.secondary)
+                                        }
+                                    }
+                                } else if let errorMessage = regularContrastingResult.error {
+                                    Text("Error: \(errorMessage)")
+                                        .foregroundColor(.red)
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                DemoSectionView(
+                    title: "Harmony Theory",
+                    description: "Understanding LCH-based color harmony scoring"
+                ) {
+                    VStack(spacing: 15) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("The harmony algorithm considers:")
+                                .font(.headline)
+                                .fontWeight(.medium)
+                            
+                            VStack(alignment: .leading, spacing: 6) {
+                                HStack {
+                                    Text("🎨 Hue relationships (50%)")
+                                        .font(.body)
+                                    Spacer()
+                                }
+                                Text("Analogous (<30°), Complementary (180°), Triadic (120°/240°)")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                    .padding(.leading, 20)
+                                
+                                HStack {
+                                    Text("🌡️ Color temperature (30%)")
+                                        .font(.body)
+                                    Spacer()
+                                }
+                                Text("Warm vs Cool color harmony")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                    .padding(.leading, 20)
+                                
+                                HStack {
+                                    Text("🎭 Chroma/Saturation (20%)")
+                                        .font(.body)
+                                    Spacer()
+                                }
+                                Text("Similar saturation levels work better together")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                    .padding(.leading, 20)
+                            }
+                        }
+                        .padding(16)
+                        .background(
+                            RoundedRectangle(cornerRadius: 15)
+                                .fill(.ultraThinMaterial)
+                        )
+                        
+                        // Example color combinations
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Try these color combinations:")
+                                .font(.headline)
+                                .fontWeight(.medium)
+                            
+                            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 10) {
+                                let examples: [(Color, Color, String)] = [
+                                    (.orange, .blue, "Complementary"),
+                                    (.red, Color(red: 0.8, green: 0.2, blue: 0.2), "Analogous"),
+                                    (.green, .purple, "Triadic"),
+                                    (Color(red: 0.2, green: 0.6, blue: 0.9), Color(red: 0.9, green: 0.3, blue: 0.2), "Temperature Clash")
+                                ]
+                                
+                                ForEach(0..<examples.count, id: \.self) { index in
+                                    let (color1, color2, label) = examples[index]
+                                    Button(action: {
+                                        colorToHarmonize = color1
+                                        referenceColor = color2
+                                    }) {
+                                        HStack(spacing: 8) {
+                                            Circle()
+                                                .fill(color1)
+                                                .frame(width: 20, height: 20)
+                                            Circle()
+                                                .fill(color2)
+                                                .frame(width: 20, height: 20)
+                                            Text(label)
+                                                .font(.caption)
+                                                .foregroundColor(.primary)
+                                        }
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 8)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .fill(.quaternary)
+                                        )
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                        }
+                        .padding(16)
+                        .background(
+                            RoundedRectangle(cornerRadius: 15)
+                                .fill(.ultraThinMaterial)
+                        )
                     }
                 }
             }
@@ -920,3 +1318,4 @@ extension Font.Weight {
 }
 
 #endif
+
