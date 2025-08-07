@@ -23,41 +23,48 @@ private extension GarnishThemeDemoApp {
         defaultTheme.setColor(.primary, Color.blue, for: .light)
         defaultTheme.setColor(.secondary, Color.green, for: .light)
         defaultTheme.setColor(.tertiary, Color.orange, for: .light)
-        defaultTheme.setColor(.backgroundColor, Color.white, for: .light)
+        defaultTheme.setColor(.background, Color.white, for: .light)
+        defaultTheme.setColor(.backgroundSecondary, Color.white, for: .light)
         defaultTheme.setColor(.primary, Color.blue.opacity(0.8), for: .dark)
         defaultTheme.setColor(.secondary, Color.green.opacity(0.8), for: .dark)
         defaultTheme.setColor(.tertiary, Color.orange.opacity(0.8), for: .dark)
-        defaultTheme.setColor(.backgroundColor, Color.black, for: .dark)
+        defaultTheme.setColor(.background, Color.black, for: .dark)
         
         let darkTheme = BuiltInTheme(name: "Dark")
         darkTheme.setColor(.primary, Color.white, for: .light)
         darkTheme.setColor(.secondary, Color.gray, for: .light)
         darkTheme.setColor(.tertiary, Color.blue, for: .light)
-        darkTheme.setColor(.backgroundColor, Color(red: 0.95, green: 0.95, blue: 0.95), for: .light)
+        darkTheme.setColor(.background, Color(red: 0.95, green: 0.95, blue: 0.95), for: .light)
+        darkTheme.setColor(.backgroundSecondary, Color(red: 0.95, green: 0.95, blue: 0.95), for: .light)
         darkTheme.setColor(.primary, Color.white, for: .dark)
         darkTheme.setColor(.secondary, Color.gray.opacity(0.7), for: .dark)
         darkTheme.setColor(.tertiary, Color.blue.opacity(0.9), for: .dark)
-        darkTheme.setColor(.backgroundColor, Color(red: 0.1, green: 0.1, blue: 0.1), for: .dark)
+        darkTheme.setColor(.background, Color(red: 0.1, green: 0.1, blue: 0.1), for: .dark)
+        darkTheme.setColor(.backgroundSecondary, Color(red: 0.1, green: 0.1, blue: 0.1), for: .dark)
         
         let oceanTheme = BuiltInTheme(name: "Ocean")
         oceanTheme.setColor(.primary, Color(red: 0.0, green: 0.5, blue: 0.8), for: .light)
         oceanTheme.setColor(.secondary, Color(red: 0.0, green: 0.7, blue: 0.6), for: .light)
         oceanTheme.setColor(.tertiary, Color(red: 0.4, green: 0.8, blue: 1.0), for: .light)
-        oceanTheme.setColor(.backgroundColor, Color(red: 0.97, green: 0.99, blue: 1.0), for: .light)
+        oceanTheme.setColor(.background, Color(red: 0.97, green: 0.99, blue: 1.0), for: .light)
+        oceanTheme.setColor(.backgroundSecondary, Color(red: 0.97, green: 0.99, blue: 1.0), for: .light)
         oceanTheme.setColor(.primary, Color(red: 0.2, green: 0.6, blue: 0.9), for: .dark)
         oceanTheme.setColor(.secondary, Color(red: 0.1, green: 0.8, blue: 0.7), for: .dark)
         oceanTheme.setColor(.tertiary, Color(red: 0.5, green: 0.9, blue: 1.0), for: .dark)
-        oceanTheme.setColor(.backgroundColor, Color(red: 0.05, green: 0.1, blue: 0.15), for: .dark)
+        oceanTheme.setColor(.background, Color(red: 0.05, green: 0.1, blue: 0.15), for: .dark)
+        oceanTheme.setColor(.backgroundSecondary, Color(red: 0.05, green: 0.1, blue: 0.15), for: .dark)
         
         let roseTheme = BuiltInTheme(name: "Rose")
         roseTheme.setColor(.primary, Color(red: 0.9, green: 0.4, blue: 0.6), for: .light)      // Soft rose pink
         roseTheme.setColor(.secondary, Color(red: 0.8, green: 0.5, blue: 0.7), for: .light)   // Muted lavender pink
         roseTheme.setColor(.tertiary, Color(red: 0.7, green: 0.3, blue: 0.5), for: .light)    // Deeper rose
-        roseTheme.setColor(.backgroundColor, Color(red: 0.99, green: 0.97, blue: 0.98), for: .light) // Very light rose tint
+        roseTheme.setColor(.background, Color(red: 0.99, green: 0.97, blue: 0.98), for: .light) // Very light rose tint
+        roseTheme.setColor(.backgroundSecondary, Color(red: 0.99, green: 0.97, blue: 0.98), for: .light) // Very light rose tint
         roseTheme.setColor(.primary, Color(red: 0.95, green: 0.6, blue: 0.75), for: .dark)    // Brighter rose for dark mode
         roseTheme.setColor(.secondary, Color(red: 0.85, green: 0.65, blue: 0.8), for: .dark)  // Soft pink-purple
         roseTheme.setColor(.tertiary, Color(red: 0.8, green: 0.5, blue: 0.65), for: .dark)    // Medium rose
-        roseTheme.setColor(.backgroundColor, Color(red: 0.15, green: 0.1, blue: 0.12), for: .dark) // Dark with rose undertone
+        roseTheme.setColor(.background, Color(red: 0.15, green: 0.1, blue: 0.12), for: .dark) // Dark with rose undertone
+        roseTheme.setColor(.backgroundSecondary, Color(red: 0.15, green: 0.1, blue: 0.12), for: .dark) // Dark with rose undertone
         
         // Register the demo themes
         GarnishTheme.registerBuiltInTheme(defaultTheme)
@@ -351,7 +358,7 @@ struct BuiltInThemesDemo: View {
                                     }
                                     
                                     LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 1), spacing: 15) {
-                                        ForEach([ColorKey.primary, .secondary, .tertiary, .backgroundColor], id: \.self) { colorKey in
+                                        ForEach([ColorKey.primary, .secondary, .tertiary, .background, .backgroundSecondary], id: \.self) { colorKey in
                                             ThemeColorSwatch(
                                                 theme: theme,
                                                 colorKey: colorKey,
@@ -465,7 +472,8 @@ struct CurrentThemeAPIDemo: View {
                                     Text("Primary").tag(ColorKey.primary)
                                     Text("Secondary").tag(ColorKey.secondary)
                                     Text("Tertiary").tag(ColorKey.tertiary)
-                                    Text("Background").tag(ColorKey.backgroundColor)
+                                    Text("Background").tag(ColorKey.background)
+                                    Text("Background Secondary").tag(ColorKey.backgroundSecondary)
                                 }
                                 .pickerStyle(.menu)
                             }
@@ -513,9 +521,16 @@ struct CurrentThemeAPIDemo: View {
                             
                             ConvenienceMethodDemo(
                                 title: "Background Light",
-                                code: "current.backgroundColor(for: .light)"
+                                code: "current.background(for: .light)"
                             ) {
-                                try? GarnishTheme.current.backgroundColor(for: .light)
+                                try? GarnishTheme.current.background(for: .light)
+                            }
+                            
+                            ConvenienceMethodDemo(
+                                title: "Background Secondary Light",
+                                code: "current.backgroundSecondary(for: .light)"
+                            ) {
+                                try? GarnishTheme.current.backgroundSecondary(for: .light)
                             }
                             
                             ConvenienceMethodDemo(
@@ -749,7 +764,7 @@ struct ColorKeysSystemDemo: View {
                         )
                         
                         LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 1), spacing: 12) {
-                            ForEach([ColorKey.primary, .secondary, .tertiary, .backgroundColor], id: \.self) { key in
+                            ForEach([ColorKey.primary, .secondary, .tertiary, .background, .backgroundSecondary], id: \.self) { key in
                                 ColorKeyInfoCard(colorKey: key)
                             }
                         }
@@ -822,7 +837,8 @@ struct ColorKeysSystemDemo: View {
                                     Text("Primary").tag(ColorKey.primary)
                                     Text("Secondary").tag(ColorKey.secondary)
                                     Text("Tertiary").tag(ColorKey.tertiary)
-                                    Text("Background").tag(ColorKey.backgroundColor)
+                                    Text("Background").tag(ColorKey.background)
+                                    Text("Background Secondary").tag(ColorKey.backgroundSecondary)
                                 }
                                 .pickerStyle(.menu)
                             }
@@ -1409,7 +1425,7 @@ struct ThemeTestingInterface: View {
     var body: some View {
         VStack(spacing: 15) {
             if let primary = try? theme.primary(for: colorScheme),
-               let background = try? theme.backgroundColor(for: colorScheme) {
+               let background = try? theme.background(for: colorScheme) {
                 
                 Text("Sample heading text for readability testing")
                     .font(.title2)

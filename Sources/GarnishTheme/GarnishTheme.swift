@@ -82,8 +82,11 @@ public class GarnishTheme {
     }
     
     /// Fast access to current background color
-    public static func currentBackgroundColor(for scheme: ColorScheme) throws -> Color {
-        return try current.backgroundColor(for: scheme)
+    public static func currentBackground(for scheme: ColorScheme) throws -> Color {
+        return try current.background(for: scheme)
+    }
+    public static func currentBackgroundSecondary(for scheme: ColorScheme) throws -> Color {
+        return try current.backgroundSecondary(for: scheme)
     }
     
     // MARK: - Theme Management

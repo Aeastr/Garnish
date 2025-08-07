@@ -40,9 +40,13 @@ public class BuiltInTheme {
         return try color(.tertiary, for: scheme)
     }
     
-    public func backgroundColor(for scheme: ColorScheme) throws -> Color {
-        return try color(.backgroundColor, for: scheme)
+    public func background(for scheme: ColorScheme) throws -> Color {
+        return try color(.background, for: scheme)
     }
+    public func backgroundSecondary(for scheme: ColorScheme) throws -> Color {
+        return try color(.backgroundSecondary, for: scheme)
+    }
+    
     
     // MARK: - Color Setting (Internal for built-in theme creation)
     
@@ -80,17 +84,18 @@ public class BuiltInTheme {
     }
     
     /// Get preview colors for theme selection UI
-    public var previewColors: (primary: Color, secondary: Color, background: Color) {
+    public var previewColors: (primary: Color, secondary: Color, background: Color, backgroundSecondary: Color) {
         let scheme: ColorScheme = .light // Default to light for previews
         
         do {
             let primary = try color(.primary, for: scheme)
             let secondary = try color(.secondary, for: scheme)
-            let background = try color(.backgroundColor, for: scheme)
-            return (primary: primary, secondary: secondary, background: background)
+            let background = try color(.background, for: scheme)
+            let backgroundSecondary = try color(.backgroundSecondary, for: scheme)
+            return (primary: primary, secondary: secondary, background: background, backgroundSecondary: backgroundSecondary)
         } catch {
             // Fallback colors if theme is incomplete
-            return (primary: Color.blue, secondary: Color.green, background: Color.white)
+            return (primary: Color.blue, secondary: Color.green, background: Color.white, backgroundSecondary: Color.gray)
         }
     }
 }

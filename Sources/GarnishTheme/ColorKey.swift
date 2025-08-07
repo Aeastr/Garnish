@@ -5,7 +5,8 @@ public enum ColorKey: Hashable, Codable {
     case primary
     case secondary
     case tertiary
-    case backgroundColor
+    case background
+    case backgroundSecondary
     case custom(String)
 }
 
@@ -20,8 +21,10 @@ public extension ColorKey {
             return "secondary"
         case .tertiary:
             return "tertiary"
-        case .backgroundColor:
-            return "backgroundColor"
+        case .background:
+            return "background"
+        case .backgroundSecondary:
+            return "backgroundSecondary"
         case .custom(let name):
             return name
         }
@@ -38,8 +41,10 @@ public extension ColorKey {
             self = .secondary
         case "tertiary":
             self = .tertiary
-        case "backgroundColor":
-            self = .backgroundColor
+        case "background":
+            self = .background
+        case "backgroundSecondary":
+            self = .backgroundSecondary
         default:
             self = .custom(string)
         }
@@ -48,7 +53,7 @@ public extension ColorKey {
     /// Returns true if this is a standard (built-in) color key
     var isStandard: Bool {
         switch self {
-        case .primary, .secondary, .tertiary, .backgroundColor:
+        case .primary, .secondary, .tertiary, .background, .backgroundSecondary:
             return true
         case .custom:
             return false
@@ -60,6 +65,6 @@ public extension ColorKey {
 public extension ColorKey {
     /// Standard color keys provided by GarnishTheme
     static let standardKeys: [ColorKey] = [
-        .primary, .secondary, .tertiary, .backgroundColor
+        .primary, .secondary, .tertiary, .background
     ]
 }
