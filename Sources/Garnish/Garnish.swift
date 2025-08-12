@@ -31,10 +31,11 @@ public class Garnish {
     public static func contrastingShade(
         of color: Color,
         using method: GarnishMath.BrightnessMethod = .luminance,
-        targetRatio: CGFloat = GarnishMath.defaultThreshold
+        targetRatio: CGFloat = GarnishMath.defaultThreshold,
+        biasPreference: CGFloat = 0.0
     ) throws -> Color {
         // contrastingShade is just contrastingColor against itself
-        return try contrastingColor(color, against: color, using: method, targetRatio: targetRatio)
+        return try contrastingColor(color, against: color, using: method, targetRatio: targetRatio, biasPreference: biasPreference)
     }
     
     /// Optimizes one color to work well against another background.
@@ -56,82 +57,113 @@ public class Garnish {
         _ color: Color,
         against background: Color,
         using method: GarnishMath.BrightnessMethod = .luminance,
-        targetRatio: CGFloat = GarnishMath.defaultThreshold
+        targetRatio: CGFloat = GarnishMath.defaultThreshold,
+        biasPreference: CGFloat = 0.0 // +ve = bias white, -ve = bias black
     ) throws -> Color {
         #if canImport(UIKit)
         typealias PlatformColor = UIColor
         #elseif os(macOS)
         typealias PlatformColor = NSColor
         #endif
-        
+
         let platformColor = PlatformColor(color)
-        let currentRatio = try GarnishMath.contrastRatio(between: color, and: background)
-        
-        // If contrast is already sufficient, return original color
+        let currentRatio = try GarnishMath.contrastRatio(
+            between: color,
+            and: background
+        )
+
         if currentRatio >= targetRatio {
             return color
         }
-        
-        // Try both black and white to see which gives better contrast against the background
+
         let blackBase: PlatformColor = .black
         let whiteBase: PlatformColor = .white
-        
-        // Test a moderate blend with both bases to see which direction works better
-        let testBlendAmount: CGFloat = 0.5
-        let blackTest = platformColor.blend(with: blackBase, ratio: testBlendAmount)
-        let whiteTest = platformColor.blend(with: whiteBase, ratio: testBlendAmount)
-        
-        let blackRatio = try GarnishMath.contrastRatio(between: Color(blackTest), and: background)
-        let whiteRatio = try GarnishMath.contrastRatio(between: Color(whiteTest), and: background)
-        
-        // Choose the direction that gives better contrast
-        let contrastingBase = blackRatio > whiteRatio ? blackBase : whiteBase
-        
-        // Binary search for the right blend amount to achieve target contrast
-        var lowBlend: CGFloat = 0.0
-        var highBlend: CGFloat = 1.0
-        var bestBlend: CGFloat = 0.0
-        var bestRatio: CGFloat = 0.0
-        let maxIterations = 5
-        
-        for _ in 0..<maxIterations {
-            let testBlend = (lowBlend + highBlend) / 2.0
-            let testColor = platformColor.blend(with: contrastingBase, ratio: testBlend)
-            let testRatio = try GarnishMath.contrastRatio(between: Color(testColor), and: background)
-            
-            // Always update best if this is better than previous best
-            if testRatio >= targetRatio && (bestRatio < targetRatio || testBlend < bestBlend) {
-                bestBlend = testBlend
-                bestRatio = testRatio
-            }
-            
-            if testRatio >= targetRatio {
-                // We have enough contrast, try with less blending
-                highBlend = testBlend
-            } else {
-                // Not enough contrast, need more blending
-                lowBlend = testBlend
-                // If we don't have a valid solution yet, this is our current best
-                if bestRatio < targetRatio {
-                    bestBlend = testBlend
-                    bestRatio = testRatio
+
+        func quickBestBlend(for base: PlatformColor) throws -> (blend: CGFloat, ratio: CGFloat) {
+            let testRatios: [CGFloat] = [0.5, 0.7, 0.8, 0.88]
+            var bestBlend: CGFloat = 1
+            var bestRatio: CGFloat = 0
+
+            for ratio in testRatios {
+                let testColor = platformColor.blend(with: base, ratio: ratio)
+                let contrast = try GarnishMath.contrastRatio(
+                    between: Color(testColor),
+                    and: background
+                )
+
+                if contrast >= targetRatio {
+                    if ratio < bestBlend {
+                        bestBlend = ratio
+                        bestRatio = contrast
+                    }
+                    break
+                } else if contrast > bestRatio {
+                    bestBlend = ratio
+                    bestRatio = contrast
                 }
             }
-            
-            // If we're close enough to target, break early
-            if bestRatio >= targetRatio && abs(bestRatio - targetRatio) < 0.1 {
-                break
+            return (bestBlend, bestRatio)
+        }
+
+        let whiteResult = try quickBestBlend(for: whiteBase)
+        let blackResult = try quickBestBlend(for: blackBase)
+
+        print("---")
+        print("Target ratio: \(targetRatio)")
+        print("Bias preference: \(biasPreference) (positive = white bias, negative = black bias)")
+        print("White final blend: \(whiteResult.blend), ratio: \(whiteResult.ratio)")
+        print("Black final blend: \(blackResult.blend), ratio: \(blackResult.ratio)")
+
+        let finalChoice: (PlatformColor, CGFloat)
+        if whiteResult.ratio >= targetRatio && blackResult.ratio >= targetRatio {
+            // Calculate how far each is from the target
+            let whiteDiff = abs(whiteResult.ratio - targetRatio)
+            let blackDiff = abs(blackResult.ratio - targetRatio)
+
+            // Apply bias: positive = white bias, negative = black bias
+            let adjustedBlackDiff = blackDiff + max(0, -biasPreference)
+            let adjustedWhiteDiff = whiteDiff + max(0, biasPreference)
+
+            print("Original diffs → White: \(whiteDiff), Black: \(blackDiff)")
+            print("Adjusted diffs → White: \(adjustedWhiteDiff), Black: \(adjustedBlackDiff)")
+
+            if adjustedWhiteDiff <= adjustedBlackDiff {
+                print("→ Choosing WHITE (meets target, ratio bias applied)")
+                finalChoice = (whiteBase, whiteResult.blend)
+            } else {
+                print("→ Choosing BLACK (meets target, ratio bias applied)")
+                finalChoice = (blackBase, blackResult.blend)
+            }
+        } else if whiteResult.ratio >= targetRatio {
+            print("→ Choosing WHITE (only white meets target)")
+            finalChoice = (whiteBase, whiteResult.blend)
+        } else if blackResult.ratio >= targetRatio {
+            print("→ Choosing BLACK (only black meets target)")
+            finalChoice = (blackBase, blackResult.blend)
+        } else {
+            // Neither meets target → still apply bias
+            let whiteDiff = abs(whiteResult.ratio - targetRatio)
+            let blackDiff = abs(blackResult.ratio - targetRatio)
+
+            let adjustedBlackDiff = blackDiff + max(0, -biasPreference)
+            let adjustedWhiteDiff = whiteDiff + max(0, biasPreference)
+
+            print("Neither meets target → applying bias")
+            print("Original diffs → White: \(whiteDiff), Black: \(blackDiff)")
+            print("Adjusted diffs → White: \(adjustedWhiteDiff), Black: \(adjustedBlackDiff)")
+
+            if adjustedWhiteDiff <= adjustedBlackDiff {
+                print("→ Choosing WHITE (bias applied, neither meets)")
+                finalChoice = (whiteBase, whiteResult.blend)
+            } else {
+                print("→ Choosing BLACK (bias applied, neither meets)")
+                finalChoice = (blackBase, blackResult.blend)
             }
         }
-        
-        let result = platformColor.blend(with: contrastingBase, ratio: bestBlend)
+        print("---")
+
+        let result = platformColor.blend(with: finalChoice.0, ratio: finalChoice.1)
         return Color(result)
-    }
-    
-    /// Quick accessibility check.
-    /// - Throws: `GarnishError` if color analysis fails
-    public static func hasGoodContrast(_ color1: Color, _ color2: Color) throws -> Bool {
-        return try GarnishMath.meetsWCAGAA(color1, color2)
     }
 }
 
