@@ -17,7 +17,7 @@ public extension GarnishTheme {
     }
     
     /// Remove a registered built-in theme
-    static func unregisterBuiltInTheme(named name: String) {
+    static func  unregisterBuiltInTheme(named name: String) {
         builtInThemes.removeValue(forKey: name)
     }
     

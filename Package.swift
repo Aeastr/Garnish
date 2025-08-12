@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "Garnish",
     platforms: [
-        .iOS(.v14),
+        .iOS(.v17),
         .macOS(.v14),
         .tvOS(.v14),
         .watchOS(.v7),
