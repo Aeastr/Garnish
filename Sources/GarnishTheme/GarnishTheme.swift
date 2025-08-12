@@ -11,8 +11,12 @@ public class GarnishTheme {
     public var primary: Color = Color(red: 123/255, green: 67/255, blue: 204/255)
     public var secondary: Color = Color(red: 147/255, green: 99/255, blue: 230/255)
     public var tertiary: Color = Color(red: 180/255, green: 147/255, blue: 242/255)
-    public var background: Color = Color(red: 252/255, green: 250/255, blue: 255/255)
-    public var backgroundSecondary: Color = Color(red: 247/255, green: 242/255, blue: 252/255)
+
+    // Almost white with a subtle purple tint
+    public var background: Color = Color(red: 253/255, green: 251/255, blue: 255/255)
+
+    // Slightly more tinted and darker for contrast
+    public var backgroundSecondary: Color = Color(red: 245/255, green: 240/255, blue: 250/255)
     
     // MARK: - Internal State
     @ObservationIgnored private var currentTheme: BuiltInTheme?
