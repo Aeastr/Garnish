@@ -80,7 +80,7 @@ public class Garnish {
         let whiteBase: PlatformColor = .white
 
         func quickBestBlend(for base: PlatformColor) throws -> (blend: CGFloat, ratio: CGFloat) {
-            let testRatios: [CGFloat] = [0.5, 0.7, 0.8, 0.88]
+            let testRatios: [CGFloat] = [0.5, 0.7, 0.8, 0.9]
             var bestBlend: CGFloat = 1
             var bestRatio: CGFloat = 0
 

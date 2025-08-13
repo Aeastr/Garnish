@@ -7,7 +7,7 @@ public class BuiltInTheme {
     public let isBuiltIn: Bool = true
     private var colors: [ColorKey: (light: Color?, dark: Color?)] = [:]
     
-    internal init(name: String) {
+    public init(name: String) {
         self.name = name
     }
     
@@ -51,12 +51,12 @@ public class BuiltInTheme {
     // MARK: - Color Setting (Internal for built-in theme creation)
     
     /// Set color for both light and dark schemes
-    internal func setColor(_ key: ColorKey, light: Color, dark: Color) {
+    public func setColor(_ key: ColorKey, light: Color, dark: Color) {
         colors[key] = (light: light, dark: dark)
     }
     
     /// Set color for specific scheme only
-    internal func setColor(_ key: ColorKey, _ color: Color, for scheme: ColorScheme) {
+    public func setColor(_ key: ColorKey, _ color: Color, for scheme: ColorScheme) {
         let existing = colors[key] ?? (light: nil, dark: nil)
         if scheme == .light {
             colors[key] = (light: color, dark: existing.dark)

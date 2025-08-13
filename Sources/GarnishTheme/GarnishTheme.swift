@@ -247,6 +247,48 @@ private extension GarnishTheme {
     }
 }
 
+// MARK: - SwiftUI Helpers
+
+/// ViewModifier that automatically handles GarnishTheme setup and color scheme changes
+public struct GarnishThemeModifier: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+    let theme: GarnishTheme
+    let setupTheme: ((GarnishTheme) -> Void)?
+    
+    init(theme: GarnishTheme, setupTheme: ((GarnishTheme) -> Void)? = nil) {
+        self.theme = theme
+        self.setupTheme = setupTheme
+    }
+    
+    public func body(content: Content) -> some View {
+        content
+            .environment(theme)
+            .onAppear {
+                theme.setColorScheme(colorScheme)
+                setupTheme?(theme)
+            }
+            .onChange(of: colorScheme) { _, newColorScheme in
+                theme.setColorScheme(newColorScheme)
+            }
+    }
+}
+
+public extension View {
+    /// Apply GarnishTheme with automatic color scheme handling
+    func garnishTheme(_ theme: GarnishTheme, setup: ((GarnishTheme) -> Void)? = nil) -> some View {
+        modifier(GarnishThemeModifier(theme: theme, setupTheme: setup))
+    }
+    
+    /// Apply GarnishTheme with built-in theme setup
+    func garnishTheme(builtInTheme: BuiltInTheme) -> some View {
+        let theme = GarnishTheme()
+        return modifier(GarnishThemeModifier(theme: theme) { theme in
+            theme.configure(theme: builtInTheme)
+        })
+    }
+    
+}
+
 // MARK: - Static Compatibility (Deprecated)
 
 public extension GarnishTheme {

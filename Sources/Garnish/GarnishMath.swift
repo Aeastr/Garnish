@@ -23,6 +23,7 @@ public class GarnishMath {
     
     /// WCAG AA contrast ratio threshold (4.5:1)
     public static let wcagAAThreshold: CGFloat = 4.5
+    public static let wcagAAThresholdLarge: CGFloat = 3.1
     
     /// WCAG AAA contrast ratio threshold (7:1)  
     public static let wcagAAAThreshold: CGFloat = 7.0
