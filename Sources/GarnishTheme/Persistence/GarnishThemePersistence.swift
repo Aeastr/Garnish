@@ -53,7 +53,7 @@ public class GarnishThemePersistence {
         
         if context.hasChanges {
             do {
-                try? context.save()
+                try context.save()
             } catch {
                 throw GarnishThemeError.coreDataError(error)
             }
