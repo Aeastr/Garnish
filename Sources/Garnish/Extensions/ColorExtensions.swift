@@ -18,6 +18,47 @@ typealias PlatformColor = NSColor
    
     
 public extension Color {
+    /// Returns HSB (Hue, Saturation, Brightness) components of the color
+    var hsb: (hue: Double, saturation: Double, brightness: Double) {
+        #if canImport(UIKit)
+        let uiColor = UIColor(self)
+        var hue: CGFloat = 0
+        var saturation: CGFloat = 0
+        var brightness: CGFloat = 0
+        var alpha: CGFloat = 0
+
+        uiColor.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+
+        return (
+            hue: Double(hue) * 360,  // Convert to degrees
+            saturation: Double(saturation),
+            brightness: Double(brightness)
+        )
+        #elseif os(macOS)
+        let nsColor = NSColor(self)
+        var hue: CGFloat = 0
+        var saturation: CGFloat = 0
+        var brightness: CGFloat = 0
+        var alpha: CGFloat = 0
+
+        // Convert to RGB color space first if needed
+        let rgbColor = nsColor.usingColorSpace(.deviceRGB) ?? nsColor
+        rgbColor.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+
+        return (
+            hue: Double(hue) * 360,  // Convert to degrees
+            saturation: Double(saturation),
+            brightness: Double(brightness)
+        )
+        #endif
+    }
+
+    /// Returns the relative luminance of the color
+    func luminance() -> Double {
+        // Use GarnishMath's implementation
+        return Double((try? GarnishMath.relativeLuminance(of: self)) ?? 0.5)
+    }
+
     /// Adjusts the brightness of a color using standardized RGB brightness calculation.
     /// Uses the same method as GarnishColor.adjustBrightness for consistency.
     ///
