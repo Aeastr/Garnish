@@ -33,7 +33,8 @@ let package = Package(
             name: "GarnishTheme"
         ),
         .target(
-            name: "GarnishExpansion"
+            name: "GarnishExpansion",
+            dependencies: ["Garnish"]
         ),
         .testTarget(
             name: "GarnishTests",
