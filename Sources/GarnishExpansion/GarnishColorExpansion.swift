@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Garnish
 
 /// Handles all color array expansion and contraction operations
 public struct GarnishColorExpansion {
