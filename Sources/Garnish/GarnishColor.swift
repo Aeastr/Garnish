@@ -32,6 +32,76 @@ public class GarnishColor {
         #endif
     }
     
+    // MARK: - Color Averaging
+
+    /// Calculates the average color from an array of colors.
+    /// - Parameter colors: Array of SwiftUI Color objects
+    /// - Returns: A new Color representing the average of all input colors
+    public static func averageColor(from colors: [Color]) -> Color {
+        guard !colors.isEmpty else {
+            return Color.clear
+        }
+
+        var totalRed: CGFloat = 0
+        var totalGreen: CGFloat = 0
+        var totalBlue: CGFloat = 0
+        var totalAlpha: CGFloat = 0
+        var successfulCount: CGFloat = 0
+
+        for color in colors {
+            if let components = extractColorComponents(from: color) {
+                totalRed += components.red
+                totalGreen += components.green
+                totalBlue += components.blue
+                totalAlpha += components.alpha
+                successfulCount += 1
+            }
+        }
+
+        guard successfulCount > 0 else { return Color.clear }
+
+        return Color(
+            .sRGB,
+            red: Double(totalRed / successfulCount),
+            green: Double(totalGreen / successfulCount),
+            blue: Double(totalBlue / successfulCount),
+            opacity: Double(totalAlpha / successfulCount)
+        )
+    }
+
+    /// Extracts RGBA components from a Color.
+    /// - Parameter color: The color to extract components from
+    /// - Returns: Tuple of (red, green, blue, alpha) components, or nil if extraction fails
+    public static func extractColorComponents(from color: Color) -> (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)? {
+        #if os(iOS) || os(tvOS) || os(watchOS)
+        let uiColor = UIColor(color)
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+
+        guard uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha) else {
+            return nil
+        }
+
+        return (red, green, blue, alpha)
+
+        #elseif os(macOS)
+        let nsColor = NSColor(color)
+        guard let rgbColor = nsColor.usingColorSpace(.sRGB) else {
+            return nil
+        }
+
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+
+        rgbColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        return (red, green, blue, alpha)
+        #endif
+    }
+
     // MARK: - Brightness Adjustment
     
     /// Adjusts the brightness of a color by a percentage.
