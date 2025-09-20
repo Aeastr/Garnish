@@ -53,12 +53,6 @@ public extension Color {
         #endif
     }
 
-    /// Returns the relative luminance of the color
-    func luminance() -> Double {
-        // Use GarnishMath's implementation
-        return Double((try? GarnishMath.relativeLuminance(of: self)) ?? 0.5)
-    }
-
     /// Adjusts the brightness of a color using standardized RGB brightness calculation.
     /// Uses the same method as GarnishColor.adjustBrightness for consistency.
     ///

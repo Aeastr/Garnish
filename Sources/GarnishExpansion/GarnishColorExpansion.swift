@@ -61,8 +61,17 @@ public struct GarnishColorExpansion {
         }
 
         // Sort by luminance and pick the middle one
-        let sorted = colors.sorted { $0.luminance() < $1.luminance() }
-        return sorted[sorted.count / 2]
+        // If we can't calculate luminance for some colors, just use the middle by index
+        do {
+            let colorsWithLuminance = try colors.map { color in
+                (color, try color.relativeLuminance())
+            }
+            let sorted = colorsWithLuminance.sorted { $0.1 < $1.1 }
+            return sorted[sorted.count / 2].0
+        } catch {
+            // Fallback: just return the middle color by index
+            return colors[colors.count / 2]
+        }
     }
 
     // MARK: - Specific Expansion Strategies
