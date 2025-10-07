@@ -1,6 +1,6 @@
 {
   "fill" : {
-    "automatic-gradient" : "display-p3:0.19608,0.57255,0.97255,1.00000"
+    "automatic-gradient" : "display-p3:0.50195,0.24413,0.85498,1.00000"
   },
   "groups" : [
     {
@@ -65,12 +65,11 @@
           "fill" : {
             "solid" : "extended-gray:1.00000,1.00000"
           },
-          "hidden" : false,
-          "image-name" : "Grid.png",
+          "image-name" : "grid.png",
           "name" : "Grid)",
-          "opacity" : 0.2,
+          "opacity" : 0.4,
           "position" : {
-            "scale" : 1,
+            "scale" : 0.5,
             "translation-in-points" : [
               0,
               0
