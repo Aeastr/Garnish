@@ -26,6 +26,27 @@ public class Garnish {
         case preferDark
     }
 
+    /// Blend intensity presets for controlling how strongly colors are adjusted
+    public enum BlendStyle {
+        /// Minimal blending - just enough to meet target contrast
+        case minimal
+        /// Moderate blending - at least 50% blend towards chosen direction
+        case moderate
+        /// Strong blending - at least 70% blend towards chosen direction
+        case strong
+        /// Maximum blending - always 100% blend (pure white or black)
+        case maximum
+
+        var minimumBlend: CGFloat {
+            switch self {
+            case .minimal: return 0.0
+            case .moderate: return 0.5
+            case .strong: return 0.7
+            case .maximum: return 1.0
+            }
+        }
+    }
+
     // MARK: - Core API (New)
     
     /// Generates a contrasting shade of the same color that meets WCAG standards.
@@ -35,7 +56,8 @@ public class Garnish {
     /// ```swift
     /// let contrastingBlue = Garnish.contrastingShade(of: .blue)
     /// let shadowBlue = Garnish.contrastingShade(of: .blue, direction: .forceDark)
-    /// let preferWhite = Garnish.contrastingShade(of: .blue, direction: .preferLight)
+    /// let strongWhite = Garnish.contrastingShade(of: .blue, blendStyle: .strong)
+    /// let customBlend = Garnish.contrastingShade(of: .blue, minimumBlend: 0.6)
     /// ```
     ///
     /// - Parameters:
@@ -46,16 +68,31 @@ public class Garnish {
     ///     - `.auto`: Choose best contrast automatically
     ///     - `.forceLight`/`.forceDark`: Always go in that direction
     ///     - `.preferLight`/`.preferDark`: Try preferred direction first, switch only if target is unreachable
+    ///   - minimumBlend: Minimum blend amount (0.0-1.0). Overrides blendStyle if both provided.
+    ///   - blendStyle: Preset blend intensity (minimal, moderate, strong, maximum)
+    ///   - blendRange: Full control over blend range. Overrides minimumBlend and blendStyle.
     /// - Returns: A contrasting shade of the input color that meets the target contrast ratio
     /// - Throws: `GarnishError` if color analysis fails
     public static func contrastingShade(
         of color: Color,
         using method: GarnishMath.BrightnessMethod = .luminance,
         targetRatio: CGFloat = GarnishMath.defaultThreshold,
-        direction: ContrastDirection = .auto
+        direction: ContrastDirection = .auto,
+        minimumBlend: CGFloat? = nil,
+        blendStyle: BlendStyle? = nil,
+        blendRange: ClosedRange<CGFloat>? = nil
     ) throws -> Color {
         // contrastingShade is just contrastingColor against itself
-        return try contrastingColor(color, against: color, using: method, targetRatio: targetRatio, direction: direction)
+        return try contrastingColor(
+            color,
+            against: color,
+            using: method,
+            targetRatio: targetRatio,
+            direction: direction,
+            minimumBlend: minimumBlend,
+            blendStyle: blendStyle,
+            blendRange: blendRange
+        )
     }
     
     /// Optimizes one color to work well against another background.
@@ -65,7 +102,8 @@ public class Garnish {
     /// ```swift
     /// let optimizedRed = Garnish.contrastingColor(.red, against: .blue)
     /// let shadowRed = Garnish.contrastingColor(.red, against: .blue, direction: .forceDark)
-    /// let whiteishText = Garnish.contrastingColor(.gray, against: .green, direction: .preferLight)
+    /// let strongWhite = Garnish.contrastingColor(.red, against: .blue, blendStyle: .strong)
+    /// let customBlend = Garnish.contrastingColor(.red, against: .blue, minimumBlend: 0.6)
     /// ```
     ///
     /// - Parameters:
@@ -77,6 +115,9 @@ public class Garnish {
     ///     - `.auto`: Choose best contrast automatically
     ///     - `.forceLight`/`.forceDark`: Always go in that direction
     ///     - `.preferLight`/`.preferDark`: Try preferred direction first, switch only if target is unreachable
+    ///   - minimumBlend: Minimum blend amount (0.0-1.0). Overrides blendStyle if both provided.
+    ///   - blendStyle: Preset blend intensity (minimal, moderate, strong, maximum)
+    ///   - blendRange: Full control over blend range. Overrides minimumBlend and blendStyle.
     /// - Returns: Optimized version of the input color
     /// - Throws: `GarnishError` if color analysis fails
     public static func contrastingColor(
@@ -84,7 +125,10 @@ public class Garnish {
         against background: Color,
         using method: GarnishMath.BrightnessMethod = .luminance,
         targetRatio: CGFloat = GarnishMath.defaultThreshold,
-        direction: ContrastDirection = .auto
+        direction: ContrastDirection = .auto,
+        minimumBlend: CGFloat? = nil,
+        blendStyle: BlendStyle? = nil,
+        blendRange: ClosedRange<CGFloat>? = nil
     ) throws -> Color {
         #if canImport(UIKit)
         typealias PlatformColor = UIColor
@@ -131,21 +175,29 @@ public class Garnish {
             let fullyBlended = platformColor.blend(with: preferredBase, ratio: 1.0)
             let maxRatio = try GarnishMath.contrastRatio(between: Color(fullyBlended), and: background)
 
-            print("🔍 Debug Prefer Mode:")
-            print("  Direction: \(direction)")
-            print("  Preferred base: \(direction == .preferLight ? "WHITE" : "BLACK")")
-            print("  Max ratio achievable: \(String(format: "%.2f", maxRatio))")
-            print("  Target ratio: \(String(format: "%.2f", targetRatio))")
-            print("  Can meet target: \(maxRatio >= targetRatio)")
-            print("  Chosen base: \(maxRatio >= targetRatio ? (direction == .preferLight ? "WHITE" : "BLACK") : (direction == .preferLight ? "BLACK" : "WHITE"))")
-
             // If preferred direction can meet target, use it; otherwise switch to alternate
             contrastingBase = maxRatio >= targetRatio ? preferredBase : alternateBase
         }
-        
+
+        // Determine the blend range to search within
+        let searchRange: ClosedRange<CGFloat>
+        if let blendRange = blendRange {
+            // Explicit range provided - use it directly
+            searchRange = blendRange
+        } else if let minimumBlend = minimumBlend {
+            // Minimum blend specified - search from minimum to 1.0
+            searchRange = minimumBlend...1.0
+        } else if let blendStyle = blendStyle {
+            // Style preset specified - map to range
+            searchRange = blendStyle.minimumBlend...1.0
+        } else {
+            // Default - search full range
+            searchRange = 0.0...1.0
+        }
+
         // Binary search for the right blend amount to achieve target contrast
-        var lowBlend: CGFloat = 0.0
-        var highBlend: CGFloat = 1.0
+        var lowBlend: CGFloat = searchRange.lowerBound
+        var highBlend: CGFloat = searchRange.upperBound
         var bestBlend: CGFloat = 0.0
         var bestRatio: CGFloat = 0.0
         let maxIterations = 5

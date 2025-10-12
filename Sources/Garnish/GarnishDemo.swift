@@ -103,10 +103,17 @@ struct CoreAPIDemo: View {
     @State private var backgroundColor = Color(red: 0.12, green: 0.01, blue: 0.88)
     @State private var targetRatio: Double = GarnishMath.defaultThreshold
     @State private var customRatioText: String = ""
+    @State private var minimumBlend: Double = 0.0
+    @State private var selectedBlendStyle: Garnish.BlendStyle? = nil
 
     private var monochromaticContrastResult: (shade: Color?, error: String?) {
         do {
-            let shade = try Garnish.contrastingShade(of: inputColor, targetRatio: targetRatio)
+            let shade = try Garnish.contrastingShade(
+                of: inputColor,
+                targetRatio: targetRatio,
+                minimumBlend: minimumBlend > 0 ? minimumBlend : nil,
+                blendStyle: selectedBlendStyle
+            )
             return (shade, nil)
         } catch {
             return (nil, error.localizedDescription)
@@ -115,7 +122,13 @@ struct CoreAPIDemo: View {
 
     private var bichromaticContrastResult: (color: Color?, error: String?) {
         do {
-            let color = try Garnish.contrastingColor(inputColor, against: backgroundColor, targetRatio: targetRatio)
+            let color = try Garnish.contrastingColor(
+                inputColor,
+                against: backgroundColor,
+                targetRatio: targetRatio,
+                minimumBlend: minimumBlend > 0 ? minimumBlend : nil,
+                blendStyle: selectedBlendStyle
+            )
             return (color, nil)
         } catch {
             return (nil, error.localizedDescription)
@@ -125,56 +138,6 @@ struct CoreAPIDemo: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // Contrast Ratio Control
-                DemoSectionView(
-                    title: "Settings",
-                    description: "Configure target contrast ratio"
-                ) {
-                    VStack(spacing: 15) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Target Contrast Ratio: \(String(format: "%.1f", targetRatio)):1")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-
-                            Slider(value: $targetRatio, in: 1.0...21.0, step: 0.5)
-                        }
-
-                        HStack(spacing: 8) {
-                            Button("AA (4.5:1)") {
-                                targetRatio = 4.5
-                            }
-                            .buttonStyle(.bordered)
-
-                            Button("AAA (7:1)") {
-                                targetRatio = 7.0
-                            }
-                            .buttonStyle(.bordered)
-
-                            Button("AA Large (3:1)") {
-                                targetRatio = 3.0
-                            }
-                            .buttonStyle(.bordered)
-                        }
-
-                        HStack {
-                            TextField("Custom ratio", text: $customRatioText)
-                                .textFieldStyle(.roundedBorder)
-                            #if os(macOS)
-                                .frame(maxWidth: 150)
-                            #endif
-
-                            Button("Set") {
-                                if let value = Double(customRatioText), value >= 1.0, value <= 21.0 {
-                                    targetRatio = value
-                                    customRatioText = ""
-                                }
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .disabled(Double(customRatioText) == nil || Double(customRatioText)! < 1.0 || Double(customRatioText)! > 21.0)
-                        }
-                    }
-                }
-
                 DemoSectionView(
                     title: "Monochromatic Contrast",
                     description: "Get a contrasting shade of the same color"
