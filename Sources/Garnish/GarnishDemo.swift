@@ -339,6 +339,94 @@ struct CoreAPIDemo: View {
             }
             .padding()
         }
+        .inspector(isPresented: .constant(true)) {
+            VStack(spacing: 20) {
+                Text("Settings")
+                    .font(.headline)
+
+                Divider()
+
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Target Contrast Ratio")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+
+                    Text("\(String(format: "%.1f", targetRatio)):1")
+                        .font(.title3)
+                        .fontDesign(.monospaced)
+
+                    Slider(value: $targetRatio, in: 1.0...21.0, step: 0.5)
+
+                    HStack(spacing: 6) {
+                        Button("3:1") { targetRatio = 3.0 }
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
+                        Button("4.5:1") { targetRatio = 4.5 }
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
+                        Button("7:1") { targetRatio = 7.0 }
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
+                    }
+                }
+
+                Divider()
+
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Minimum Blend")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+
+                    Text("\(String(format: "%.0f", minimumBlend * 100))%")
+                        .font(.title3)
+                        .fontDesign(.monospaced)
+
+                    Slider(value: $minimumBlend, in: 0.0...1.0, step: 0.1)
+
+                    VStack(spacing: 6) {
+                        Button("Minimal (0%)") {
+                            selectedBlendStyle = .minimal
+                            minimumBlend = 0.0
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .opacity(selectedBlendStyle == .minimal ? 1.0 : 0.5)
+                        .controlSize(.small)
+
+                        Button("Moderate (50%)") {
+                            selectedBlendStyle = .moderate
+                            minimumBlend = 0.5
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .opacity(selectedBlendStyle == .moderate ? 1.0 : 0.5)
+                        .controlSize(.small)
+
+                        Button("Strong (70%)") {
+                            selectedBlendStyle = .strong
+                            minimumBlend = 0.7
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .opacity(selectedBlendStyle == .strong ? 1.0 : 0.5)
+                        .controlSize(.small)
+
+                        Button("Maximum (100%)") {
+                            selectedBlendStyle = .maximum
+                            minimumBlend = 1.0
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .opacity(selectedBlendStyle == .maximum ? 1.0 : 0.5)
+                        .controlSize(.small)
+                    }
+
+                    Text("Controls how strongly colors blend towards white/black.")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+            }
+            .padding()
+            .inspectorColumnWidth(min: 200, ideal: 250, max: 300)
+        }
     }
 }
 
