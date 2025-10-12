@@ -101,19 +101,21 @@ enum DemoSection: CaseIterable {
 struct CoreAPIDemo: View {
     @State private var inputColor = Color(red: 0.54, green: 0.22, blue: 0.89)
     @State private var backgroundColor = Color(red: 0.12, green: 0.01, blue: 0.88)
-    
+    @State private var targetRatio: Double = GarnishMath.defaultThreshold
+    @State private var customRatioText: String = ""
+
     private var monochromaticContrastResult: (shade: Color?, error: String?) {
         do {
-            let shade = try Garnish.contrastingShade(of: inputColor)
+            let shade = try Garnish.contrastingShade(of: inputColor, targetRatio: targetRatio)
             return (shade, nil)
         } catch {
             return (nil, error.localizedDescription)
         }
     }
-    
+
     private var bichromaticContrastResult: (color: Color?, error: String?) {
         do {
-            let color = try Garnish.contrastingColor(inputColor, against: backgroundColor)
+            let color = try Garnish.contrastingColor(inputColor, against: backgroundColor, targetRatio: targetRatio)
             return (color, nil)
         } catch {
             return (nil, error.localizedDescription)
@@ -123,25 +125,75 @@ struct CoreAPIDemo: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
+                // Contrast Ratio Control
+                DemoSectionView(
+                    title: "Settings",
+                    description: "Configure target contrast ratio"
+                ) {
+                    VStack(spacing: 15) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Target Contrast Ratio: \(String(format: "%.1f", targetRatio)):1")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+
+                            Slider(value: $targetRatio, in: 1.0...21.0, step: 0.5)
+                        }
+
+                        HStack(spacing: 8) {
+                            Button("AA (4.5:1)") {
+                                targetRatio = 4.5
+                            }
+                            .buttonStyle(.bordered)
+
+                            Button("AAA (7:1)") {
+                                targetRatio = 7.0
+                            }
+                            .buttonStyle(.bordered)
+
+                            Button("AA Large (3:1)") {
+                                targetRatio = 3.0
+                            }
+                            .buttonStyle(.bordered)
+                        }
+
+                        HStack {
+                            TextField("Custom ratio", text: $customRatioText)
+                                .textFieldStyle(.roundedBorder)
+                            #if os(macOS)
+                                .frame(maxWidth: 150)
+                            #endif
+
+                            Button("Set") {
+                                if let value = Double(customRatioText), value >= 1.0, value <= 21.0 {
+                                    targetRatio = value
+                                    customRatioText = ""
+                                }
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .disabled(Double(customRatioText) == nil || Double(customRatioText)! < 1.0 || Double(customRatioText)! > 21.0)
+                        }
+                    }
+                }
+
                 DemoSectionView(
                     title: "Monochromatic Contrast",
                     description: "Get a contrasting shade of the same color"
                 ) {
                     VStack(spacing: 20) {
-                        
-                        
+
+
                         CodeBlock(
                             code: """
-                            let contrastingShade = try Garnish.contrastingShade(of: inputColor)
+                            let contrastingShade = try Garnish.contrastingShade(of: inputColor, targetRatio: \(String(format: "%.1f", targetRatio)))
                             """,
                             colorMappings: [
                                 "contrastingShade": monochromaticContrastResult.shade ?? .gray,
                                 "inputColor": inputColor
                             ]
                         )
-                        
+
                         Divider()
-                        
+
                         ColorPicker("Input Color", selection: $inputColor)
                         
                         if let errorMessage = monochromaticContrastResult.error {
@@ -192,10 +244,10 @@ struct CoreAPIDemo: View {
                     description: "Optimize one color against another"
                 ) {
                     VStack(spacing: 20) {
-                        
+
                         CodeBlock(
                             code: """
-                            let optimizedColor = try Garnish.contrastingColor(inputColor, against: backgroundColor)
+                            let optimizedColor = try Garnish.contrastingColor(inputColor, against: backgroundColor, targetRatio: \(String(format: "%.1f", targetRatio)))
                             """,
                             colorMappings: [
                                 "optimizedColor": bichromaticContrastResult.color ?? .gray,
@@ -251,6 +303,74 @@ struct CoreAPIDemo: View {
                             }
                             .fixedSize()
                         }
+                    }
+                }
+
+                DemoSectionView(
+                    title: "Direction Control",
+                    description: "Control whether colors go light or dark"
+                ) {
+                    VStack(spacing: 20) {
+                        ColorPicker("Input Color", selection: $inputColor)
+
+                        let autoShade = try? Garnish.contrastingShade(of: inputColor, targetRatio: targetRatio, direction: .auto)
+                        let forcedDark = try? Garnish.contrastingShade(of: inputColor, targetRatio: targetRatio, direction: .forceDark)
+                        let forcedLight = try? Garnish.contrastingShade(of: inputColor, targetRatio: targetRatio, direction: .forceLight)
+                        let preferDark = try? Garnish.contrastingShade(of: inputColor, targetRatio: targetRatio, direction: .preferDark)
+                        let preferLight = try? Garnish.contrastingShade(of: inputColor, targetRatio: targetRatio, direction: .preferLight)
+
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Force vs Prefer")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+
+                            Text("**Force**: Always goes in that direction (may not meet target contrast)")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+
+                            Text("**Prefer**: Tries that direction first, switches only if target is unreachable")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(12)
+                        .background(Color.secondary.opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+
+                        ScrollView(.horizontal) {
+                            HStack(spacing: 12) {
+                                DirectionSwatch(label: "Auto", color: autoShade, background: inputColor)
+                                Divider().frame(height: 80)
+                                DirectionSwatch(label: "Prefer Light", color: preferLight, background: inputColor)
+                                DirectionSwatch(label: "Prefer Dark", color: preferDark, background: inputColor)
+                                Divider().frame(height: 80)
+                                DirectionSwatch(label: "Force Light", color: forcedLight, background: inputColor)
+                                DirectionSwatch(label: "Force Dark", color: forcedDark, background: inputColor)
+                            }
+                            .padding(.horizontal, 4)
+                        }
+
+                        CodeBlock(
+                            code: """
+                            // Auto - picks mathematically best
+                            let auto = try Garnish.contrastingShade(of: color, direction: .auto)
+
+                            // Prefer - tries your preference, switches if needed
+                            let preferLight = try Garnish.contrastingShade(of: color, direction: .preferLight)
+                            let preferDark = try Garnish.contrastingShade(of: color, direction: .preferDark)
+
+                            // Force - always goes that way (may not meet target)
+                            let forceLight = try Garnish.contrastingShade(of: color, direction: .forceLight)
+                            let forceDark = try Garnish.contrastingShade(of: color, direction: .forceDark)
+                            """,
+                            colorMappings: [
+                                "color": inputColor,
+                                "auto": autoShade ?? .gray,
+                                "preferLight": preferLight ?? .gray,
+                                "preferDark": preferDark ?? .gray,
+                                "forceLight": forcedLight ?? .gray,
+                                "forceDark": forcedDark ?? .gray
+                            ]
+                        )
                     }
                 }
             }
@@ -773,7 +893,7 @@ struct DemoSectionView<Content: View>: View {
 struct ColorSwatch: View {
     let color: Color
     let label: String
-    
+
     var body: some View {
         VStack(spacing: 12) {
             RoundedRectangle(cornerRadius: 15)
@@ -795,12 +915,47 @@ struct ColorSwatch: View {
                             lineWidth: 1
                         )
                 )
-            
+
             Text(label)
                 .font(.caption)
                 .fontWeight(.medium)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
+        }
+    }
+}
+
+struct DirectionSwatch: View {
+    let label: String
+    let color: Color?
+    let background: Color
+
+    var body: some View {
+        VStack(spacing: 8) {
+            if let color = color {
+                Text("Text")
+                    .font(.caption.weight(.semibold))
+                    .foregroundColor(color)
+                    .padding(8)
+                    .frame(width: 70)
+                    .background(background)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                    )
+            } else {
+                Rectangle()
+                    .fill(Color.secondary.opacity(0.2))
+                    .frame(width: 70, height: 32)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+
+            Text(label)
+                .font(.caption2)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .frame(width: 70)
         }
     }
 }

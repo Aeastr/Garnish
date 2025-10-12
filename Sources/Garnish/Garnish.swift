@@ -4,14 +4,28 @@
 import SwiftUI
 
 /// **Garnish** - Clean, simple color contrast utilities.
-/// 
+///
 /// Provides two main functions:
 /// 1. **Monochromatic contrast**: Find a good shade of the same color
 /// 2. **Bi-chromatic contrast**: Optimize one color against another
 ///
 /// All calculations use WCAG-compliant standards for accessibility.
 public class Garnish {
-    
+
+    /// Direction to bias the contrasting color generation
+    public enum ContrastDirection {
+        /// Automatically choose between light and dark based on which provides better contrast
+        case auto
+        /// Force towards white/lighter shades (useful for highlights)
+        case forceLight
+        /// Force towards black/darker shades (useful for shadows)
+        case forceDark
+        /// Prefer lighter shades, but switch to dark if necessary to meet target contrast
+        case preferLight
+        /// Prefer darker shades, but switch to light if necessary to meet target contrast
+        case preferDark
+    }
+
     // MARK: - Core API (New)
     
     /// Generates a contrasting shade of the same color that meets WCAG standards.
@@ -20,21 +34,28 @@ public class Garnish {
     /// Example:
     /// ```swift
     /// let contrastingBlue = Garnish.contrastingShade(of: .blue)
+    /// let shadowBlue = Garnish.contrastingShade(of: .blue, direction: .forceDark)
+    /// let preferWhite = Garnish.contrastingShade(of: .blue, direction: .preferLight)
     /// ```
     ///
     /// - Parameters:
     ///   - color: The base color to create a contrasting shade from
     ///   - method: Brightness calculation method (default: .luminance)
     ///   - targetRatio: Minimum contrast ratio to achieve (default: WCAG AA = 4.5)
+    ///   - direction: Direction preference (default: .auto)
+    ///     - `.auto`: Choose best contrast automatically
+    ///     - `.forceLight`/`.forceDark`: Always go in that direction
+    ///     - `.preferLight`/`.preferDark`: Try preferred direction first, switch only if target is unreachable
     /// - Returns: A contrasting shade of the input color that meets the target contrast ratio
     /// - Throws: `GarnishError` if color analysis fails
     public static func contrastingShade(
         of color: Color,
         using method: GarnishMath.BrightnessMethod = .luminance,
-        targetRatio: CGFloat = GarnishMath.defaultThreshold
+        targetRatio: CGFloat = GarnishMath.defaultThreshold,
+        direction: ContrastDirection = .auto
     ) throws -> Color {
         // contrastingShade is just contrastingColor against itself
-        return try contrastingColor(color, against: color, using: method, targetRatio: targetRatio)
+        return try contrastingColor(color, against: color, using: method, targetRatio: targetRatio, direction: direction)
     }
     
     /// Optimizes one color to work well against another background.
@@ -43,6 +64,8 @@ public class Garnish {
     /// Example:
     /// ```swift
     /// let optimizedRed = Garnish.contrastingColor(.red, against: .blue)
+    /// let shadowRed = Garnish.contrastingColor(.red, against: .blue, direction: .forceDark)
+    /// let whiteishText = Garnish.contrastingColor(.gray, against: .green, direction: .preferLight)
     /// ```
     ///
     /// - Parameters:
@@ -50,13 +73,18 @@ public class Garnish {
     ///   - background: The background color to optimize against
     ///   - method: Brightness calculation method (default: .luminance)
     ///   - targetRatio: Minimum contrast ratio (default: WCAG AA = 4.5)
+    ///   - direction: Direction preference (default: .auto)
+    ///     - `.auto`: Choose best contrast automatically
+    ///     - `.forceLight`/`.forceDark`: Always go in that direction
+    ///     - `.preferLight`/`.preferDark`: Try preferred direction first, switch only if target is unreachable
     /// - Returns: Optimized version of the input color
     /// - Throws: `GarnishError` if color analysis fails
     public static func contrastingColor(
         _ color: Color,
         against background: Color,
         using method: GarnishMath.BrightnessMethod = .luminance,
-        targetRatio: CGFloat = GarnishMath.defaultThreshold
+        targetRatio: CGFloat = GarnishMath.defaultThreshold,
+        direction: ContrastDirection = .auto
     ) throws -> Color {
         #if canImport(UIKit)
         typealias PlatformColor = UIColor
@@ -72,20 +100,48 @@ public class Garnish {
             return color
         }
         
-        // Try both black and white to see which gives better contrast against the background
+        // Determine the base color to blend with
         let blackBase: PlatformColor = .black
         let whiteBase: PlatformColor = .white
-        
-        // Test a moderate blend with both bases to see which direction works better
-        let testBlendAmount: CGFloat = 0.5
-        let blackTest = platformColor.blend(with: blackBase, ratio: testBlendAmount)
-        let whiteTest = platformColor.blend(with: whiteBase, ratio: testBlendAmount)
-        
-        let blackRatio = try GarnishMath.contrastRatio(between: Color(blackTest), and: background)
-        let whiteRatio = try GarnishMath.contrastRatio(between: Color(whiteTest), and: background)
-        
-        // Choose the direction that gives better contrast
-        let contrastingBase = blackRatio > whiteRatio ? blackBase : whiteBase
+
+        let contrastingBase: PlatformColor
+
+        switch direction {
+        case .forceDark:
+            contrastingBase = blackBase
+        case .forceLight:
+            contrastingBase = whiteBase
+        case .auto:
+            // Test the maximum achievable contrast in each direction by fully blending
+            let fullyBlack = platformColor.blend(with: blackBase, ratio: 1.0)
+            let fullyWhite = platformColor.blend(with: whiteBase, ratio: 1.0)
+
+            let maxBlackRatio = try GarnishMath.contrastRatio(between: Color(fullyBlack), and: background)
+            let maxWhiteRatio = try GarnishMath.contrastRatio(between: Color(fullyWhite), and: background)
+
+            // Choose the direction with the highest potential contrast
+            contrastingBase = maxBlackRatio > maxWhiteRatio ? blackBase : whiteBase
+
+        case .preferLight, .preferDark:
+            // Try the preferred direction first
+            let preferredBase = direction == .preferLight ? whiteBase : blackBase
+            let alternateBase = direction == .preferLight ? blackBase : whiteBase
+
+            // Check if fully blending with preferred base can meet target
+            let fullyBlended = platformColor.blend(with: preferredBase, ratio: 1.0)
+            let maxRatio = try GarnishMath.contrastRatio(between: Color(fullyBlended), and: background)
+
+            print("🔍 Debug Prefer Mode:")
+            print("  Direction: \(direction)")
+            print("  Preferred base: \(direction == .preferLight ? "WHITE" : "BLACK")")
+            print("  Max ratio achievable: \(String(format: "%.2f", maxRatio))")
+            print("  Target ratio: \(String(format: "%.2f", targetRatio))")
+            print("  Can meet target: \(maxRatio >= targetRatio)")
+            print("  Chosen base: \(maxRatio >= targetRatio ? (direction == .preferLight ? "WHITE" : "BLACK") : (direction == .preferLight ? "BLACK" : "WHITE"))")
+
+            // If preferred direction can meet target, use it; otherwise switch to alternate
+            contrastingBase = maxRatio >= targetRatio ? preferredBase : alternateBase
+        }
         
         // Binary search for the right blend amount to achieve target contrast
         var lowBlend: CGFloat = 0.0
@@ -119,7 +175,7 @@ public class Garnish {
             }
             
             // If we're close enough to target, break early
-            if bestRatio >= targetRatio && abs(bestRatio - targetRatio) < 0.1 {
+            if bestRatio >= targetRatio && abs(bestRatio - targetRatio) < 0.05 {
                 break
             }
         }
