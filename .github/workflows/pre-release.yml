@@ -3,7 +3,7 @@ name: Pre-release
 on:
   pull_request:
     types: [closed]
-    branches: [ develop ]
+    branches: [ dev ]
 
 # Prevent concurrent pre-releases
 concurrency:
