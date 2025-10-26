@@ -78,7 +78,16 @@ identifier_name:
     - x
     - y
     - z
-    - i 
+    - i
+    - j
+    - k
+    - r  # Red color component
+    - g  # Green color component
+    - b  # Blue color component
+    - a  # Alpha color component
+    - h  # Hue color component
+    - s  # Saturation color component
+    - v  # Value/brightness color component
 
 type_name:
   min_length: 3
