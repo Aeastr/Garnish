@@ -11,6 +11,21 @@
 import SwiftUI
 import Foundation
 
+/// Preview colors for theme selection UI
+public struct ThemePreviewColors {
+    public let primary: Color
+    public let secondary: Color
+    public let background: Color
+    public let backgroundSecondary: Color
+
+    public init(primary: Color, secondary: Color, background: Color, backgroundSecondary: Color) {
+        self.primary = primary
+        self.secondary = secondary
+        self.background = background
+        self.backgroundSecondary = backgroundSecondary
+    }
+}
+
 /// Wrapper for current theme that can be either built-in or user-created
 public enum CurrentTheme {
     case builtIn(BuiltInTheme)
@@ -81,7 +96,7 @@ public enum CurrentTheme {
     }
 
     /// Get preview colors for theme selection UI
-    public var previewColors: (primary: Color, secondary: Color, background: Color, backgroundSecondary: Color) {
+    public var previewColors: ThemePreviewColors {
         switch self {
         case .builtIn(let theme):
             return theme.previewColors
