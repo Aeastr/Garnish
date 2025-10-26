@@ -15,6 +15,21 @@ import UIKit
 import AppKit
 #endif
 
+/// RGBA color components structure
+public struct ColorComponents {
+    public let red: CGFloat
+    public let green: CGFloat
+    public let blue: CGFloat
+    public let alpha: CGFloat
+
+    public init(red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
+        self.red = red
+        self.green = green
+        self.blue = blue
+        self.alpha = alpha
+    }
+}
+
 /// Color manipulation utilities for advanced color operations.
 /// Provides blending, brightness adjustment, and other color transformation functions.
 public class GarnishColor {
@@ -80,8 +95,8 @@ public class GarnishColor {
 
     /// Extracts RGBA components from a Color.
     /// - Parameter color: The color to extract components from
-    /// - Returns: Tuple of (red, green, blue, alpha) components, or nil if extraction fails
-    public static func extractColorComponents(from color: Color) -> (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)? {
+    /// - Returns: ColorComponents structure, or nil if extraction fails
+    public static func extractColorComponents(from color: Color) -> ColorComponents? {
         #if os(iOS) || os(tvOS) || os(watchOS)
         let uiColor = UIColor(color)
         var red: CGFloat = 0
@@ -93,7 +108,7 @@ public class GarnishColor {
             return nil
         }
 
-        return (red, green, blue, alpha)
+        return ColorComponents(red: red, green: green, blue: blue, alpha: alpha)
 
         #elseif os(macOS)
         let nsColor = NSColor(color)
@@ -107,7 +122,7 @@ public class GarnishColor {
         var alpha: CGFloat = 0
 
         rgbColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-        return (red, green, blue, alpha)
+        return ColorComponents(red: red, green: green, blue: blue, alpha: alpha)
         #endif
     }
 
