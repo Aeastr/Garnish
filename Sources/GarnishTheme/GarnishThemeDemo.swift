@@ -2,8 +2,10 @@
 //  GarnishThemeDemo.swift
 //  GarnishTheme
 //
-//  Created by Aether on 06/08/2025.
-//  Demo app showcasing the GarnishTheme API
+//  Created by Garnish Contributors, 2025.
+//
+//  Copyright © 2025 Garnish Contributors. All rights reserved.
+//  Licensed under the MIT License.
 //
 
 #if DEBUG

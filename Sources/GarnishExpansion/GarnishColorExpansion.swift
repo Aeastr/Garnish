@@ -1,8 +1,11 @@
 //
 //  GarnishColorExpansion.swift
-//  Garnish
+//  GarnishExpansion
 //
-//  Created by Assistant on 2025-09-20.
+//  Created by Garnish Contributors, 2025.
+//
+//  Copyright © 2025 Garnish Contributors. All rights reserved.
+//  Licensed under the MIT License.
 //
 
 import SwiftUI

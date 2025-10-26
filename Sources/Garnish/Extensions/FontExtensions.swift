@@ -2,8 +2,10 @@
 //  FontExtensions.swift
 //  Garnish
 //
-//  Created by Aether on 19/12/2024.
-//  Consolidated and updated from Garnish Functions folder
+//  Created by Garnish Contributors, 2025.
+//
+//  Copyright © 2025 Garnish Contributors. All rights reserved.
+//  Licensed under the MIT License.
 //
 
 import SwiftUI

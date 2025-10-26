@@ -1,5 +1,12 @@
-// Garnish - Clean Color Contrast Utilities
-// Refactored for simplicity, consistency, and WCAG compliance
+//
+//  Garnish.swift
+//  Garnish
+//
+//  Created by Garnish Contributors, 2025.
+//
+//  Copyright © 2025 Garnish Contributors. All rights reserved.
+//  Licensed under the MIT License.
+//
 
 import SwiftUI
 
