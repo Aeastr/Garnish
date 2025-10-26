@@ -94,7 +94,7 @@ public class BuiltInTheme {
     }
 
     /// Get preview colors for theme selection UI
-    public var previewColors: (primary: Color, secondary: Color, background: Color, backgroundSecondary: Color) {
+    public var previewColors: ThemePreviewColors {
         let scheme: ColorScheme = .light // Default to light for previews
 
         do {
@@ -102,10 +102,20 @@ public class BuiltInTheme {
             let secondary = try color(.secondary, for: scheme)
             let background = try color(.background, for: scheme)
             let backgroundSecondary = try color(.backgroundSecondary, for: scheme)
-            return (primary: primary, secondary: secondary, background: background, backgroundSecondary: backgroundSecondary)
+            return ThemePreviewColors(
+                primary: primary,
+                secondary: secondary,
+                background: background,
+                backgroundSecondary: backgroundSecondary
+            )
         } catch {
             // Fallback colors if theme is incomplete
-            return (primary: Color.blue, secondary: Color.green, background: Color.white, backgroundSecondary: Color.gray)
+            return ThemePreviewColors(
+                primary: Color.blue,
+                secondary: Color.green,
+                background: Color.white,
+                backgroundSecondary: Color.gray
+            )
         }
     }
 }
