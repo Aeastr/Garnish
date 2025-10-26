@@ -16,11 +16,9 @@ import CoreData
 extension GarnishThemeColor {
     /// Computed property for SwiftUI Color light variant
     var lightSwiftUIColor: Color? {
-        get {
-            // Check if any component is actually set (not just defaults)
-            guard hasLightColor else { return nil }
-            return Color(.sRGB, red: lightColorR, green: lightColorG, blue: lightColorB, opacity: lightColorA)
-        }
+        // Check if any component is actually set (not just defaults)
+        guard hasLightColor else { return nil }
+        return Color(.sRGB, red: lightColorR, green: lightColorG, blue: lightColorB, opacity: lightColorA)
     }
 
     /// Set the light SwiftUI Color, throwing an error if color extraction fails
@@ -76,10 +74,8 @@ extension GarnishThemeColor {
 
     /// Computed property for SwiftUI Color dark variant
     var darkSwiftUIColor: Color? {
-        get {
-            guard hasDarkColor else { return nil }
-            return Color(.sRGB, red: darkColorR, green: darkColorG, blue: darkColorB, opacity: darkColorA)
-        }
+        guard hasDarkColor else { return nil }
+        return Color(.sRGB, red: darkColorR, green: darkColorG, blue: darkColorB, opacity: darkColorA)
     }
 
     /// Set the dark SwiftUI Color, throwing an error if color extraction fails

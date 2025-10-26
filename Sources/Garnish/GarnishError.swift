@@ -32,13 +32,13 @@ public enum GarnishError: Error, LocalizedError {
         case .colorComponentExtractionFailed(let color):
             return "Failed to extract color components from color: \(color). The color may be in an unsupported format."
 
-        case .colorSpaceConversionFailed(let color, let targetSpace):
+        case let .colorSpaceConversionFailed(color, targetSpace):
             return "Failed to convert color \(color) to \(targetSpace) color space."
 
         case .missingRequiredParameter(let parameter):
             return "Required parameter '\(parameter)' was not provided."
 
-        case .invalidParameter(let parameter, let value):
+        case let .invalidParameter(parameter, value):
             return "Invalid value '\(value)' provided for parameter '\(parameter)'."
 
         case .invalidColorCalculation(let operation):

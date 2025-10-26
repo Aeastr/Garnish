@@ -24,9 +24,9 @@ public enum GarnishThemeError: LocalizedError {
         switch self {
         case .themeNotFound(let name):
             return "Theme '\(name)' not found"
-        case .colorNotCached(let key, let scheme):
+        case let .colorNotCached(key, scheme):
             return "Color '\(key.stringValue)' not cached for \(scheme == .light ? "light" : "dark") mode"
-        case .colorNotDefined(let key, let themeName):
+        case let .colorNotDefined(key, themeName):
             return "Color '\(key.stringValue)' not defined in theme '\(themeName)'"
         case .themeAlreadyExists(let name):
             return "Theme '\(name)' already exists"
