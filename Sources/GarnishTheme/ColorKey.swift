@@ -1,3 +1,13 @@
+//
+//  ColorKey.swift
+//  GarnishTheme
+//
+//  Created by Garnish Contributors, 2025.
+//
+//  Copyright © 2025 Garnish Contributors. All rights reserved.
+//  Licensed under the MIT License.
+//
+
 import Foundation
 
 /// Represents a color key for theme-based color management

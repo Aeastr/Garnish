@@ -1,3 +1,13 @@
+//
+//  GarnishTheme.swift
+//  GarnishTheme
+//
+//  Created by Garnish Contributors, 2025.
+//
+//  Copyright © 2025 Garnish Contributors. All rights reserved.
+//  Licensed under the MIT License.
+//
+
 import SwiftUI
 import Foundation
 import CoreData

@@ -1,3 +1,13 @@
+//
+//  BuiltInThemes.swift
+//  GarnishTheme
+//
+//  Created by Garnish Contributors, 2025.
+//
+//  Copyright © 2025 Garnish Contributors. All rights reserved.
+//  Licensed under the MIT License.
+//
+
 import SwiftUI
 
 /// Infrastructure for built-in themes that users can define for their apps
