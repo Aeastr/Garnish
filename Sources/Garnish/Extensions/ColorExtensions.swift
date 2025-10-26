@@ -15,8 +15,8 @@ import AppKit
 /// Type alias for the platform-specific color.
 typealias PlatformColor = NSColor
 #endif
-   
-    
+
+
 public extension Color {
     /// Returns HSB (Hue, Saturation, Brightness) components of the color
     var hsb: (hue: Double, saturation: Double, brightness: Double) {
@@ -62,7 +62,7 @@ public extension Color {
     func adjustedBrightness(by factor: CGFloat) throws -> Color {
         return try GarnishColor.adjustBrightness(of: self, by: factor)
     }
-    
+
     /// Adjusts the luminance of a color using WCAG-compliant relative luminance calculation.
     /// Uses the same method as GarnishColor.adjustLuminance for consistency.
     ///
@@ -71,7 +71,7 @@ public extension Color {
     func adjustedLuminance(by factor: CGFloat) -> Color {
         return GarnishColor.adjustLuminance(of: self, by: factor)
     }
-    
+
     /// Returns the hexadecimal string representation of the Color.
     ///
     /// - Parameter alpha: If `true` returns an 8-character hex including the alpha
@@ -81,31 +81,31 @@ public extension Color {
     func toHex(alpha: Bool = false) throws -> String {
         // Convert SwiftUI Color to a platform-specific color.
         let platformColor = PlatformColor(self)
-        
+
         #if os(macOS)
         // For NSColor, ensure we're in RGB color space to avoid dynamic color issues
         guard let rgbColor = platformColor.usingColorSpace(.deviceRGB) else {
             throw GarnishError.colorSpaceConversionFailed(self, targetSpace: "deviceRGB")
         }
-        
+
         let r = Float(rgbColor.redComponent)
         let g = Float(rgbColor.greenComponent)
         let b = Float(rgbColor.blueComponent)
         let a = Float(rgbColor.alphaComponent)
-        
+
         #else
         // For UIColor, use getRed method
         var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
         guard platformColor.getRed(&r, green: &g, blue: &b, alpha: &a) else {
             throw GarnishError.colorComponentExtractionFailed(self)
         }
-        
+
         let rFloat = Float(r)
         let gFloat = Float(g)
         let bFloat = Float(b)
         let aFloat = Float(a)
         #endif
-        
+
         if alpha {
             #if os(macOS)
             return String(format: "%02lX%02lX%02lX%02lX",
@@ -135,4 +135,3 @@ public extension Color {
         }
     }
 }
-

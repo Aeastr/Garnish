@@ -9,7 +9,7 @@ import SwiftUI
 
 extension Garnish {
     /// **DEPRECATED**: Use `Garnish.contrastingColor(_:against:)` instead.
-    /// 
+    ///
     /// This function has been refactored to use the new standardized foundation.
     /// The new API is cleaner and removes inappropriate default parameters.
     ///
@@ -17,7 +17,7 @@ extension Garnish {
     /// ```swift
     /// // Old way:
     /// let adjusted = Garnish.adjustForBackground(for: .blue, with: .white)
-    /// 
+    ///
     /// // New way:
     /// let adjusted = Garnish.contrastingColor(.blue, against: .white)
     /// ```
@@ -39,10 +39,9 @@ extension Garnish {
             }
             return (try? contrastingShade(of: color)) ?? color
         }
-        
+
         // Use the new standardized API
         let targetRatio = GarnishMath.defaultThreshold // Use WCAG AA standard
         return (try? contrastingColor(color, against: bgColor, targetRatio: targetRatio)) ?? color
     }
-    
 }

@@ -33,24 +33,24 @@ public enum GarnishMode {
 
 extension View {
     // MARK: - Single Color Garnish
-    
+
     /// **DEPRECATED**: This modifier will be removed in a future version.
-    /// 
+    ///
     /// **Why Deprecated**: This modifier violates API responsibility boundaries by automatically
     /// applying UI styling decisions that should be controlled by the user.
-    /// 
+    ///
     /// **Migration Path**: Use Garnish for color calculations only, then apply colors manually:
     /// ```swift
     /// // Old way:
     /// Text("Hello").garnish(.blue, on: .all)
-    /// 
+    ///
     /// // New way:
     /// let contrastingColor = Garnish.contrastingShade(of: .blue)
     /// Text("Hello")
     ///     .foregroundColor(contrastingColor)
     ///     .background(.blue)
     /// ```
-    /// 
+    ///
     /// - Parameters:
     ///   - color: The main color to apply.
     ///   - scope: The part(s) of the view to be adjusted. Defaults to `.foreground`.
@@ -62,26 +62,26 @@ extension View {
     ) -> some View {
         self.modifier(GarnishModifierCon(color: color, scope: scope))
     }
-    
+
     // MARK: - Foreground and Background Garnish
-    
+
     /// **DEPRECATED**: This modifier will be removed in a future version.
-    /// 
+    ///
     /// **Why Deprecated**: This modifier violates API responsibility boundaries by automatically
     /// applying UI styling decisions that should be controlled by the user.
-    /// 
+    ///
     /// **Migration Path**: Use Garnish for color calculations only, then apply colors manually:
     /// ```swift
     /// // Old way:
     /// Text("Welcome").garnish(.white, .black, on: .all)
-    /// 
+    ///
     /// // New way:
     /// let contrastingColor = Garnish.contrastingColor(of: .white, against: .black)
     /// Text("Welcome")
     ///     .foregroundColor(contrastingColor)
     ///     .background(.black)
     /// ```
-    /// 
+    ///
     /// - Parameters:
     ///   - foreground: The intended foreground color.
     ///   - background: The intended background color.
@@ -117,22 +117,20 @@ struct GarnishModifierAFB: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        if scope == .all{
+        if scope == .all {
             content
                 .foregroundColor(
                     Garnish
                         .adjustForBackground(for: color, in: colorScheme, with: secondaryColor)
                 )
                 .background(secondaryColor)
-        }
-        else if scope == .foreground{
+        } else if scope == .foreground {
             content
                 .foregroundColor(
                     Garnish
                         .adjustForBackground(for: color, in: colorScheme, with: secondaryColor)
                 )
-        }
-        else if scope == .background{
+        } else if scope == .background {
             content
                 .background(secondaryColor)
         }
@@ -152,16 +150,14 @@ struct GarnishModifierCon: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        if scope == .all{
+        if scope == .all {
             content
                 .foregroundColor(Garnish.contrastingForeground(for: color))
                 .background(color)
-        }
-        else if scope == .foreground{
+        } else if scope == .foreground {
             content
                 .foregroundColor(Garnish.contrastingForeground(for: color))
-        }
-        else if scope == .background{
+        } else if scope == .background {
             content
                 .background(color)
         }

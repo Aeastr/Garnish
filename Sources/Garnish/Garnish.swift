@@ -11,7 +11,6 @@ import SwiftUI
 ///
 /// All calculations use WCAG-compliant standards for accessibility.
 public class Garnish {
-
     /// Direction to bias the contrasting color generation
     public enum ContrastDirection {
         /// Automatically choose between light and dark based on which provides better contrast
@@ -48,7 +47,7 @@ public class Garnish {
     }
 
     // MARK: - Core API (New)
-    
+
     /// Generates a contrasting shade of the same color that meets WCAG standards.
     /// **Use Case 1**: "I have blue, give me a shade of blue that looks good against blue"
     ///
@@ -94,7 +93,7 @@ public class Garnish {
             blendRange: blendRange
         )
     }
-    
+
     /// Optimizes one color to work well against another background.
     /// **Use Case 2**: "I have blue and red, which version of red looks best against blue?"
     ///
@@ -135,15 +134,15 @@ public class Garnish {
         #elseif os(macOS)
         typealias PlatformColor = NSColor
         #endif
-        
+
         let platformColor = PlatformColor(color)
         let currentRatio = try GarnishMath.contrastRatio(between: color, and: background)
-        
+
         // If contrast is already sufficient, return original color
         if currentRatio >= targetRatio {
             return color
         }
-        
+
         // Determine the base color to blend with
         let blackBase: PlatformColor = .black
         let whiteBase: PlatformColor = .white
@@ -201,18 +200,18 @@ public class Garnish {
         var bestBlend: CGFloat = 0.0
         var bestRatio: CGFloat = 0.0
         let maxIterations = 5
-        
+
         for _ in 0..<maxIterations {
             let testBlend = (lowBlend + highBlend) / 2.0
             let testColor = platformColor.blend(with: contrastingBase, ratio: testBlend)
             let testRatio = try GarnishMath.contrastRatio(between: Color(testColor), and: background)
-            
+
             // Always update best if this is better than previous best
             if testRatio >= targetRatio && (bestRatio < targetRatio || testBlend < bestBlend) {
                 bestBlend = testBlend
                 bestRatio = testRatio
             }
-            
+
             if testRatio >= targetRatio {
                 // We have enough contrast, try with less blending
                 highBlend = testBlend
@@ -225,24 +224,23 @@ public class Garnish {
                     bestRatio = testRatio
                 }
             }
-            
+
             // If we're close enough to target, break early
             if bestRatio >= targetRatio && abs(bestRatio - targetRatio) < 0.05 {
                 break
             }
         }
-        
+
         let result = platformColor.blend(with: contrastingBase, ratio: bestBlend)
         return Color(result)
     }
-    
+
     /// Quick accessibility check.
     /// - Throws: `GarnishError` if color analysis fails
     public static func hasGoodContrast(_ color1: Color, _ color2: Color) throws -> Bool {
         return try GarnishMath.meetsWCAGAA(color1, color2)
     }
 }
-
 
 
 // Preview removed - demo views were moved to new GarnishDemo.swift

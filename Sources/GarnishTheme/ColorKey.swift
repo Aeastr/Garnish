@@ -29,7 +29,7 @@ public extension ColorKey {
             return name
         }
     }
-    
+
     /// Creates a ColorKey from a string value
     /// - Parameter string: The string representation
     /// - Returns: ColorKey instance, or .custom(string) if not a standard key
@@ -49,7 +49,7 @@ public extension ColorKey {
             self = .custom(string)
         }
     }
-    
+
     /// Returns true if this is a standard (built-in) color key
     var isStandard: Bool {
         switch self {

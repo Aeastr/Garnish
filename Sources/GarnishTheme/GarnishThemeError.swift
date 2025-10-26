@@ -9,7 +9,7 @@ public enum GarnishThemeError: LocalizedError {
     case themeAlreadyExists(String)
     case colorTransformationFailed(ColorKey)
     case coreDataError(Error)
-    
+
     public var errorDescription: String? {
         switch self {
         case .themeNotFound(let name):
@@ -26,7 +26,7 @@ public enum GarnishThemeError: LocalizedError {
             return "CoreData error: \(error.localizedDescription)"
         }
     }
-    
+
     public var recoverySuggestion: String? {
         switch self {
         case .themeNotFound:

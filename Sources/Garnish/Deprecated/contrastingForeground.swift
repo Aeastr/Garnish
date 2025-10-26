@@ -10,7 +10,7 @@ import SwiftUI
 
 public extension Garnish {
     /// **DEPRECATED**: Use `Garnish.contrastingShade(of:)` instead.
-    /// 
+    ///
     /// This function has been refactored to use the new standardized foundation.
     /// The new API is cleaner and uses WCAG-compliant calculations.
     ///
@@ -18,7 +18,7 @@ public extension Garnish {
     /// ```swift
     /// // Old way:
     /// let foreground = Garnish.contrastingForeground(for: .blue)
-    /// 
+    ///
     /// // New way:
     /// let foreground = Garnish.contrastingShade(of: .blue)
     /// ```
@@ -32,4 +32,3 @@ public extension Garnish {
         return (try? contrastingShade(of: background)) ?? background
     }
 }
-

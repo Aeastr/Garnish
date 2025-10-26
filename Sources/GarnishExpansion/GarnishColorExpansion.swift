@@ -10,7 +10,6 @@ import Garnish
 
 /// Handles all color array expansion and contraction operations
 public struct GarnishColorExpansion {
-
     // MARK: - Expansion Methods
 
     /// Main expansion method using Harmonic Flow strategy

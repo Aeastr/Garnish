@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-//extension Garnish {
+// extension Garnish {
 //    /// Produces a version of the input color that is blended with a base color (white or black),
 //    /// determined by the provided color scheme.
 //    ///
@@ -27,7 +27,7 @@ import SwiftUI
 //    public static func colorBase(for color: Color, in scheme: ColorScheme, blendAmount: CGFloat = 0.90) -> Color {
 //        let uiColor = UIColor(color)
 //        let base = scheme == .light ? UIColor.systemBackground : UIColor.primary
-//        
+//
 //        // We'll blend the input color with the chosen base.
 //        // A high blend ratio means a subtle tint. Adjust these numbers as desired.
 //        // For example: 0.9 base, 0.1 color.
@@ -36,4 +36,4 @@ import SwiftUI
 //        let tinted = uiColor.blend(with: base, ratio: blendAmount)
 //        return Color(tinted)
 //    }
-//}
+// }

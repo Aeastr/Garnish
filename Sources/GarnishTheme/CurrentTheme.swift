@@ -5,7 +5,7 @@ import Foundation
 public enum CurrentTheme {
     case builtIn(BuiltInTheme)
     case userCreated(GarnishThemeEntity)
-    
+
     /// The name of the current theme
     public var name: String {
         switch self {
@@ -15,7 +15,7 @@ public enum CurrentTheme {
             return theme.name ?? "Unnamed"
         }
     }
-    
+
     /// Whether this is a built-in theme
     public var isBuiltIn: Bool {
         switch self {
@@ -25,7 +25,7 @@ public enum CurrentTheme {
             return false
         }
     }
-    
+
     /// Get color for a specific key and scheme
     public func color(_ key: ColorKey, for scheme: ColorScheme) throws -> Color {
         switch self {
@@ -38,28 +38,28 @@ public enum CurrentTheme {
             return color
         }
     }
-    
+
     /// Convenience accessors for standard colors
     public func primary(for scheme: ColorScheme) throws -> Color {
         return try color(.primary, for: scheme)
     }
-    
+
     public func secondary(for scheme: ColorScheme) throws -> Color {
         return try color(.secondary, for: scheme)
     }
-    
+
     public func tertiary(for scheme: ColorScheme) throws -> Color {
         return try color(.tertiary, for: scheme)
     }
-    
+
     public func background(for scheme: ColorScheme) throws -> Color {
         return try color(.background, for: scheme)
     }
-    
+
     public func backgroundSecondary(for scheme: ColorScheme) throws -> Color {
         return try color(.backgroundSecondary, for: scheme)
     }
-    
+
     /// Get all defined color keys
     public var definedColorKeys: [ColorKey] {
         switch self {
@@ -69,7 +69,7 @@ public enum CurrentTheme {
             return theme.definedColorKeys
         }
     }
-    
+
     /// Get preview colors for theme selection UI
     public var previewColors: (primary: Color, secondary: Color, background: Color, backgroundSecondary: Color) {
         switch self {
@@ -77,7 +77,7 @@ public enum CurrentTheme {
             return theme.previewColors
         case .userCreated(let theme):
             let scheme: ColorScheme = .light // Default to light for previews
-            
+
             do {
                 let primary = try color(.primary, for: scheme)
                 let secondary = try color(.secondary, for: scheme)
@@ -99,7 +99,7 @@ public extension CurrentTheme {
     static func from(builtIn theme: BuiltInTheme) -> CurrentTheme {
         return .builtIn(theme)
     }
-    
+
     /// Create from user-created theme entity
     static func from(userCreated theme: GarnishThemeEntity) -> CurrentTheme {
         return .userCreated(theme)

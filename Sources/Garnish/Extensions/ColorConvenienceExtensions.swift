@@ -23,7 +23,7 @@ public extension Color {
     func contrastingShade() throws -> Color {
         return try Garnish.contrastingShade(of: self)
     }
-    
+
     /// Returns an optimized version of this color that works well against the specified background.
     /// This is equivalent to calling `Garnish.contrastingColor(self, against: background)`.
     ///
@@ -40,9 +40,9 @@ public extension Color {
     func optimized(against background: Color, targetRatio: CGFloat = GarnishMath.wcagAAThreshold) throws -> Color {
         return try Garnish.contrastingColor(self, against: background, targetRatio: targetRatio)
     }
-    
+
     // MARK: - GarnishMath Convenience Extensions
-    
+
     /// Classifies this color as light or dark.
     /// This is equivalent to calling `GarnishMath.classify(self)`.
     ///
@@ -60,7 +60,7 @@ public extension Color {
     func classify(threshold: CGFloat = 0.5, using method: GarnishMath.BrightnessMethod = .luminance) throws -> GarnishMath.ColorClassification {
         return try GarnishMath.classify(self, threshold: threshold, using: method)
     }
-    
+
     /// Determines the optimal ColorScheme for this color.
     /// This is equivalent to calling `GarnishMath.colorScheme(for: self)`.
     ///
@@ -75,7 +75,7 @@ public extension Color {
     func colorScheme(using method: GarnishMath.BrightnessMethod = .luminance) throws -> ColorScheme {
         return try GarnishMath.colorScheme(for: self, using: method)
     }
-    
+
     /// Calculates the relative luminance of this color using WCAG 2.1 standards.
     /// This is equivalent to calling `GarnishMath.relativeLuminance(of: self)`.
     ///
@@ -89,7 +89,7 @@ public extension Color {
     func relativeLuminance() throws -> CGFloat {
         return try GarnishMath.relativeLuminance(of: self)
     }
-    
+
     /// Calculates the brightness of this color using the specified method.
     /// This is equivalent to calling `GarnishMath.brightness(of: self, using: method)`.
     ///
@@ -104,7 +104,7 @@ public extension Color {
     func brightness(using method: GarnishMath.BrightnessMethod = .luminance) throws -> CGFloat {
         return try GarnishMath.brightness(of: self, using: method)
     }
-    
+
     /// Calculates the contrast ratio between this color and another color using WCAG 2.1 standards.
     /// This is equivalent to calling `GarnishMath.contrastRatio(between: self, and: otherColor)`.
     ///
@@ -120,7 +120,7 @@ public extension Color {
     func contrastRatio(with otherColor: Color) throws -> CGFloat {
         return try GarnishMath.contrastRatio(between: self, and: otherColor)
     }
-    
+
     /// Checks if this color meets WCAG AA contrast requirements against another color.
     /// This is equivalent to calling `GarnishMath.meetsWCAGAA(self, otherColor)`.
     ///
@@ -136,7 +136,7 @@ public extension Color {
     func meetsWCAGAA(with otherColor: Color) throws -> Bool {
         return try GarnishMath.meetsWCAGAA(self, otherColor)
     }
-    
+
     /// Checks if this color meets WCAG AAA contrast requirements against another color.
     /// This is equivalent to calling `GarnishMath.meetsWCAGAAA(self, otherColor)`.
     ///

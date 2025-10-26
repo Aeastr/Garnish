@@ -29,7 +29,7 @@ private extension GarnishThemeDemoApp {
         defaultTheme.setColor(.secondary, Color.green.opacity(0.8), for: .dark)
         defaultTheme.setColor(.tertiary, Color.orange.opacity(0.8), for: .dark)
         defaultTheme.setColor(.background, Color.black, for: .dark)
-        
+
         let darkTheme = BuiltInTheme(name: "Dark")
         darkTheme.setColor(.primary, Color.white, for: .light)
         darkTheme.setColor(.secondary, Color.gray, for: .light)
@@ -41,7 +41,7 @@ private extension GarnishThemeDemoApp {
         darkTheme.setColor(.tertiary, Color.blue.opacity(0.9), for: .dark)
         darkTheme.setColor(.background, Color(red: 0.1, green: 0.1, blue: 0.1), for: .dark)
         darkTheme.setColor(.backgroundSecondary, Color(red: 0.1, green: 0.1, blue: 0.1), for: .dark)
-        
+
         let oceanTheme = BuiltInTheme(name: "Ocean")
         oceanTheme.setColor(.primary, Color(red: 0.0, green: 0.5, blue: 0.8), for: .light)
         oceanTheme.setColor(.secondary, Color(red: 0.0, green: 0.7, blue: 0.6), for: .light)
@@ -53,7 +53,7 @@ private extension GarnishThemeDemoApp {
         oceanTheme.setColor(.tertiary, Color(red: 0.5, green: 0.9, blue: 1.0), for: .dark)
         oceanTheme.setColor(.background, Color(red: 0.05, green: 0.1, blue: 0.15), for: .dark)
         oceanTheme.setColor(.backgroundSecondary, Color(red: 0.05, green: 0.1, blue: 0.15), for: .dark)
-        
+
         let roseTheme = BuiltInTheme(name: "Rose")
         roseTheme.setColor(.primary, Color(red: 0.9, green: 0.4, blue: 0.6), for: .light)      // Soft rose pink
         roseTheme.setColor(.secondary, Color(red: 0.8, green: 0.5, blue: 0.7), for: .light)   // Muted lavender pink
@@ -65,7 +65,7 @@ private extension GarnishThemeDemoApp {
         roseTheme.setColor(.tertiary, Color(red: 0.8, green: 0.5, blue: 0.65), for: .dark)    // Medium rose
         roseTheme.setColor(.background, Color(red: 0.15, green: 0.1, blue: 0.12), for: .dark) // Dark with rose undertone
         roseTheme.setColor(.backgroundSecondary, Color(red: 0.15, green: 0.1, blue: 0.12), for: .dark) // Dark with rose undertone
-        
+
         // Register the demo themes
         GarnishTheme.registerBuiltInTheme(defaultTheme)
         GarnishTheme.registerBuiltInTheme(darkTheme)
@@ -79,12 +79,12 @@ private extension GarnishThemeDemoApp {
 @available(watchOS, unavailable)
 public struct GarnishThemeDemoApp: View {
     @State private var selectedDemo: ThemeDemoSection?
-    
+
     public init() {
         // Set up demo themes for demonstration
         Self.setupDemoThemes()
     }
-    
+
     public var body: some View {
         NavigationSplitView {
             // Sidebar
@@ -129,7 +129,7 @@ enum ThemeDemoSection: CaseIterable {
     case customThemes
     case colorKeysSystem
     case themeComparison
-    
+
     var title: String {
         switch self {
         case .registeringThemes: return "Registering Themes"
@@ -140,7 +140,7 @@ enum ThemeDemoSection: CaseIterable {
         case .themeComparison: return "Theme Comparison"
         }
     }
-    
+
     var icon: String {
         switch self {
         case .registeringThemes: return "plus.app.fill"
@@ -151,7 +151,7 @@ enum ThemeDemoSection: CaseIterable {
         case .themeComparison: return "rectangle.2.swap"
         }
     }
-    
+
     @ViewBuilder
     var view: some View {
         switch self {
@@ -170,7 +170,6 @@ enum ThemeDemoSection: CaseIterable {
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 struct RegisteringThemesDemo: View {
-    
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -183,30 +182,30 @@ struct RegisteringThemesDemo: View {
                             code: """
                             // 1. Create your theme
                             let myTheme = BuiltInTheme(name: "MyAppTheme")
-                            
+
                             // 2. Define colors for light mode
                             myTheme.setColor(.primary, Color.blue, for: .light)
                             myTheme.setColor(.secondary, Color.green, for: .light)
                             myTheme.setColor(.backgroundColor, Color.white, for: .light)
-                            
+
                             // 3. Define colors for dark mode
                             myTheme.setColor(.primary, Color.cyan, for: .dark)
                             myTheme.setColor(.secondary, Color.mint, for: .dark)
                             myTheme.setColor(.backgroundColor, Color.black, for: .dark)
-                            
+
                             // 4. Register it with GarnishTheme
                             GarnishTheme.registerBuiltInTheme(myTheme)
                             """,
                             themeName: "Registration"
                         )
-                        
+
                         Text("Built-in themes are perfect for app-specific themes that don't need user customization.")
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
                     }
                 }
-                
+
                 ThemeDemoSectionView(
                     title: "Registration Methods",
                     description: "API for managing built-in themes in your app"
@@ -216,19 +215,19 @@ struct RegisteringThemesDemo: View {
                             code: """
                             // Register a theme
                             GarnishTheme.registerBuiltInTheme(theme)
-                            
+
                             // Get a registered theme
                             let theme = GarnishTheme.builtin("MyTheme")
-                            
+
                             // List all registered themes
                             let themeNames = GarnishTheme.builtInThemeNames
-                            
+
                             // Remove a theme
                             GarnishTheme.unregisterBuiltInTheme(named: "MyTheme")
                             """,
                             themeName: "API"
                         )
-                        
+
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Text("Currently Registered:")
@@ -237,7 +236,7 @@ struct RegisteringThemesDemo: View {
                                     .fontDesign(.monospaced)
                                     .foregroundColor(.secondary)
                             }
-                            
+
                             if !GarnishTheme.builtInThemeNames.isEmpty {
                                 ForEach(GarnishTheme.builtInThemeNames, id: \.self) { themeName in
                                     HStack {
@@ -267,7 +266,7 @@ struct RegisteringThemesDemo: View {
                         )
                     }
                 }
-                
+
                 ThemeDemoSectionView(
                     title: "Demo Theme Setup",
                     description: "This demo registers example themes to showcase the functionality"
@@ -276,16 +275,16 @@ struct RegisteringThemesDemo: View {
                         ThemeCodeBlock(
                             code: """
                             // This demo app registers these example themes:
-                            
+
                             private func setupDemoThemes() {
                                 let defaultTheme = BuiltInTheme(name: "Default")
                                 // ... configure colors ...
                                 GarnishTheme.registerBuiltInTheme(defaultTheme)
-                                
+
                                 let darkTheme = BuiltInTheme(name: "Dark")
                                 // ... configure colors ...
                                 GarnishTheme.registerBuiltInTheme(darkTheme)
-                                
+
                                 let oceanTheme = BuiltInTheme(name: "Ocean")
                                 // ... configure colors ...
                                 GarnishTheme.registerBuiltInTheme(oceanTheme)
@@ -293,7 +292,7 @@ struct RegisteringThemesDemo: View {
                             """,
                             themeName: "Demo Setup"
                         )
-                        
+
                         Text("In your actual app, you would register your themes during app launch, typically in your App's init or a setup function.")
                             .font(.caption)
                             .foregroundColor(.secondary)
@@ -312,15 +311,15 @@ struct RegisteringThemesDemo: View {
 @available(watchOS, unavailable)
 struct BuiltInThemesDemo: View {
     @State private var selectedThemeName: String = "Default"
-    
+
     private var availableThemes: [String] {
         GarnishTheme.availableBuiltInThemes
     }
-    
+
     private var selectedTheme: BuiltInTheme? {
         GarnishTheme.builtin(selectedThemeName)
     }
-    
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -335,7 +334,7 @@ struct BuiltInThemesDemo: View {
                             }
                         }
                         .pickerStyle(.segmented)
-                        
+
                         if let theme = selectedTheme {
                             VStack(spacing: 15) {
                                 ThemeCodeBlock(
@@ -345,9 +344,9 @@ struct BuiltInThemesDemo: View {
                                     """,
                                     themeName: theme.name
                                 )
-                                
+
                                 Divider()
-                                
+
                                 // Color palette display
                                 VStack(alignment: .leading, spacing: 12) {
                                     HStack {
@@ -356,7 +355,7 @@ struct BuiltInThemesDemo: View {
                                             .fontWeight(.medium)
                                         Spacer()
                                     }
-                                    
+
                                     LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 1), spacing: 15) {
                                         ForEach([ColorKey.primary, .secondary, .tertiary, .background, .backgroundSecondary], id: \.self) { colorKey in
                                             ThemeColorSwatch(
@@ -371,7 +370,7 @@ struct BuiltInThemesDemo: View {
                         }
                     }
                 }
-                
+
                 ThemeDemoSectionView(
                     title: "Theme Switching",
                     description: "Dynamically switch between themes at runtime"
@@ -384,7 +383,7 @@ struct BuiltInThemesDemo: View {
                             """,
                             themeName: "Ocean"
                         )
-                        
+
                         Button("Set as Current Theme") {
                             if let theme = selectedTheme {
                                 do {
@@ -411,7 +410,7 @@ struct BuiltInThemesDemo: View {
 struct CurrentThemeAPIDemo: View {
     @State private var colorScheme: ColorScheme = .light
     @State private var selectedColorKey: ColorKey = .primary
-    
+
     private var currentColor: Color? {
         do {
             return try GarnishTheme.current.color(selectedColorKey, for: colorScheme)
@@ -419,7 +418,7 @@ struct CurrentThemeAPIDemo: View {
             return nil
         }
     }
-    
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -432,12 +431,12 @@ struct CurrentThemeAPIDemo: View {
                             Text("Current Theme: \(GarnishTheme.current.name)")
                                 .font(.title3)
                                 .fontWeight(.semibold)
-                            
+
                             Text("Built-in: \(GarnishTheme.current.isBuiltIn ? "Yes" : "No")")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
-                        
+
                         ThemeCodeBlock(
                             code: """
                             // Fast access to current theme
@@ -446,9 +445,9 @@ struct CurrentThemeAPIDemo: View {
                             """,
                             themeName: GarnishTheme.current.name
                         )
-                        
+
                         Divider()
-                        
+
                         VStack(alignment: .leading, spacing: 15) {
                             HStack {
                                 Text("Color Scheme:")
@@ -462,7 +461,7 @@ struct CurrentThemeAPIDemo: View {
                                 .pickerStyle(.segmented)
                                 .frame(width: 150)
                             }
-                            
+
                             HStack {
                                 Text("Color Key:")
                                     .font(.subheadline)
@@ -477,7 +476,7 @@ struct CurrentThemeAPIDemo: View {
                                 }
                                 .pickerStyle(.menu)
                             }
-                            
+
                             if let color = currentColor {
                                 CurrentThemeColorDisplay(
                                     color: color,
@@ -488,7 +487,7 @@ struct CurrentThemeAPIDemo: View {
                         }
                     }
                 }
-                
+
                 ThemeDemoSectionView(
                     title: "Convenience Methods",
                     description: "Quick access methods for common theme operations"
@@ -503,7 +502,7 @@ struct CurrentThemeAPIDemo: View {
                             """,
                             themeName: GarnishTheme.current.name
                         )
-                        
+
                         LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 1), spacing: 12) {
                             ConvenienceMethodDemo(
                                 title: "Primary Light",
@@ -511,28 +510,28 @@ struct CurrentThemeAPIDemo: View {
                             ) {
                                 try? GarnishTheme.current.primary(for: .light)
                             }
-                            
+
                             ConvenienceMethodDemo(
                                 title: "Secondary Dark",
                                 code: "current.secondary(for: .dark)"
                             ) {
                                 try? GarnishTheme.current.secondary(for: .dark)
                             }
-                            
+
                             ConvenienceMethodDemo(
                                 title: "Background Light",
                                 code: "current.background(for: .light)"
                             ) {
                                 try? GarnishTheme.current.background(for: .light)
                             }
-                            
+
                             ConvenienceMethodDemo(
                                 title: "Background Secondary Light",
                                 code: "current.backgroundSecondary(for: .light)"
                             ) {
                                 try? GarnishTheme.current.backgroundSecondary(for: .light)
                             }
-                            
+
                             ConvenienceMethodDemo(
                                 title: "Tertiary Dark",
                                 code: "current.tertiary(for: .dark)"
@@ -560,7 +559,7 @@ struct CustomThemesDemo: View {
     @State private var secondaryDarkColor = Color.white
     @State private var showingAlert = false
     @State private var alertMessage = ""
-    
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -581,9 +580,9 @@ struct CustomThemesDemo: View {
                             """,
                             themeName: "Custom"
                         )
-                        
+
                         Divider()
-                        
+
                         VStack(alignment: .leading, spacing: 15) {
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack {
@@ -595,7 +594,7 @@ struct CustomThemesDemo: View {
                                 TextField("Enter theme name", text: $themeName)
                                     .textFieldStyle(.roundedBorder)
                             }
-                            
+
                             VStack(alignment: .leading, spacing: 12) {
                                 HStack {
                                     Text("Primary Colors")
@@ -603,7 +602,7 @@ struct CustomThemesDemo: View {
                                         .fontWeight(.medium)
                                     Spacer()
                                 }
-                                
+
                                 HStack(spacing: 16) {
                                     VStack(alignment: .leading, spacing: 8) {
                                         Text("Light")
@@ -614,7 +613,7 @@ struct CustomThemesDemo: View {
                                             .frame(height: 40)
                                     }
                                     .frame(maxWidth: .infinity)
-                                    
+
                                     VStack(alignment: .leading, spacing: 8) {
                                         Text("Dark")
                                             .font(.caption)
@@ -626,7 +625,7 @@ struct CustomThemesDemo: View {
                                     .frame(maxWidth: .infinity)
                                 }
                             }
-                            
+
                             VStack(alignment: .leading, spacing: 12) {
                                 HStack {
                                     Text("Secondary Colors")
@@ -634,7 +633,7 @@ struct CustomThemesDemo: View {
                                         .fontWeight(.medium)
                                     Spacer()
                                 }
-                                
+
                                 HStack(spacing: 16) {
                                     VStack(alignment: .leading, spacing: 8) {
                                         Text("Light")
@@ -645,7 +644,7 @@ struct CustomThemesDemo: View {
                                             .frame(height: 40)
                                     }
                                     .frame(maxWidth: .infinity)
-                                    
+
                                     VStack(alignment: .leading, spacing: 8) {
                                         Text("Dark")
                                             .font(.caption)
@@ -657,7 +656,7 @@ struct CustomThemesDemo: View {
                                     .frame(maxWidth: .infinity)
                                 }
                             }
-                            
+
                             // Theme preview
                             CustomThemePreview(
                                 primaryLight: primaryLightColor,
@@ -665,7 +664,7 @@ struct CustomThemesDemo: View {
                                 secondaryLight: secondaryLightColor,
                                 secondaryDark: secondaryDarkColor
                             )
-                            
+
                             Button("Create Theme") {
                                 createCustomTheme()
                             }
@@ -674,7 +673,7 @@ struct CustomThemesDemo: View {
                         }
                     }
                 }
-                
+
                 ThemeDemoSectionView(
                     title: "Manage Custom Themes",
                     description: "List and manage your saved custom themes"
@@ -690,7 +689,7 @@ struct CustomThemesDemo: View {
                             """,
                             themeName: "Management"
                         )
-                        
+
                         Button("Load Custom Themes") {
                             loadCustomThemes()
                         }
@@ -706,15 +705,15 @@ struct CustomThemesDemo: View {
             Text(alertMessage)
         }
     }
-    
+
     private func createCustomTheme() {
         do {
             let colors: [ColorKey: [ColorScheme: Color]] = [
                 .primary: [.light: primaryLightColor, .dark: primaryDarkColor],
                 .secondary: [.light: secondaryLightColor, .dark: secondaryDarkColor]
             ]
-            
-            let _ = try GarnishTheme.createUserTheme(named: themeName, colors: colors)
+
+            _ = try GarnishTheme.createUserTheme(named: themeName, colors: colors)
             alertMessage = "Successfully created theme '\(themeName)'"
             showingAlert = true
             themeName = ""
@@ -723,7 +722,7 @@ struct CustomThemesDemo: View {
             showingAlert = true
         }
     }
-    
+
     private func loadCustomThemes() {
         do {
             let themes = try GarnishTheme.loadUserThemes()
@@ -743,7 +742,7 @@ struct CustomThemesDemo: View {
 struct ColorKeysSystemDemo: View {
     @State private var customKeyName: String = ""
     @State private var selectedStandardKey: ColorKey = .primary
-    
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -762,7 +761,7 @@ struct ColorKeysSystemDemo: View {
                             """,
                             themeName: "ColorKey"
                         )
-                        
+
                         LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 1), spacing: 12) {
                             ForEach([ColorKey.primary, .secondary, .tertiary, .background, .backgroundSecondary], id: \.self) { key in
                                 ColorKeyInfoCard(colorKey: key)
@@ -770,7 +769,7 @@ struct ColorKeysSystemDemo: View {
                         }
                     }
                 }
-                
+
                 ThemeDemoSectionView(
                     title: "Custom Color Keys",
                     description: "Extend themes with your own custom color keys"
@@ -781,14 +780,14 @@ struct ColorKeysSystemDemo: View {
                             // Custom color keys
                             let accentKey = ColorKey.custom("accent")
                             let warningKey = ColorKey.custom("warning")
-                            
+
                             // String conversion
                             print(accentKey.stringValue) // "accent"
                             print(accentKey.isStandard) // false
                             """,
                             themeName: "Custom"
                         )
-                        
+
                         VStack(alignment: .leading, spacing: 12) {
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack {
@@ -800,7 +799,7 @@ struct ColorKeysSystemDemo: View {
                                 TextField("Enter custom key name", text: $customKeyName)
                                     .textFieldStyle(.roundedBorder)
                             }
-                            
+
                             if !customKeyName.isEmpty {
                                 let customKey = ColorKey.custom(customKeyName)
                                 ColorKeyInfoCard(colorKey: customKey)
@@ -808,7 +807,7 @@ struct ColorKeysSystemDemo: View {
                         }
                     }
                 }
-                
+
                 ThemeDemoSectionView(
                     title: "ColorKey Extensions",
                     description: "Useful extensions for working with color keys"
@@ -819,14 +818,14 @@ struct ColorKeysSystemDemo: View {
                             // String conversion
                             let key = ColorKey(from: "primary") // .primary
                             let customKey = ColorKey(from: "accent") // .custom("accent")
-                            
+
                             // Properties
                             print(key.stringValue) // "primary"
                             print(key.isStandard) // true
                             """,
                             themeName: "Extensions"
                         )
-                        
+
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Text("Selected Key:")
@@ -842,7 +841,7 @@ struct ColorKeysSystemDemo: View {
                                 }
                                 .pickerStyle(.menu)
                             }
-                            
+
                             HStack {
                                 Text("String Value:")
                                     .font(.subheadline)
@@ -852,7 +851,7 @@ struct ColorKeysSystemDemo: View {
                                     .fontDesign(.monospaced)
                                     .foregroundColor(.secondary)
                             }
-                            
+
                             HStack {
                                 Text("Is Standard:")
                                     .font(.subheadline)
@@ -885,11 +884,11 @@ struct ThemeComparisonDemo: View {
     @State private var firstTheme: String = "Default"
     @State private var secondTheme: String = "Dark"
     @State private var colorScheme: ColorScheme = .light
-    
+
     private var availableThemes: [String] {
         GarnishTheme.availableBuiltInThemes
     }
-    
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -907,12 +906,12 @@ struct ThemeComparisonDemo: View {
                                 }
                                 .pickerStyle(.menu)
                                 .frame(maxWidth: .infinity)
-                                
+
                                 Text("vs")
                                     .font(.title2)
                                     .fontWeight(.medium)
                                     .foregroundStyle(.secondary)
-                                
+
                                 Picker("Second Theme", selection: $secondTheme) {
                                     ForEach(availableThemes, id: \.self) { theme in
                                         Text(theme).tag(theme)
@@ -921,26 +920,26 @@ struct ThemeComparisonDemo: View {
                                 .pickerStyle(.menu)
                                 .frame(maxWidth: .infinity)
                             }
-                            
+
                             Picker("Color Scheme", selection: $colorScheme) {
                                 Text("Light").tag(ColorScheme.light)
                                 Text("Dark").tag(ColorScheme.dark)
                             }
                             .pickerStyle(.segmented)
                         }
-                        
+
                         HStack(spacing: 15) {
                             if let theme1 = GarnishTheme.builtin(firstTheme) {
                                 ThemeComparisonCard(theme: theme1, colorScheme: colorScheme)
                             }
-                            
+
                             if let theme2 = GarnishTheme.builtin(secondTheme) {
                                 ThemeComparisonCard(theme: theme2, colorScheme: colorScheme)
                             }
                         }
                     }
                 }
-                
+
                 ThemeDemoSectionView(
                     title: "Theme Testing",
                     description: "Test theme readability and accessibility"
@@ -955,7 +954,7 @@ struct ThemeComparisonDemo: View {
                             """,
                             themeName: firstTheme
                         )
-                        
+
                         if let theme = GarnishTheme.builtin(firstTheme) {
                             ThemeTestingInterface(theme: theme, colorScheme: colorScheme)
                         }
@@ -975,13 +974,13 @@ struct ThemeDemoSectionView<Content: View>: View {
     let title: String
     let description: String
     let content: Content
-    
+
     init(title: String, description: String, @ViewBuilder content: () -> Content) {
         self.title = title
         self.description = description
         self.content = content()
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             VStack(alignment: .leading, spacing: 8) {
@@ -994,7 +993,7 @@ struct ThemeDemoSectionView<Content: View>: View {
                     .foregroundStyle(.secondary)
                     .lineLimit(nil)
             }
-            
+
             content
         }
         .safeAreaPadding(24)
@@ -1016,15 +1015,15 @@ struct ThemeColorSwatch: View {
     let theme: BuiltInTheme
     let colorKey: ColorKey
     let title: String
-    
+
     private var lightColor: Color? {
         try? theme.color(colorKey, for: .light)
     }
-    
+
     private var darkColor: Color? {
         try? theme.color(colorKey, for: .dark)
     }
-    
+
     var body: some View {
         VStack(spacing: 12) {
             // Title
@@ -1035,7 +1034,7 @@ struct ThemeColorSwatch: View {
                     .foregroundColor(.primary)
                 Spacer()
             }
-            
+
             // Color squares
             HStack(spacing: 12) {
                 if let lightColor = lightColor {
@@ -1053,7 +1052,7 @@ struct ThemeColorSwatch: View {
                             .foregroundColor(.secondary)
                     }
                 }
-                
+
                 if let darkColor = darkColor {
                     VStack(spacing: 8) {
                         RoundedRectangle(cornerRadius: 8)
@@ -1069,7 +1068,6 @@ struct ThemeColorSwatch: View {
                             .foregroundColor(.secondary)
                     }
                 }
-                
             }
         }
         .padding(.top, 16)
@@ -1088,7 +1086,7 @@ struct ThemeColorSwatch: View {
 struct ThemeCodeBlock: View {
     let code: String
     let themeName: String
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
@@ -1104,10 +1102,10 @@ struct ThemeCodeBlock: View {
             .padding(.horizontal, 16)
             .padding(.top, 12)
             .padding(.bottom, 8)
-            
+
             Divider()
                 .padding(.horizontal, 16)
-            
+
             Text(code)
                 .font(.system(.callout, design: .monospaced))
                 .padding(16)
@@ -1131,7 +1129,7 @@ struct CurrentThemeColorDisplay: View {
     let color: Color
     let colorKey: ColorKey
     let colorScheme: ColorScheme
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -1141,7 +1139,7 @@ struct CurrentThemeColorDisplay: View {
                     .foregroundColor(.primary)
                 Spacer()
             }
-            
+
             HStack(spacing: 16) {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(color)
@@ -1151,18 +1149,18 @@ struct CurrentThemeColorDisplay: View {
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                     )
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Sample Text")
                         .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundColor(color)
-                    
+
                     Text("Preview with current color")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-                
+
                 Spacer()
             }
         }
@@ -1181,7 +1179,7 @@ struct ConvenienceMethodDemo: View {
     let title: String
     let code: String
     let colorProvider: () -> Color?
-    
+
     var body: some View {
         VStack(spacing: 8) {
             if let color = colorProvider() {
@@ -1198,12 +1196,12 @@ struct ConvenienceMethodDemo: View {
                             .foregroundColor(.red)
                     )
             }
-            
+
             Text(title)
                 .font(.caption)
                 .fontWeight(.medium)
                 .multilineTextAlignment(.center)
-            
+
             Text(code)
                 .font(.caption2)
                 .fontDesign(.monospaced)
@@ -1226,7 +1224,7 @@ struct CustomThemePreview: View {
     let primaryDark: Color
     let secondaryLight: Color
     let secondaryDark: Color
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
@@ -1235,7 +1233,7 @@ struct CustomThemePreview: View {
                     .fontWeight(.medium)
                 Spacer()
             }
-            
+
             VStack(spacing: 12) {
                 // Primary colors
                 VStack(alignment: .leading, spacing: 8) {
@@ -1246,7 +1244,7 @@ struct CustomThemePreview: View {
                             .foregroundColor(.primary)
                         Spacer()
                     }
-                    
+
                     HStack(spacing: 12) {
                         VStack(spacing: 4) {
                             RoundedRectangle(cornerRadius: 8)
@@ -1261,7 +1259,7 @@ struct CustomThemePreview: View {
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                         }
-                        
+
                         VStack(spacing: 4) {
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(primaryDark)
@@ -1275,11 +1273,11 @@ struct CustomThemePreview: View {
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                         }
-                        
+
                         Spacer()
                     }
                 }
-                
+
                 // Secondary colors
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
@@ -1289,7 +1287,7 @@ struct CustomThemePreview: View {
                             .foregroundColor(.primary)
                         Spacer()
                     }
-                    
+
                     HStack(spacing: 12) {
                         VStack(spacing: 4) {
                             RoundedRectangle(cornerRadius: 8)
@@ -1304,7 +1302,7 @@ struct CustomThemePreview: View {
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                         }
-                        
+
                         VStack(spacing: 4) {
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(secondaryDark)
@@ -1318,7 +1316,7 @@ struct CustomThemePreview: View {
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                         }
-                        
+
                         Spacer()
                     }
                 }
@@ -1337,27 +1335,27 @@ struct CustomThemePreview: View {
 @available(watchOS, unavailable)
 struct ColorKeyInfoCard: View {
     let colorKey: ColorKey
-    
+
     var body: some View {
         HStack(spacing: 16) {
             Image(systemName: colorKey.isStandard ? "key.fill" : "key.horizontal.fill")
                 .font(.title2)
                 .foregroundColor(colorKey.isStandard ? .blue : .orange)
                 .frame(width: 40)
-            
+
             VStack(alignment: .leading, spacing: 4) {
                 Text(colorKey.stringValue)
                     .font(.subheadline)
                     .fontWeight(.medium)
                     .foregroundColor(.primary)
-                
+
                 Text(colorKey.isStandard ? "Standard Key" : "Custom Key")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
-            
+
             Spacer()
-            
+
             Text(colorKey.isStandard ? "Standard" : "Custom")
                 .font(.caption)
                 .fontWeight(.medium)
@@ -1383,13 +1381,13 @@ struct ColorKeyInfoCard: View {
 struct ThemeComparisonCard: View {
     let theme: BuiltInTheme
     let colorScheme: ColorScheme
-    
+
     var body: some View {
         VStack(spacing: 12) {
             Text(theme.name)
                 .font(.headline)
                 .fontWeight(.semibold)
-            
+
             VStack(spacing: 8) {
                 ForEach([ColorKey.primary, .secondary, .tertiary], id: \.self) { key in
                     if let color = try? theme.color(key, for: colorScheme) {
@@ -1397,7 +1395,7 @@ struct ThemeComparisonCard: View {
                             Text(key.stringValue.capitalized)
                                 .font(.caption)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            
+
                             Circle()
                                 .fill(color)
                                 .frame(width: 20, height: 20)
@@ -1421,12 +1419,11 @@ struct ThemeComparisonCard: View {
 struct ThemeTestingInterface: View {
     let theme: BuiltInTheme
     let colorScheme: ColorScheme
-    
+
     var body: some View {
         VStack(spacing: 15) {
             if let primary = try? theme.primary(for: colorScheme),
                let background = try? theme.background(for: colorScheme) {
-                
                 Text("Sample heading text for readability testing")
                     .font(.title2)
                     .fontWeight(.semibold)
@@ -1434,7 +1431,7 @@ struct ThemeTestingInterface: View {
                     .padding()
                     .background(background)
                     .clipShape(RoundedRectangle(cornerRadius: 15))
-                
+
                 Text("This is body text to test the theme's readability in different contexts. It should be easy to read and provide good contrast.")
                     .font(.body)
                     .foregroundColor(primary)

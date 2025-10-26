@@ -7,20 +7,20 @@
 
 import SwiftUI
 
-extension Garnish{
+extension Garnish {
     /// **DEPRECATED**: This function will be removed in a future version.
-    /// 
+    ///
     /// **Migration Path**: Use the extension method instead:
     /// ```swift
     /// // Old way:
     /// let weight = try Garnish.recommendedFontWeight(for: textColor, with: backgroundColor)
-    /// 
+    ///
     /// // New way:
     /// let weight = try textColor.recommendedFontWeight(against: backgroundColor)
     /// ```
-    /// 
+    ///
     /// Recommends an appropriate font weight based on the contrast between foreground and background colors.
-    /// 
+    ///
     /// - Parameters:
     ///   - color: The foreground color (text color)
     ///   - backgroundColor: The background color to contrast against
@@ -36,23 +36,22 @@ extension Garnish{
         fontWeightRange: [Font.Weight] = [.regular, .semibold],
         debugStatements: Bool = false
     ) throws -> Font.Weight {
-        
         // Validate font weight range
         guard !fontWeightRange.isEmpty else {
             throw GarnishError.invalidParameter("fontWeightRange", value: fontWeightRange)
         }
-        
+
         // Use the new standardized math functions
         let contrast = try GarnishMath.contrastRatio(between: color, and: backgroundColor)
-        
+
         if debugStatements {
             print("[Debug] Background: \(backgroundColor), Foreground: \(color), Contrast: \(contrast)")
         }
-        
+
         // Define thresholds for font weight adjustments using WCAG standards
         let heavyWeightThreshold: CGFloat = 3.0 // Use heavier weights for very low contrast
         let lightWeightThreshold: CGFloat = GarnishMath.wcagAAThreshold // Use WCAG AA threshold
-        
+
         // Decide font weight based on contrast thresholds
         if contrast < heavyWeightThreshold {
             if debugStatements {

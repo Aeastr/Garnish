@@ -4,7 +4,6 @@ import CoreData
 // MARK: - GarnishThemeColor Extensions
 
 extension GarnishThemeColor {
-    
     /// Computed property for SwiftUI Color light variant
     var lightSwiftUIColor: Color? {
         get {
@@ -13,7 +12,7 @@ extension GarnishThemeColor {
             return Color(.sRGB, red: lightColorR, green: lightColorG, blue: lightColorB, opacity: lightColorA)
         }
     }
-    
+
     /// Set the light SwiftUI Color, throwing an error if color extraction fails
     func setLightColor(_ color: Color?) throws {
         if let color = color {
@@ -22,12 +21,12 @@ extension GarnishThemeColor {
                let components = cgColor.components,
                components.count >= 3 {
                 lightColorR = Double(components[0])
-                lightColorG = Double(components[1]) 
+                lightColorG = Double(components[1])
                 lightColorB = Double(components[2])
                 lightColorA = components.count >= 4 ? Double(components[3]) : 1.0
                 return
             }
-            
+
             // Fallback: Extract RGBA components via platform color conversion
             #if canImport(UIKit)
             let platformColor = UIColor(color)
@@ -35,22 +34,22 @@ extension GarnishThemeColor {
             var green: CGFloat = 0
             var blue: CGFloat = 0
             var alpha: CGFloat = 0
-            
+
             guard platformColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha) else {
                 throw GarnishThemeError.colorTransformationFailed(.custom("light - failed to extract RGBA from UIColor"))
             }
-            
+
             lightColorR = Double(red)
             lightColorG = Double(green)
             lightColorB = Double(blue)
             lightColorA = Double(alpha)
-            
+
             #elseif canImport(AppKit)
             let platformColor = NSColor(color)
             guard let rgbColor = platformColor.usingColorSpace(.deviceRGB) else {
                 throw GarnishThemeError.colorTransformationFailed(.custom("light - failed to convert to RGB colorspace"))
             }
-            
+
             lightColorR = Double(rgbColor.redComponent)
             lightColorG = Double(rgbColor.greenComponent)
             lightColorB = Double(rgbColor.blueComponent)
@@ -64,7 +63,7 @@ extension GarnishThemeColor {
             lightColorA = -1.0
         }
     }
-    
+
     /// Computed property for SwiftUI Color dark variant
     var darkSwiftUIColor: Color? {
         get {
@@ -72,7 +71,7 @@ extension GarnishThemeColor {
             return Color(.sRGB, red: darkColorR, green: darkColorG, blue: darkColorB, opacity: darkColorA)
         }
     }
-    
+
     /// Set the dark SwiftUI Color, throwing an error if color extraction fails
     func setDarkColor(_ color: Color?) throws {
         if let color = color {
@@ -86,7 +85,7 @@ extension GarnishThemeColor {
                 darkColorA = components.count >= 4 ? Double(components[3]) : 1.0
                 return
             }
-            
+
             // Fallback: Extract RGBA components via platform color conversion
             #if canImport(UIKit)
             let platformColor = UIColor(color)
@@ -94,22 +93,22 @@ extension GarnishThemeColor {
             var green: CGFloat = 0
             var blue: CGFloat = 0
             var alpha: CGFloat = 0
-            
+
             guard platformColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha) else {
                 throw GarnishThemeError.colorTransformationFailed(.custom("dark - failed to extract RGBA from UIColor"))
             }
-            
+
             darkColorR = Double(red)
             darkColorG = Double(green)
             darkColorB = Double(blue)
             darkColorA = Double(alpha)
-            
+
             #elseif canImport(AppKit)
             let platformColor = NSColor(color)
             guard let rgbColor = platformColor.usingColorSpace(.deviceRGB) else {
                 throw GarnishThemeError.colorTransformationFailed(.custom("dark - failed to convert to RGB colorspace"))
             }
-            
+
             darkColorR = Double(rgbColor.redComponent)
             darkColorG = Double(rgbColor.greenComponent)
             darkColorB = Double(rgbColor.blueComponent)
@@ -122,23 +121,23 @@ extension GarnishThemeColor {
             darkColorA = -1.0
         }
     }
-    
+
     /// Check if light color is actually set (vs just default values)
     var hasLightColor: Bool {
         return lightColorR >= 0 && lightColorG >= 0 && lightColorB >= 0 && lightColorA >= 0
     }
-    
+
     /// Check if dark color is actually set (vs just default values)
     var hasDarkColor: Bool {
         return darkColorR >= 0 && darkColorG >= 0 && darkColorB >= 0 && darkColorA >= 0
     }
-    
+
     /// Set both light and dark colors at once
     func setColors(light: Color?, dark: Color?) throws {
         try setLightColor(light)
         try setDarkColor(dark)
     }
-    
+
     /// Get color for specific scheme
     func color(for scheme: ColorScheme) -> Color? {
         switch scheme {
@@ -150,7 +149,7 @@ extension GarnishThemeColor {
             return lightSwiftUIColor
         }
     }
-    
+
     /// Set color for specific scheme
     func setColor(_ color: Color?, for scheme: ColorScheme) throws {
         switch scheme {
@@ -167,46 +166,45 @@ extension GarnishThemeColor {
 // MARK: - GarnishThemeEntity Extensions
 
 extension GarnishThemeEntity {
-    
     /// Get color for a specific key and scheme
     func color(for key: ColorKey, scheme: ColorScheme) -> Color? {
         guard let colors = colors as? Set<GarnishThemeColor> else { return nil }
         let colorEntity = colors.first { $0.key == key.stringValue }
         return colorEntity?.color(for: scheme)
     }
-    
+
     /// Set color for a specific key and scheme
     func setColor(_ color: Color?, for key: ColorKey, scheme: ColorScheme) throws {
         guard let colors = colors as? Set<GarnishThemeColor> else { return }
-        
+
         var colorEntity = colors.first { $0.key == key.stringValue }
-        
+
         // Create new color entity if needed
         if colorEntity == nil {
             colorEntity = GarnishThemeColor(context: managedObjectContext!)
             colorEntity?.key = key.stringValue
             colorEntity?.theme = self
         }
-        
+
         try colorEntity?.setColor(color, for: scheme)
     }
-    
+
     /// Set both light and dark colors for a key
     func setColors(for key: ColorKey, light: Color?, dark: Color?) throws {
         guard let colors = colors as? Set<GarnishThemeColor> else { return }
-        
+
         var colorEntity = colors.first { $0.key == key.stringValue }
-        
+
         // Create new color entity if needed
         if colorEntity == nil {
             colorEntity = GarnishThemeColor(context: managedObjectContext!)
             colorEntity?.key = key.stringValue
             colorEntity?.theme = self
         }
-        
+
         try colorEntity?.setColors(light: light, dark: dark)
     }
-    
+
     /// Get all defined color keys
     var definedColorKeys: [ColorKey] {
         guard let colors = colors as? Set<GarnishThemeColor> else { return [] }
@@ -215,7 +213,7 @@ extension GarnishThemeEntity {
             return ColorKey(from: key)
         }
     }
-    
+
     /// Remove a color key
     func removeColor(for key: ColorKey) {
         guard let colors = colors as? Set<GarnishThemeColor> else { return }
@@ -223,7 +221,7 @@ extension GarnishThemeEntity {
             managedObjectContext?.delete(colorEntity)
         }
     }
-    
+
     /// Update the updatedAt timestamp
     func touch() {
         updatedAt = Date()

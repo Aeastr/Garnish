@@ -10,18 +10,18 @@ import SwiftUI
 
 public extension Color {
     /// **DEPRECATED**: Use `textColor.recommendedFontWeight(against: backgroundColor)` extension method instead.
-    /// 
+    ///
     /// **Migration Path**: Use the new extension method:
     /// ```swift
     /// // Old way:
     /// let weight = textColor.recommendedFontWeight(in: .light, with: backgroundColor)
-    /// 
+    ///
     /// // New way:
     /// let weight = try textColor.recommendedFontWeight(against: backgroundColor)
     /// ```
-    /// 
+    ///
     /// Recommends an appropriate font weight based on the contrast between this color and background.
-    /// 
+    ///
     /// - Parameters:
     ///   - scheme: Color scheme context (deprecated, no longer used)
     ///   - backgroundColor: The background color to contrast against (required)
@@ -43,7 +43,7 @@ public extension Color {
             let middleIndex = fontWeightRange.count / 2
             return fontWeightRange[middleIndex]
         }
-        
+
         // Use the new method internally, but catch errors and provide fallback
         do {
             return try self.recommendedFontWeight(
@@ -59,13 +59,13 @@ public extension Color {
             return fontWeightRange[middleIndex]
         }
     }
-    
+
     /// **DEPRECATED**: Use `color.contrastingShade()` extension method instead.
-    /// 
-    /// 
+    ///
+    ///
     /// Returns a contrasting foreground color for this background color.
     /// Note: This method has a typo in the name and uses deprecated API internally.
-    /// 
+    ///
     /// - Returns: A contrasting color suitable for use as foreground
     @available(*, deprecated, message: "Use color.contrastingShade() extension method instead")
     func constratingForegroud() -> Color {

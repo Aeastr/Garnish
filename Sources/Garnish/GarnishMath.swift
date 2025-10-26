@@ -8,9 +8,8 @@ import AppKit
 /// Mathematical utilities for color analysis and contrast calculations.
 /// Provides standardized, WCAG-compliant methods for luminance and contrast calculations.
 public class GarnishMath {
-    
     // MARK: - Brightness Calculation Methods
-    
+
     /// Method for calculating color brightness/luminance
     public enum BrightnessMethod {
         /// WCAG 2.1 relative luminance calculation (recommended)
@@ -18,20 +17,20 @@ public class GarnishMath {
         /// Simple RGB averaging: (r + g + b) / 3
         case rgb
     }
-    
+
     // MARK: - WCAG Standards
-    
+
     /// WCAG AA contrast ratio threshold (4.5:1)
     public static let wcagAAThreshold: CGFloat = 4.5
-    
-    /// WCAG AAA contrast ratio threshold (7:1)  
+
+    /// WCAG AAA contrast ratio threshold (7:1)
     public static let wcagAAAThreshold: CGFloat = 7.0
-    
+
     /// Default contrast threshold used throughout Garnish
     public static let defaultThreshold: CGFloat = wcagAAThreshold
-    
+
     // MARK: - Luminance Calculations
-    
+
     /// Calculates the relative luminance of a color using WCAG 2.1 standards.
     /// This is the recommended method for accessibility-compliant color analysis.
     ///
@@ -52,7 +51,7 @@ public class GarnishMath {
         throw GarnishError.colorComponentExtractionFailed(color)
         #endif
     }
-    
+
     /// Calculates brightness using simple RGB averaging.
     /// Less accurate than relativeLuminance but faster for non-accessibility use cases.
     ///
@@ -82,7 +81,7 @@ public class GarnishMath {
         throw GarnishError.colorComponentExtractionFailed(color)
         #endif
     }
-    
+
     /// Calculates brightness using the specified method.
     ///
     /// - Parameters:
@@ -98,11 +97,11 @@ public class GarnishMath {
             return try rgbBrightness(of: color)
         }
     }
-    
+
     // MARK: - Contrast Calculations
-    
+
     /// Computes the contrast ratio between two colors using WCAG 2.1 standards.
-    /// Contrast ratio is defined as (L1 + 0.05) / (L2 + 0.05), where L1 is the 
+    /// Contrast ratio is defined as (L1 + 0.05) / (L2 + 0.05), where L1 is the
     /// lighter color's luminance and L2 is the darker color's luminance.
     ///
     /// Example:
@@ -121,17 +120,17 @@ public class GarnishMath {
         let l2 = try relativeLuminance(of: color2)
         let maxLum = max(l1, l2)
         let minLum = min(l1, l2)
-        
+
         return (maxLum + 0.05) / (minLum + 0.05)
     }
-    
+
     // MARK: - Color Classification
-    
+
     /// Classification of a color as light or dark
     public enum ColorClassification {
         case light
         case dark
-        
+
         /// Returns the corresponding SwiftUI ColorScheme
         public var colorScheme: ColorScheme {
             switch self {
@@ -140,7 +139,7 @@ public class GarnishMath {
             }
         }
     }
-    
+
     /// Classifies a color as light or dark based on its brightness.
     ///
     /// - Parameters:
@@ -152,7 +151,7 @@ public class GarnishMath {
     public static func classify(_ color: Color, threshold: CGFloat = 0.5, using method: BrightnessMethod = .luminance) throws -> ColorClassification {
         return try brightness(of: color, using: method) > threshold ? .light : .dark
     }
-    
+
     /// Convenience function: Determines the optimal ColorScheme for a given color.
     ///
     /// - Parameters:
@@ -163,9 +162,9 @@ public class GarnishMath {
     public static func colorScheme(for color: Color, using method: BrightnessMethod = .luminance) throws -> ColorScheme {
         return try classify(color, using: method).colorScheme
     }
-    
+
     // MARK: - Contrast Validation
-    
+
     /// Checks if two colors meet WCAG AA contrast requirements.
     ///
     /// - Parameters:
@@ -176,7 +175,7 @@ public class GarnishMath {
     public static func meetsWCAGAA(_ color1: Color, _ color2: Color) throws -> Bool {
         return try contrastRatio(between: color1, and: color2) >= wcagAAThreshold
     }
-    
+
     /// Checks if contrast ratio meets WCAG AA contrast requirements.
     ///
     /// - Parameters:
@@ -185,7 +184,7 @@ public class GarnishMath {
     public static func meetsWCAGAA(_ ratio: CGFloat) -> Bool {
         return ratio >= wcagAAThreshold
     }
-    
+
     /// Checks if two colors meet WCAG AAA contrast requirements.
     ///
     /// - Parameters:
@@ -196,7 +195,7 @@ public class GarnishMath {
     public static func meetsWCAGAAA(_ color1: Color, _ color2: Color) throws -> Bool {
         return try contrastRatio(between: color1, and: color2) >= wcagAAAThreshold
     }
-    
+
     /// Checks if contrast ratio meets WCAG AAA contrast requirements.
     ///
     /// - Parameters:
