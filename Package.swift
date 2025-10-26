@@ -20,6 +20,10 @@ let package = Package(
             name: "GarnishTheme",
             targets: ["GarnishTheme"]
         ),
+        .library(
+            name: "GarnishExpansion",
+            targets: ["GarnishExpansion"]
+        ),
     ],
     targets: [
         .target(
@@ -27,6 +31,10 @@ let package = Package(
         ),
         .target(
             name: "GarnishTheme"
+        ),
+        .target(
+            name: "GarnishExpansion",
+            dependencies: ["Garnish"]
         ),
         .testTarget(
             name: "GarnishTests",
