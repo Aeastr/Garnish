@@ -17,10 +17,6 @@ let package = Package(
             targets: ["Garnish"]
         ),
         .library(
-            name: "GarnishTheme",
-            targets: ["GarnishTheme"]
-        ),
-        .library(
             name: "GarnishExpansion",
             targets: ["GarnishExpansion"]
         ),

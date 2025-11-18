@@ -13,6 +13,7 @@ import Foundation
 import CoreData
 /// Theme management utilities and static methods
 public class GarnishTheme {
+    public init() {}
     /// Computed property to access CoreData context
     private static var context: NSManagedObjectContext {
         return GarnishThemePersistence.shared.context

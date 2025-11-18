@@ -54,7 +54,7 @@
       },
       "translucency" : {
         "enabled" : true,
-        "value" : 0.43
+        "value" : 0
       }
     },
     {
@@ -65,9 +65,8 @@
           "fill" : {
             "solid" : "extended-gray:1.00000,1.00000"
           },
-          "hidden" : false,
           "image-name" : "Grid.png",
-          "name" : "Grid)",
+          "name" : "Grid",
           "opacity" : 0.2,
           "position" : {
             "scale" : 1,
