@@ -9,6 +9,7 @@
 //
 
 import SwiftUI
+import Chronicle
 #if canImport(UIKit)
 import UIKit
 #elseif os(macOS)
@@ -133,9 +134,8 @@ public class GarnishColor {
     /// - Parameters:
     ///   - color: The color to adjust
     ///   - percentage: Adjustment percentage (-1.0 to 1.0, where positive lightens, negative darkens)
-    /// - Returns: Color with adjusted brightness
-    /// - Throws: `GarnishError.colorSpaceConversionFailed` if color cannot be converted to RGB color space
-    public static func adjustBrightness(of color: Color, by percentage: CGFloat) throws -> Color {
+    /// - Returns: Color with adjusted brightness, or `nil` if processing fails.
+    public static func adjustBrightness(of color: Color, by percentage: CGFloat) -> Color? {
         #if canImport(UIKit)
         typealias PlatformColor = UIColor
         #elseif os(macOS)
@@ -150,7 +150,11 @@ public class GarnishColor {
         #elseif os(macOS)
         // For NSColor, ensure we're in RGB color space to avoid dynamic color issues
         guard let rgbColor = platformColor.usingColorSpace(.deviceRGB) else {
-            throw GarnishError.colorSpaceConversionFailed(color, targetSpace: "deviceRGB")
+            Logger.shared.log("Failed to convert color to RGB color space", level: .error, metadata: [
+                "subsystem": "Garnish",
+                "operation": "adjustBrightness"
+            ])
+            return nil
         }
         r = rgbColor.redComponent
         g = rgbColor.greenComponent
@@ -205,9 +209,8 @@ public class GarnishColor {
     /// - Parameters:
     ///   - color: The color to convert
     ///   - includeAlpha: Whether to include alpha channel (default: false)
-    /// - Returns: Hexadecimal string (e.g., "FF0000" for red)
-    /// - Throws: `GarnishError.colorComponentExtractionFailed` or `GarnishError.colorSpaceConversionFailed` if color processing fails
-    public static func toHex(_ color: Color, includeAlpha: Bool = false) throws -> String {
+    /// - Returns: Hexadecimal string (e.g., "FF0000" for red), or `nil` if conversion fails
+    public static func toHex(_ color: Color, includeAlpha: Bool = false) -> String? {
         #if canImport(UIKit)
         typealias PlatformColor = UIColor
         #elseif os(macOS)
@@ -218,11 +221,19 @@ public class GarnishColor {
 
         #if canImport(UIKit)
         guard let components = platformColor.cgColor.components else {
-            throw GarnishError.colorComponentExtractionFailed(color)
+            Logger.shared.log("Failed to extract color components", level: .error, metadata: [
+                "subsystem": "Garnish",
+                "operation": "toHex"
+            ])
+            return nil
         }
 
         guard components.count >= 3 else {
-            throw GarnishError.colorComponentExtractionFailed(color)
+            Logger.shared.log("Insufficient color components", level: .error, metadata: [
+                "subsystem": "Garnish",
+                "operation": "toHex"
+            ])
+            return nil
         }
 
         let r = Float(components[0])
@@ -233,7 +244,11 @@ public class GarnishColor {
         #elseif os(macOS)
         // For NSColor, ensure we're in RGB color space to avoid dynamic color issues
         guard let rgbColor = platformColor.usingColorSpace(.deviceRGB) else {
-            throw GarnishError.colorSpaceConversionFailed(color, targetSpace: "deviceRGB")
+            Logger.shared.log("Failed to convert color to RGB color space", level: .error, metadata: [
+                "subsystem": "Garnish",
+                "operation": "toHex"
+            ])
+            return nil
         }
 
         let r = Float(rgbColor.redComponent)

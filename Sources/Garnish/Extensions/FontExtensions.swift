@@ -30,7 +30,9 @@ public extension Color {
         }
 
         // Use the new standardized math functions
-        let contrast = try GarnishMath.contrastRatio(between: self, and: backgroundColor)
+        guard let contrast = GarnishMath.contrastRatio(between: self, and: backgroundColor) else {
+            throw GarnishError.invalidColorCalculation("Failed to calculate contrast ratio")
+        }
 
         if debugStatements {
             print("[Debug] Background: \(backgroundColor), Foreground: \(self), Contrast: \(contrast)")

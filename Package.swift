@@ -21,9 +21,15 @@ let package = Package(
             targets: ["GarnishExpansion"]
         ),
     ],
+    dependencies: [
+        .package(url: "https://github.com/Aeastr/Chronicle.git", from: "3.0.0")
+    ],
     targets: [
         .target(
-            name: "Garnish"
+            name: "Garnish",
+            dependencies: [
+                .product(name: "Chronicle", package: "Chronicle")
+            ]
         ),
         .target(
             name: "GarnishExpansion",

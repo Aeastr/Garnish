@@ -9,6 +9,7 @@
 //
 
 import SwiftUI
+import Chronicle
 
 /// **Garnish** - Clean, simple color contrast utilities.
 ///
@@ -77,8 +78,7 @@ public class Garnish {
     ///   - minimumBlend: Minimum blend amount (0.0-1.0). Overrides blendStyle if both provided.
     ///   - blendStyle: Preset blend intensity (minimal, moderate, strong, maximum)
     ///   - blendRange: Full control over blend range. Overrides minimumBlend and blendStyle.
-    /// - Returns: A contrasting shade of the input color that meets the target contrast ratio
-    /// - Throws: `GarnishError` if color analysis fails
+    /// - Returns: A contrasting shade of the input color that meets the target contrast ratio, or `nil` if processing fails.
     public static func contrastingShade(
         of color: Color,
         using method: GarnishMath.BrightnessMethod = .luminance,
@@ -87,9 +87,9 @@ public class Garnish {
         minimumBlend: CGFloat? = nil,
         blendStyle: BlendStyle? = nil,
         blendRange: ClosedRange<CGFloat>? = nil
-    ) throws -> Color {
+    ) -> Color? {
         // contrastingShade is just contrastingColor against itself
-        return try contrastingColor(
+        return contrastingColor(
             color,
             against: color,
             using: method,
@@ -124,8 +124,7 @@ public class Garnish {
     ///   - minimumBlend: Minimum blend amount (0.0-1.0). Overrides blendStyle if both provided.
     ///   - blendStyle: Preset blend intensity (minimal, moderate, strong, maximum)
     ///   - blendRange: Full control over blend range. Overrides minimumBlend and blendStyle.
-    /// - Returns: Optimized version of the input color
-    /// - Throws: `GarnishError` if color analysis fails
+    /// - Returns: Optimized version of the input color, or `nil` if processing fails.
     public static func contrastingColor(
         _ color: Color,
         against background: Color,
@@ -135,7 +134,7 @@ public class Garnish {
         minimumBlend: CGFloat? = nil,
         blendStyle: BlendStyle? = nil,
         blendRange: ClosedRange<CGFloat>? = nil
-    ) throws -> Color {
+    ) -> Color? {
         #if canImport(UIKit)
         typealias PlatformColor = UIColor
         #elseif os(macOS)
@@ -143,7 +142,11 @@ public class Garnish {
         #endif
 
         let platformColor = PlatformColor(color)
-        let currentRatio = try GarnishMath.contrastRatio(between: color, and: background)
+
+        // Calculate current contrast ratio
+        guard let currentRatio = GarnishMath.contrastRatio(between: color, and: background) else {
+            return nil
+        }
 
         // If contrast is already sufficient, return original color
         if currentRatio >= targetRatio {
@@ -166,8 +169,10 @@ public class Garnish {
             let fullyBlack = platformColor.blend(with: blackBase, ratio: 1.0)
             let fullyWhite = platformColor.blend(with: whiteBase, ratio: 1.0)
 
-            let maxBlackRatio = try GarnishMath.contrastRatio(between: Color(fullyBlack), and: background)
-            let maxWhiteRatio = try GarnishMath.contrastRatio(between: Color(fullyWhite), and: background)
+            guard let maxBlackRatio = GarnishMath.contrastRatio(between: Color(fullyBlack), and: background),
+                  let maxWhiteRatio = GarnishMath.contrastRatio(between: Color(fullyWhite), and: background) else {
+                return nil
+            }
 
             // Choose the direction with the highest potential contrast
             contrastingBase = maxBlackRatio > maxWhiteRatio ? blackBase : whiteBase
@@ -179,7 +184,9 @@ public class Garnish {
 
             // Check if fully blending with preferred base can meet target
             let fullyBlended = platformColor.blend(with: preferredBase, ratio: 1.0)
-            let maxRatio = try GarnishMath.contrastRatio(between: Color(fullyBlended), and: background)
+            guard let maxRatio = GarnishMath.contrastRatio(between: Color(fullyBlended), and: background) else {
+                return nil
+            }
 
             // If preferred direction can meet target, use it; otherwise switch to alternate
             contrastingBase = maxRatio >= targetRatio ? preferredBase : alternateBase
@@ -211,7 +218,9 @@ public class Garnish {
         for _ in 0..<maxIterations {
             let testBlend = (lowBlend + highBlend) / 2.0
             let testColor = platformColor.blend(with: contrastingBase, ratio: testBlend)
-            let testRatio = try GarnishMath.contrastRatio(between: Color(testColor), and: background)
+            guard let testRatio = GarnishMath.contrastRatio(between: Color(testColor), and: background) else {
+                return nil
+            }
 
             // Always update best if this is better than previous best
             if testRatio >= targetRatio && (bestRatio < targetRatio || testBlend < bestBlend) {
@@ -243,9 +252,9 @@ public class Garnish {
     }
 
     /// Quick accessibility check.
-    /// - Throws: `GarnishError` if color analysis fails
-    public static func hasGoodContrast(_ color1: Color, _ color2: Color) throws -> Bool {
-        return try GarnishMath.meetsWCAGAA(color1, color2)
+    /// - Returns: `true` if colors meet WCAG AA standards, `false` otherwise (including if color analysis fails)
+    public static func hasGoodContrast(_ color1: Color, _ color2: Color) -> Bool {
+        return GarnishMath.meetsWCAGAA(color1, color2)
     }
 }
 

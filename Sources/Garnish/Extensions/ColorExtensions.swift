@@ -60,10 +60,9 @@ public extension Color {
     /// Uses the same method as GarnishColor.adjustBrightness for consistency.
     ///
     /// - Parameter factor: Brightness adjustment factor (1.0 = no change, >1.0 = brighter, <1.0 = darker)
-    /// - Returns: A new Color with adjusted brightness
-    /// - Throws: `GarnishError.colorSpaceConversionFailed` if color cannot be converted to RGB color space
-    func adjustedBrightness(by factor: CGFloat) throws -> Color {
-        return try GarnishColor.adjustBrightness(of: self, by: factor)
+    /// - Returns: A new Color with adjusted brightness, or `nil` if processing fails
+    func adjustedBrightness(by factor: CGFloat) -> Color? {
+        return GarnishColor.adjustBrightness(of: self, by: factor)
     }
 
     /// Adjusts the luminance of a color using WCAG-compliant relative luminance calculation.
@@ -79,16 +78,15 @@ public extension Color {
     ///
     /// - Parameter alpha: If `true` returns an 8-character hex including the alpha
     ///                    component, otherwise returns a 6-character hex string.
-    /// - Returns: A hexadecimal string for the color.
-    /// - Throws: `GarnishError.colorComponentExtractionFailed` if color components cannot be extracted
-    func toHex(alpha: Bool = false) throws -> String {
+    /// - Returns: A hexadecimal string for the color, or `nil` if conversion fails
+    func toHex(alpha: Bool = false) -> String? {
         // Convert SwiftUI Color to a platform-specific color.
         let platformColor = PlatformColor(self)
 
         #if os(macOS)
         // For NSColor, ensure we're in RGB color space to avoid dynamic color issues
         guard let rgbColor = platformColor.usingColorSpace(.deviceRGB) else {
-            throw GarnishError.colorSpaceConversionFailed(self, targetSpace: "deviceRGB")
+            return nil
         }
 
         let r = Float(rgbColor.redComponent)
@@ -100,7 +98,7 @@ public extension Color {
         // For UIColor, use getRed method
         var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
         guard platformColor.getRed(&r, green: &g, blue: &b, alpha: &a) else {
-            throw GarnishError.colorComponentExtractionFailed(self)
+            return nil
         }
 
         let rFloat = Float(r)
