@@ -31,8 +31,12 @@ public class GarnishMath {
 
     // MARK: - WCAG Standards
 
-    /// WCAG AA contrast ratio threshold (4.5:1)
+    /// WCAG AA contrast ratio threshold for normal text (4.5:1)
     public static let wcagAAThreshold: CGFloat = 4.5
+
+    /// WCAG AA contrast ratio threshold for large text (3:1)
+    /// Large text is defined as 18pt+ or 14pt+ bold
+    public static let wcagAAThresholdLarge: CGFloat = 3.0
 
     /// WCAG AAA contrast ratio threshold (7:1)
     public static let wcagAAAThreshold: CGFloat = 7.0
@@ -215,6 +219,26 @@ public class GarnishMath {
     /// - Returns: True if contrast ratio >= 4.5:1
     public static func meetsWCAGAA(_ ratio: CGFloat) -> Bool {
         return ratio >= wcagAAThreshold
+    }
+
+    /// Checks if two colors meet WCAG AA contrast requirements for large text.
+    ///
+    /// - Parameters:
+    ///   - color1: First color
+    ///   - color2: Second color
+    /// - Returns: True if contrast ratio >= 3:1, false if it doesn't meet the threshold or if calculation fails
+    public static func meetsWCAGAALarge(_ color1: Color, _ color2: Color) -> Bool {
+        guard let ratio = contrastRatio(between: color1, and: color2) else { return false }
+        return ratio >= wcagAAThresholdLarge
+    }
+
+    /// Checks if contrast ratio meets WCAG AA contrast requirements for large text.
+    ///
+    /// - Parameters:
+    ///   - ratio: Contrast Ratio
+    /// - Returns: True if contrast ratio >= 3:1
+    public static func meetsWCAGAALarge(_ ratio: CGFloat) -> Bool {
+        return ratio >= wcagAAThresholdLarge
     }
 
     /// Checks if two colors meet WCAG AAA contrast requirements.
