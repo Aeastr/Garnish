@@ -434,30 +434,24 @@ struct MathUtilitiesDemo: View {
     @State private var color2 = Color.red
 
     private var luminanceResult: (value: Double?, error: String?) {
-        do {
-            let value = try GarnishMath.relativeLuminance(of: color1)
-            return (value, nil)
-        } catch {
-            return (nil, error.localizedDescription)
+        if let value = GarnishMath.relativeLuminance(of: color1) {
+            return (Double(value), nil)
         }
+        return (nil, "Failed to calculate luminance")
     }
 
     private var brightnessResult: (value: Double?, error: String?) {
-        do {
-            let value = try GarnishMath.brightness(of: color1)
-            return (value, nil)
-        } catch {
-            return (nil, error.localizedDescription)
+        if let value = GarnishMath.brightness(of: color1) {
+            return (Double(value), nil)
         }
+        return (nil, "Failed to calculate brightness")
     }
 
     private var contrastRatioResult: (value: Double?, error: String?) {
-        do {
-            let value = try GarnishMath.contrastRatio(between: color1, and: color2)
-            return (value, nil)
-        } catch {
-            return (nil, error.localizedDescription)
+        if let value = GarnishMath.contrastRatio(between: color1, and: color2) {
+            return (Double(value), nil)
         }
+        return (nil, "Failed to calculate contrast ratio")
     }
 
     private var colorSchemeResult: (scheme: ColorScheme?, error: String?) {
@@ -810,12 +804,10 @@ struct AccessibilityDemo: View {
     @State private var backgroundColor = Color.white
 
     private var contrastRatioResult: (value: Double?, error: String?) {
-        do {
-            let value = try GarnishMath.contrastRatio(between: foregroundColor, and: backgroundColor)
-            return (value, nil)
-        } catch {
-            return (nil, error.localizedDescription)
+        if let value = GarnishMath.contrastRatio(between: foregroundColor, and: backgroundColor) {
+            return (Double(value), nil)
         }
+        return (nil, "Failed to calculate contrast ratio")
     }
 
     var body: some View {
