@@ -26,19 +26,12 @@ let package = Package(
             name: "Garnish"
         ),
         .target(
-            name: "GarnishTheme"
-        ),
-        .target(
             name: "GarnishExpansion",
             dependencies: ["Garnish"]
         ),
         .testTarget(
             name: "GarnishTests",
             dependencies: ["Garnish"]
-        ),
-        .testTarget(
-            name: "GarnishThemeTests",
-            dependencies: ["GarnishTheme"]
         ),
     ]
 )
