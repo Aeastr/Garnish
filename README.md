@@ -1,32 +1,18 @@
 <div align="center">
-  <img width="270" height="270" src="/assets/icon.png" alt="Garnish Logo">
+  <img width="150" height="150" src="/Resources/Icons/icon.png" alt="Garnish Logo">
   <h1><b>Garnish</b></h1>
   <p>A Swift package that provides intelligent color utilities for accessibility, contrast optimization, and visual harmony.</p>
 </div>
 
-<div align="center">
-  <a href="https://swift.org">
-    <img src="https://img.shields.io/badge/Swift-5.9-orange.svg" alt="Swift Version">
-  </a>
-  <a href="https://www.apple.com/ios/">
-    <img src="https://img.shields.io/badge/iOS-14.0%2B-blue.svg" alt="iOS 14.0+">
-  </a>  
-  <a href="https://www.apple.com/macos/">
-    <img src="https://img.shields.io/badge/macOS-14%2B-blue.svg" alt="macOS 14.0+">
-  </a>
-  <a href="https://www.apple.com/tvos/">
-    <img src="https://img.shields.io/badge/tvOS-14.0%2B-blue.svg" alt="tvOS 14.0+">
-  </a>
-  <a href="https://www.apple.com/watchos/">
-    <img src="https://img.shields.io/badge/watchOS-7.0%2B-blue.svg" alt="watchOS 7.0+">
-  </a>
-  <a href="https://www.apple.com/visionos/">
-    <img src="https://img.shields.io/badge/visionOS-1.0%2B-blue.svg" alt="visionOS 1.0+">
-  </a>
-  <a href="LICENSE">
-    <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT">
-  </a>
-</div>
+<p align="center">
+  <a href="https://swift.org"><img src="https://img.shields.io/badge/Swift-5.9-orange.svg" alt="Swift Version"></a>
+  <a href="https://www.apple.com/ios/"><img src="https://img.shields.io/badge/iOS-14.0%2B-blue.svg" alt="iOS 14.0+"></a>  
+  <a href="https://www.apple.com/macos/"><img src="https://img.shields.io/badge/macOS-14%2B-blue.svg" alt="macOS 14.0+"></a>
+  <a href="https://www.apple.com/tvos/"><img src="https://img.shields.io/badge/tvOS-14.0%2B-blue.svg" alt="tvOS 14.0+"></a>
+  <a href="https://www.apple.com/watchos/"><img src="https://img.shields.io/badge/watchOS-7.0%2B-blue.svg" alt="watchOS 7.0+"></a>
+  <a href="https://www.apple.com/visionos/"><img src="https://img.shields.io/badge/visionOS-1.0%2B-blue.svg" alt="visionOS 1.0+"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT"></a>
+</p>
 
 
 
@@ -34,7 +20,7 @@
 
 Garnish is a comprehensive Swift package that provides intelligent color utilities for accessibility, contrast optimization, and visual harmony.
 
-| ![Auto Contrast](assets/readme/autoContrast.png) | ![Color Math](assets/readme/colorMath.png) | ![Color Analysis](assets/readme/colorAnalysis.png) |
+| ![Auto Contrast](Resources/Icons/autoContrast.png) | ![Color Math](Resources/Icons/colorMath.png) | ![Color Analysis](Resources/Icons/colorAnalysis.png) |
 |:---:|:---:|:---:|
 | **Auto Contrast** | **Color Math** | **Color Analysis** |
 | Automatically generate readable text colors from any background | Calculate luminance, brightness, and contrast ratios with WCAG standards | Classify colors as light/dark and validate accessibility compliance |
