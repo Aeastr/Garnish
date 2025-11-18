@@ -18,7 +18,7 @@ public extension Color {
     ///   - fontWeightRange: Array of font weights to choose from (default: [.regular, .semibold])
     ///   - debugStatements: Whether to print debug information
     /// - Returns: Recommended font weight from the provided range
-    /// - Throws: `GarnishError` if parameters are invalid or color analysis fails
+    /// - Throws: `GarnishError` if parameters are invalid or contrast calculation fails (internal use only)
     func recommendedFontWeight(
         against backgroundColor: Color,
         fontWeightRange: [Font.Weight] = [.regular, .semibold],

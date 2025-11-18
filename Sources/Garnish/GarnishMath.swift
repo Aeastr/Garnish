@@ -231,10 +231,8 @@ public class GarnishMath {
     /// Checks if contrast ratio meets WCAG AAA contrast requirements.
     ///
     /// - Parameters:
-    ///   - color1: First color
-    ///   - color2: Second color
+    ///   - ratio: Contrast ratio
     /// - Returns: True if contrast ratio >= 7:1
-    /// - Throws: `GarnishError` if color analysis fails
     public static func meetsWCAGAAA(_ ratio: CGFloat) -> Bool {
         return ratio >= wcagAAAThreshold
     }

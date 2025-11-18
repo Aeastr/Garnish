@@ -51,7 +51,7 @@ internal extension UIColor {
     /// ```
     ///
     /// - Returns: A value between 0.0 and 1.0 representing the relative luminance.
-    /// - Throws: `GarnishError.colorComponentExtractionFailed` if color components cannot be extracted
+    /// - Throws: `GarnishError (internal use only).colorComponentExtractionFailed` if color components cannot be extracted
     func relativeLuminance() throws -> CGFloat {
         var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
         guard getRed(&r, green: &g, blue: &b, alpha: &a) else {
@@ -118,7 +118,7 @@ internal extension NSColor {
     /// ```
     ///
     /// - Returns: A value between 0.0 and 1.0 representing the relative luminance.
-    /// - Throws: `GarnishError.colorSpaceConversionFailed` if color cannot be converted to RGB color space
+    /// - Throws: `GarnishError (internal use only).colorSpaceConversionFailed` if color cannot be converted to RGB color space
     func relativeLuminance() throws -> CGFloat {
         // Ensure the color is in the device RGB color space.
         guard let color = usingColorSpace(.deviceRGB) else {
