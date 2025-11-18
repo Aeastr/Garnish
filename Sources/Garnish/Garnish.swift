@@ -125,6 +125,7 @@ public class Garnish {
     ///   - blendStyle: Preset blend intensity (minimal, moderate, strong, maximum)
     ///   - blendRange: Full control over blend range. Overrides minimumBlend and blendStyle.
     /// - Returns: Optimized version of the input color, or `nil` if processing fails.
+    // swiftlint:disable:next cyclomatic_complexity
     public static func contrastingColor(
         _ color: Color,
         against background: Color,
