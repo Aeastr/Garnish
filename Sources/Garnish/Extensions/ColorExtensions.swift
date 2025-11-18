@@ -1,8 +1,11 @@
 //
-//  Color Extensions.swift
+//  ColorExtensions.swift
 //  Garnish
 //
-//  Created by Aether on 15/12/2024.
+//  Created by Garnish Contributors, 2025.
+//
+//  Copyright © 2025 Garnish Contributors. All rights reserved.
+//  Licensed under the MIT License.
 //
 
 import SwiftUI
@@ -15,8 +18,8 @@ import AppKit
 /// Type alias for the platform-specific color.
 typealias PlatformColor = NSColor
 #endif
-   
-    
+
+
 public extension Color {
     /// Returns HSB (Hue, Saturation, Brightness) components of the color
     var hsb: (hue: Double, saturation: Double, brightness: Double) {
@@ -57,12 +60,11 @@ public extension Color {
     /// Uses the same method as GarnishColor.adjustBrightness for consistency.
     ///
     /// - Parameter factor: Brightness adjustment factor (1.0 = no change, >1.0 = brighter, <1.0 = darker)
-    /// - Returns: A new Color with adjusted brightness
-    /// - Throws: `GarnishError.colorSpaceConversionFailed` if color cannot be converted to RGB color space
-    func adjustedBrightness(by factor: CGFloat) throws -> Color {
-        return try GarnishColor.adjustBrightness(of: self, by: factor)
+    /// - Returns: A new Color with adjusted brightness, or `nil` if processing fails
+    func adjustedBrightness(by factor: CGFloat) -> Color? {
+        return GarnishColor.adjustBrightness(of: self, by: factor)
     }
-    
+
     /// Adjusts the luminance of a color using WCAG-compliant relative luminance calculation.
     /// Uses the same method as GarnishColor.adjustLuminance for consistency.
     ///
@@ -71,41 +73,40 @@ public extension Color {
     func adjustedLuminance(by factor: CGFloat) -> Color {
         return GarnishColor.adjustLuminance(of: self, by: factor)
     }
-    
+
     /// Returns the hexadecimal string representation of the Color.
     ///
     /// - Parameter alpha: If `true` returns an 8-character hex including the alpha
     ///                    component, otherwise returns a 6-character hex string.
-    /// - Returns: A hexadecimal string for the color.
-    /// - Throws: `GarnishError.colorComponentExtractionFailed` if color components cannot be extracted
-    func toHex(alpha: Bool = false) throws -> String {
+    /// - Returns: A hexadecimal string for the color, or `nil` if conversion fails
+    func toHex(alpha: Bool = false) -> String? {
         // Convert SwiftUI Color to a platform-specific color.
         let platformColor = PlatformColor(self)
-        
+
         #if os(macOS)
         // For NSColor, ensure we're in RGB color space to avoid dynamic color issues
         guard let rgbColor = platformColor.usingColorSpace(.deviceRGB) else {
-            throw GarnishError.colorSpaceConversionFailed(self, targetSpace: "deviceRGB")
+            return nil
         }
-        
+
         let r = Float(rgbColor.redComponent)
         let g = Float(rgbColor.greenComponent)
         let b = Float(rgbColor.blueComponent)
         let a = Float(rgbColor.alphaComponent)
-        
+
         #else
         // For UIColor, use getRed method
         var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
         guard platformColor.getRed(&r, green: &g, blue: &b, alpha: &a) else {
-            throw GarnishError.colorComponentExtractionFailed(self)
+            return nil
         }
-        
+
         let rFloat = Float(r)
         let gFloat = Float(g)
         let bFloat = Float(b)
         let aFloat = Float(a)
         #endif
-        
+
         if alpha {
             #if os(macOS)
             return String(format: "%02lX%02lX%02lX%02lX",
@@ -135,4 +136,3 @@ public extension Color {
         }
     }
 }
-

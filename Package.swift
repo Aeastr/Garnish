@@ -17,20 +17,19 @@ let package = Package(
             targets: ["Garnish"]
         ),
         .library(
-            name: "GarnishTheme",
-            targets: ["GarnishTheme"]
-        ),
-        .library(
             name: "GarnishExpansion",
             targets: ["GarnishExpansion"]
         ),
     ],
+    dependencies: [
+        .package(url: "https://github.com/Aeastr/Chronicle.git", from: "3.0.0")
+    ],
     targets: [
         .target(
-            name: "Garnish"
-        ),
-        .target(
-            name: "GarnishTheme"
+            name: "Garnish",
+            dependencies: [
+                .product(name: "Chronicle", package: "Chronicle")
+            ]
         ),
         .target(
             name: "GarnishExpansion",
@@ -39,10 +38,6 @@ let package = Package(
         .testTarget(
             name: "GarnishTests",
             dependencies: ["Garnish"]
-        ),
-        .testTarget(
-            name: "GarnishThemeTests",
-            dependencies: ["GarnishTheme"]
         ),
     ]
 )

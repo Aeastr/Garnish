@@ -1,4 +1,4 @@
-# SwiftLint configuration for Portal package
+# SwiftLint configuration for Garnish package
 
 # Paths to include/exclude
 included:
@@ -40,7 +40,6 @@ opt_in_rules:
   - fallthrough
   - fatal_error_message
   - file_header
-  - file_name
   - first_where
   - flatmap_over_map_reduce
   - identical_operands
@@ -81,6 +80,13 @@ identifier_name:
     - i
     - j
     - k
+    - r  # Red color component
+    - g  # Green color component
+    - b  # Blue color component
+    - a  # Alpha color component
+    - h  # Hue color component
+    - s  # Saturation color component
+    - v  # Value/brightness color component
 
 type_name:
   min_length: 3
@@ -116,15 +122,4 @@ vertical_whitespace:
   max_empty_lines: 2
 
 file_header:
-  required_pattern: "^\\/\\/\\n\\/\\/  .*\\.swift\\n\\/\\/  (Portal|PortalFlowingHeader|PortalPrivate|PortalView)\\n\\/\\/\\n\\/\\/  Created by .*, [0-9]{4}\\.\\n\\/\\/\\n\\/\\/  Copyright © [0-9]{4} .*\\. All rights reserved\\.\\n\\/\\/  Licensed under the MIT License\\."
-
-custom_rules:
-  no_hardcoded_delays:
-    name: "No Hardcoded Delays"
-    # Note: This regex is intentionally broad and may flag animation design parameters.
-    # It catches TimeInterval/Double/CGFloat literals to encourage use of PortalConstants.
-    # False positives (e.g., animation choreography values) are acceptable as warnings
-    # since package users won't run SwiftLint on library internals.
-    regex: '(?<!PortalConstants\.)(?:TimeInterval|Double|CGFloat)\s*\(\s*0\.[1-9]'
-    message: "Use PortalConstants for delay values instead of hardcoding them"
-    severity: warning
+  required_pattern: "^\\/\\/\\n\\/\\/  .*\\.swift\\n\\/\\/  (Garnish|GarnishTheme|GarnishExpansion)\\n\\/\\/\\n\\/\\/  Created by .*, [0-9]{4}\\.\\n\\/\\/\\n\\/\\/  Copyright © [0-9]{4} .*\\. All rights reserved\\.\\n\\/\\/  Licensed under the MIT License\\."

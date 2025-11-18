@@ -63,11 +63,6 @@ Garnish comes with a bundled demo app that lets you explore Garnish in action. O
 ### Garnish Base Demo
 Explore the core color utilities with interactive demos for **Core API** (monochromatic and bi-chromatic contrast generation), **Math Utilities** (luminance calculations and contrast ratios), **Color Extensions** (brightness adjustment and hex conversion), **Font Weight** optimization, and **Accessibility** compliance checking with WCAG standards.
 
-![GarnishTheme Demo](assets/readme/GarnishThemeDemo.png)
-
-### GarnishTheme Demo  
-Discover the theming system with demos for **Theme Registration**, **Built-in Themes** (Default, Dark, Ocean, Rose), **Current Theme API**, **Custom Theme Creation**, **Color Keys System**, and **Theme Comparison** tools for building flexible, dynamic app themes.
-
 ## License
 
 This project is released under the MIT License. See [LICENSE](LICENSE) for details.

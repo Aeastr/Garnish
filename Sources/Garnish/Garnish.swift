@@ -1,7 +1,15 @@
-// Garnish - Clean Color Contrast Utilities
-// Refactored for simplicity, consistency, and WCAG compliance
+//
+//  Garnish.swift
+//  Garnish
+//
+//  Created by Garnish Contributors, 2025.
+//
+//  Copyright © 2025 Garnish Contributors. All rights reserved.
+//  Licensed under the MIT License.
+//
 
 import SwiftUI
+import Chronicle
 
 /// **Garnish** - Clean, simple color contrast utilities.
 ///
@@ -11,7 +19,6 @@ import SwiftUI
 ///
 /// All calculations use WCAG-compliant standards for accessibility.
 public class Garnish {
-
     /// Direction to bias the contrasting color generation
     public enum ContrastDirection {
         /// Automatically choose between light and dark based on which provides better contrast
@@ -48,7 +55,7 @@ public class Garnish {
     }
 
     // MARK: - Core API (New)
-    
+
     /// Generates a contrasting shade of the same color that meets WCAG standards.
     /// **Use Case 1**: "I have blue, give me a shade of blue that looks good against blue"
     ///
@@ -71,8 +78,7 @@ public class Garnish {
     ///   - minimumBlend: Minimum blend amount (0.0-1.0). Overrides blendStyle if both provided.
     ///   - blendStyle: Preset blend intensity (minimal, moderate, strong, maximum)
     ///   - blendRange: Full control over blend range. Overrides minimumBlend and blendStyle.
-    /// - Returns: A contrasting shade of the input color that meets the target contrast ratio
-    /// - Throws: `GarnishError` if color analysis fails
+    /// - Returns: A contrasting shade of the input color that meets the target contrast ratio, or `nil` if processing fails.
     public static func contrastingShade(
         of color: Color,
         using method: GarnishMath.BrightnessMethod = .luminance,
@@ -81,9 +87,9 @@ public class Garnish {
         minimumBlend: CGFloat? = nil,
         blendStyle: BlendStyle? = nil,
         blendRange: ClosedRange<CGFloat>? = nil
-    ) throws -> Color {
+    ) -> Color? {
         // contrastingShade is just contrastingColor against itself
-        return try contrastingColor(
+        return contrastingColor(
             color,
             against: color,
             using: method,
@@ -94,7 +100,7 @@ public class Garnish {
             blendRange: blendRange
         )
     }
-    
+
     /// Optimizes one color to work well against another background.
     /// **Use Case 2**: "I have blue and red, which version of red looks best against blue?"
     ///
@@ -118,8 +124,7 @@ public class Garnish {
     ///   - minimumBlend: Minimum blend amount (0.0-1.0). Overrides blendStyle if both provided.
     ///   - blendStyle: Preset blend intensity (minimal, moderate, strong, maximum)
     ///   - blendRange: Full control over blend range. Overrides minimumBlend and blendStyle.
-    /// - Returns: Optimized version of the input color
-    /// - Throws: `GarnishError` if color analysis fails
+    /// - Returns: Optimized version of the input color, or `nil` if processing fails.
     public static func contrastingColor(
         _ color: Color,
         against background: Color,
@@ -129,120 +134,193 @@ public class Garnish {
         minimumBlend: CGFloat? = nil,
         blendStyle: BlendStyle? = nil,
         blendRange: ClosedRange<CGFloat>? = nil
-    ) throws -> Color {
+    ) -> Color? {
         #if canImport(UIKit)
         typealias PlatformColor = UIColor
         #elseif os(macOS)
         typealias PlatformColor = NSColor
         #endif
-        
+
         let platformColor = PlatformColor(color)
-        let currentRatio = try GarnishMath.contrastRatio(between: color, and: background)
-        
+
+        // Calculate current contrast ratio
+        guard let currentRatio = GarnishMath.contrastRatio(between: color, and: background) else {
+            return nil
+        }
+
         // If contrast is already sufficient, return original color
         if currentRatio >= targetRatio {
             return color
         }
-        
+
         // Determine the base color to blend with
-        let blackBase: PlatformColor = .black
-        let whiteBase: PlatformColor = .white
-
-        let contrastingBase: PlatformColor
-
-        switch direction {
-        case .forceDark:
-            contrastingBase = blackBase
-        case .forceLight:
-            contrastingBase = whiteBase
-        case .auto:
-            // Test the maximum achievable contrast in each direction by fully blending
-            let fullyBlack = platformColor.blend(with: blackBase, ratio: 1.0)
-            let fullyWhite = platformColor.blend(with: whiteBase, ratio: 1.0)
-
-            let maxBlackRatio = try GarnishMath.contrastRatio(between: Color(fullyBlack), and: background)
-            let maxWhiteRatio = try GarnishMath.contrastRatio(between: Color(fullyWhite), and: background)
-
-            // Choose the direction with the highest potential contrast
-            contrastingBase = maxBlackRatio > maxWhiteRatio ? blackBase : whiteBase
-
-        case .preferLight, .preferDark:
-            // Try the preferred direction first
-            let preferredBase = direction == .preferLight ? whiteBase : blackBase
-            let alternateBase = direction == .preferLight ? blackBase : whiteBase
-
-            // Check if fully blending with preferred base can meet target
-            let fullyBlended = platformColor.blend(with: preferredBase, ratio: 1.0)
-            let maxRatio = try GarnishMath.contrastRatio(between: Color(fullyBlended), and: background)
-
-            // If preferred direction can meet target, use it; otherwise switch to alternate
-            contrastingBase = maxRatio >= targetRatio ? preferredBase : alternateBase
+        guard let contrastingBase = determineContrastingBase(
+            platformColor: platformColor,
+            background: background,
+            direction: direction,
+            targetRatio: targetRatio
+        ) else {
+            return nil
         }
 
         // Determine the blend range to search within
-        let searchRange: ClosedRange<CGFloat>
-        if let blendRange = blendRange {
-            // Explicit range provided - use it directly
-            searchRange = blendRange
-        } else if let minimumBlend = minimumBlend {
-            // Minimum blend specified - search from minimum to 1.0
-            searchRange = minimumBlend...1.0
-        } else if let blendStyle = blendStyle {
-            // Style preset specified - map to range
-            searchRange = blendStyle.minimumBlend...1.0
-        } else {
-            // Default - search full range
-            searchRange = 0.0...1.0
-        }
+        let searchRange = determineBlendRange(
+            blendRange: blendRange,
+            minimumBlend: minimumBlend,
+            blendStyle: blendStyle
+        )
 
         // Binary search for the right blend amount to achieve target contrast
+        guard let bestBlend = findOptimalBlend(
+            platformColor: platformColor,
+            contrastingBase: contrastingBase,
+            background: background,
+            targetRatio: targetRatio,
+            searchRange: searchRange
+        ) else {
+            return nil
+        }
+
+        let result = platformColor.blend(with: contrastingBase, ratio: bestBlend)
+        return Color(result)
+    }
+
+    // MARK: - Private Helper Methods
+
+    private static func determineContrastingBase<PlatformColor: PlatformColorProtocol>(
+        platformColor: PlatformColor,
+        background: Color,
+        direction: ContrastDirection,
+        targetRatio: CGFloat
+    ) -> PlatformColor? {
+        let blackBase: PlatformColor = .black
+        let whiteBase: PlatformColor = .white
+
+        switch direction {
+        case .forceDark:
+            return blackBase
+        case .forceLight:
+            return whiteBase
+        case .auto:
+            return determineAutoDirection(
+                platformColor: platformColor,
+                background: background,
+                blackBase: blackBase,
+                whiteBase: whiteBase
+            )
+        case .preferLight, .preferDark:
+            return determinePreferredDirection(
+                platformColor: platformColor,
+                background: background,
+                direction: direction,
+                targetRatio: targetRatio,
+                blackBase: blackBase,
+                whiteBase: whiteBase
+            )
+        }
+    }
+
+    private static func determineAutoDirection<PlatformColor: PlatformColorProtocol>(
+        platformColor: PlatformColor,
+        background: Color,
+        blackBase: PlatformColor,
+        whiteBase: PlatformColor
+    ) -> PlatformColor? {
+        let fullyBlack = platformColor.blend(with: blackBase, ratio: 1.0)
+        let fullyWhite = platformColor.blend(with: whiteBase, ratio: 1.0)
+
+        guard let maxBlackRatio = GarnishMath.contrastRatio(between: Color(fullyBlack), and: background),
+              let maxWhiteRatio = GarnishMath.contrastRatio(between: Color(fullyWhite), and: background) else {
+            return nil
+        }
+
+        return maxBlackRatio > maxWhiteRatio ? blackBase : whiteBase
+    }
+
+    private static func determinePreferredDirection<PlatformColor: PlatformColorProtocol>(
+        platformColor: PlatformColor,
+        background: Color,
+        direction: ContrastDirection,
+        targetRatio: CGFloat,
+        blackBase: PlatformColor,
+        whiteBase: PlatformColor
+    ) -> PlatformColor? {
+        let preferredBase = direction == .preferLight ? whiteBase : blackBase
+        let alternateBase = direction == .preferLight ? blackBase : whiteBase
+
+        let fullyBlended = platformColor.blend(with: preferredBase, ratio: 1.0)
+        guard let maxRatio = GarnishMath.contrastRatio(between: Color(fullyBlended), and: background) else {
+            return nil
+        }
+
+        return maxRatio >= targetRatio ? preferredBase : alternateBase
+    }
+
+    private static func determineBlendRange(
+        blendRange: ClosedRange<CGFloat>?,
+        minimumBlend: CGFloat?,
+        blendStyle: BlendStyle?
+    ) -> ClosedRange<CGFloat> {
+        if let blendRange = blendRange {
+            return blendRange
+        } else if let minimumBlend = minimumBlend {
+            return minimumBlend...1.0
+        } else if let blendStyle = blendStyle {
+            return blendStyle.minimumBlend...1.0
+        } else {
+            return 0.0...1.0
+        }
+    }
+
+    private static func findOptimalBlend<PlatformColor: PlatformColorProtocol>(
+        platformColor: PlatformColor,
+        contrastingBase: PlatformColor,
+        background: Color,
+        targetRatio: CGFloat,
+        searchRange: ClosedRange<CGFloat>
+    ) -> CGFloat? {
         var lowBlend: CGFloat = searchRange.lowerBound
         var highBlend: CGFloat = searchRange.upperBound
         var bestBlend: CGFloat = 0.0
         var bestRatio: CGFloat = 0.0
         let maxIterations = 5
-        
+
         for _ in 0..<maxIterations {
             let testBlend = (lowBlend + highBlend) / 2.0
             let testColor = platformColor.blend(with: contrastingBase, ratio: testBlend)
-            let testRatio = try GarnishMath.contrastRatio(between: Color(testColor), and: background)
-            
-            // Always update best if this is better than previous best
+            guard let testRatio = GarnishMath.contrastRatio(between: Color(testColor), and: background) else {
+                return nil
+            }
+
             if testRatio >= targetRatio && (bestRatio < targetRatio || testBlend < bestBlend) {
                 bestBlend = testBlend
                 bestRatio = testRatio
             }
-            
+
             if testRatio >= targetRatio {
-                // We have enough contrast, try with less blending
                 highBlend = testBlend
             } else {
-                // Not enough contrast, need more blending
                 lowBlend = testBlend
-                // If we don't have a valid solution yet, this is our current best
                 if bestRatio < targetRatio {
                     bestBlend = testBlend
                     bestRatio = testRatio
                 }
             }
-            
-            // If we're close enough to target, break early
+
             if bestRatio >= targetRatio && abs(bestRatio - targetRatio) < 0.05 {
                 break
             }
         }
-        
-        let result = platformColor.blend(with: contrastingBase, ratio: bestBlend)
-        return Color(result)
+
+        return bestBlend
     }
-    
+
     /// Quick accessibility check.
-    /// - Throws: `GarnishError` if color analysis fails
-    public static func hasGoodContrast(_ color1: Color, _ color2: Color) throws -> Bool {
-        return try GarnishMath.meetsWCAGAA(color1, color2)
+    /// - Returns: `true` if colors meet WCAG AA standards, `false` otherwise (including if color analysis fails)
+    public static func hasGoodContrast(_ color1: Color, _ color2: Color) -> Bool {
+        return GarnishMath.meetsWCAGAA(color1, color2)
     }
 }
-
 
 
 // Preview removed - demo views were moved to new GarnishDemo.swift

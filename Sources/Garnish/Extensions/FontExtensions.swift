@@ -2,43 +2,46 @@
 //  FontExtensions.swift
 //  Garnish
 //
-//  Created by Aether on 19/12/2024.
-//  Consolidated and updated from Garnish Functions folder
+//  Created by Garnish Contributors, 2025.
+//
+//  Copyright © 2025 Garnish Contributors. All rights reserved.
+//  Licensed under the MIT License.
 //
 
 import SwiftUI
 
 public extension Color {
     /// Recommends an appropriate font weight for this color when used as text.
-    /// 
+    ///
     /// - Parameters:
     ///   - backgroundColor: The background color to contrast against
     ///   - fontWeightRange: Array of font weights to choose from (default: [.regular, .semibold])
     ///   - debugStatements: Whether to print debug information
     /// - Returns: Recommended font weight from the provided range
-    /// - Throws: `GarnishError` if parameters are invalid or color analysis fails
+    /// - Throws: `GarnishError` if parameters are invalid or contrast calculation fails (internal use only)
     func recommendedFontWeight(
         against backgroundColor: Color,
         fontWeightRange: [Font.Weight] = [.regular, .semibold],
         debugStatements: Bool = false
     ) throws -> Font.Weight {
-        
         // Validate font weight range
         guard !fontWeightRange.isEmpty else {
             throw GarnishError.invalidParameter("fontWeightRange", value: fontWeightRange)
         }
-        
+
         // Use the new standardized math functions
-        let contrast = try GarnishMath.contrastRatio(between: self, and: backgroundColor)
-        
+        guard let contrast = GarnishMath.contrastRatio(between: self, and: backgroundColor) else {
+            throw GarnishError.invalidColorCalculation("Failed to calculate contrast ratio")
+        }
+
         if debugStatements {
             print("[Debug] Background: \(backgroundColor), Foreground: \(self), Contrast: \(contrast)")
         }
-        
+
         // Define thresholds for font weight adjustments using WCAG standards
         let heavyWeightThreshold: CGFloat = 3.0 // Use heavier weights for very low contrast
         let lightWeightThreshold: CGFloat = GarnishMath.wcagAAThreshold // Use WCAG AA threshold
-        
+
         // Decide font weight based on contrast thresholds
         if contrast < heavyWeightThreshold {
             if debugStatements {

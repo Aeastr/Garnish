@@ -1,16 +1,41 @@
+//
+//  GarnishColor.swift
+//  Garnish
+//
+//  Created by Garnish Contributors, 2025.
+//
+//  Copyright © 2025 Garnish Contributors. All rights reserved.
+//  Licensed under the MIT License.
+//
+
 import SwiftUI
+import Chronicle
 #if canImport(UIKit)
 import UIKit
 #elseif os(macOS)
 import AppKit
 #endif
 
+/// RGBA color components structure
+public struct ColorComponents {
+    public let red: CGFloat
+    public let green: CGFloat
+    public let blue: CGFloat
+    public let alpha: CGFloat
+
+    public init(red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
+        self.red = red
+        self.green = green
+        self.blue = blue
+        self.alpha = alpha
+    }
+}
+
 /// Color manipulation utilities for advanced color operations.
 /// Provides blending, brightness adjustment, and other color transformation functions.
 public class GarnishColor {
-    
     // MARK: - Color Blending
-    
+
     /// Blends two colors together using a specified ratio.
     ///
     /// - Parameters:
@@ -31,7 +56,7 @@ public class GarnishColor {
         return Color(result)
         #endif
     }
-    
+
     // MARK: - Color Averaging
 
     /// Calculates the average color from an array of colors.
@@ -71,8 +96,8 @@ public class GarnishColor {
 
     /// Extracts RGBA components from a Color.
     /// - Parameter color: The color to extract components from
-    /// - Returns: Tuple of (red, green, blue, alpha) components, or nil if extraction fails
-    public static func extractColorComponents(from color: Color) -> (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)? {
+    /// - Returns: ColorComponents structure, or nil if extraction fails
+    public static func extractColorComponents(from color: Color) -> ColorComponents? {
         #if os(iOS) || os(tvOS) || os(watchOS)
         let uiColor = UIColor(color)
         var red: CGFloat = 0
@@ -84,7 +109,7 @@ public class GarnishColor {
             return nil
         }
 
-        return (red, green, blue, alpha)
+        return ColorComponents(red: red, green: green, blue: blue, alpha: alpha)
 
         #elseif os(macOS)
         let nsColor = NSColor(color)
@@ -98,54 +123,57 @@ public class GarnishColor {
         var alpha: CGFloat = 0
 
         rgbColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-        return (red, green, blue, alpha)
+        return ColorComponents(red: red, green: green, blue: blue, alpha: alpha)
         #endif
     }
 
     // MARK: - Brightness Adjustment
-    
+
     /// Adjusts the brightness of a color by a percentage.
     ///
     /// - Parameters:
     ///   - color: The color to adjust
     ///   - percentage: Adjustment percentage (-1.0 to 1.0, where positive lightens, negative darkens)
-    /// - Returns: Color with adjusted brightness
-    /// - Throws: `GarnishError.colorSpaceConversionFailed` if color cannot be converted to RGB color space
-    public static func adjustBrightness(of color: Color, by percentage: CGFloat) throws -> Color {
+    /// - Returns: Color with adjusted brightness, or `nil` if processing fails.
+    public static func adjustBrightness(of color: Color, by percentage: CGFloat) -> Color? {
         #if canImport(UIKit)
         typealias PlatformColor = UIColor
         #elseif os(macOS)
         typealias PlatformColor = NSColor
         #endif
-        
+
         let platformColor = PlatformColor(color)
         var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
-        
+
         #if canImport(UIKit)
         platformColor.getRed(&r, green: &g, blue: &b, alpha: &a)
         #elseif os(macOS)
         // For NSColor, ensure we're in RGB color space to avoid dynamic color issues
         guard let rgbColor = platformColor.usingColorSpace(.deviceRGB) else {
-            throw GarnishError.colorSpaceConversionFailed(color, targetSpace: "deviceRGB")
+            Logger.shared.log("Failed to convert color to RGB color space", level: .error, metadata: [
+                "subsystem": "Garnish",
+                "operation": "adjustBrightness"
+            ])
+            return nil
         }
         r = rgbColor.redComponent
         g = rgbColor.greenComponent
         b = rgbColor.blueComponent
         a = rgbColor.alphaComponent
         #endif
-        
+
         let factor = 1.0 + percentage
         let newR = min(max(r * factor, 0), 1)
         let newG = min(max(g * factor, 0), 1)
         let newB = min(max(b * factor, 0), 1)
-        
+
         #if canImport(UIKit)
         return Color(PlatformColor(red: newR, green: newG, blue: newB, alpha: a))
         #elseif os(macOS)
         return Color(PlatformColor(calibratedRed: newR, green: newG, blue: newB, alpha: a))
         #endif
     }
-    
+
     /// Adjusts the luminance (HSB brightness) of a color by a factor.
     ///
     /// - Parameters:
@@ -158,10 +186,10 @@ public class GarnishColor {
         #elseif os(macOS)
         typealias PlatformColor = NSColor
         #endif
-        
+
         let platformColor = PlatformColor(color)
         var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
-        
+
         #if canImport(UIKit)
         platformColor.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
         let newBrightness = max(min(b * factor, 1.0), 0.0)
@@ -173,65 +201,76 @@ public class GarnishColor {
         return Color(PlatformColor(calibratedHue: h, saturation: s, brightness: newBrightness, alpha: a))
         #endif
     }
-    
+
     // MARK: - Color Conversion
-    
+
     /// Converts a color to its hexadecimal string representation.
     ///
     /// - Parameters:
     ///   - color: The color to convert
     ///   - includeAlpha: Whether to include alpha channel (default: false)
-    /// - Returns: Hexadecimal string (e.g., "FF0000" for red)
-    /// - Throws: `GarnishError.colorComponentExtractionFailed` or `GarnishError.colorSpaceConversionFailed` if color processing fails
-    public static func toHex(_ color: Color, includeAlpha: Bool = false) throws -> String {
+    /// - Returns: Hexadecimal string (e.g., "FF0000" for red), or `nil` if conversion fails
+    public static func toHex(_ color: Color, includeAlpha: Bool = false) -> String? {
         #if canImport(UIKit)
         typealias PlatformColor = UIColor
         #elseif os(macOS)
         typealias PlatformColor = NSColor
         #endif
-        
+
         let platformColor = PlatformColor(color)
-        
+
         #if canImport(UIKit)
         guard let components = platformColor.cgColor.components else {
-            throw GarnishError.colorComponentExtractionFailed(color)
+            Logger.shared.log("Failed to extract color components", level: .error, metadata: [
+                "subsystem": "Garnish",
+                "operation": "toHex"
+            ])
+            return nil
         }
-        
+
         guard components.count >= 3 else {
-            throw GarnishError.colorComponentExtractionFailed(color)
+            Logger.shared.log("Insufficient color components", level: .error, metadata: [
+                "subsystem": "Garnish",
+                "operation": "toHex"
+            ])
+            return nil
         }
-        
+
         let r = Float(components[0])
         let g = Float(components[1])
         let b = Float(components[2])
         let a = components.count >= 4 ? Float(components[3]) : 1.0
-        
+
         #elseif os(macOS)
         // For NSColor, ensure we're in RGB color space to avoid dynamic color issues
         guard let rgbColor = platformColor.usingColorSpace(.deviceRGB) else {
-            throw GarnishError.colorSpaceConversionFailed(color, targetSpace: "deviceRGB")
+            Logger.shared.log("Failed to convert color to RGB color space", level: .error, metadata: [
+                "subsystem": "Garnish",
+                "operation": "toHex"
+            ])
+            return nil
         }
-        
+
         let r = Float(rgbColor.redComponent)
         let g = Float(rgbColor.greenComponent)
         let b = Float(rgbColor.blueComponent)
         let a = Float(rgbColor.alphaComponent)
         #endif
-        
+
         if includeAlpha {
             return String(format: "%02lX%02lX%02lX%02lX",
-                         lroundf(r * 255),
-                         lroundf(g * 255),
-                         lroundf(b * 255),
-                         lroundf(a * 255))
+                          lroundf(r * 255),
+                          lroundf(g * 255),
+                          lroundf(b * 255),
+                          lroundf(a * 255))
         } else {
             return String(format: "%02lX%02lX%02lX",
-                         lroundf(r * 255),
-                         lroundf(g * 255),
-                         lroundf(b * 255))
+                          lroundf(r * 255),
+                          lroundf(g * 255),
+                          lroundf(b * 255))
         }
     }
-    
+
     /// Creates a color from a hexadecimal string.
     ///
     /// - Parameter hex: Hexadecimal string (with or without #, supports 3, 6, or 8 characters)
@@ -239,16 +278,16 @@ public class GarnishColor {
     public static func fromHex(_ hex: String) -> Color? {
         var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
         hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
-        
+
         var rgb: UInt64 = 0
-        
+
         guard Scanner(string: hexSanitized).scanHexInt64(&rgb) else {
             return nil
         }
-        
+
         let length = hexSanitized.count
         let r, g, b, a: CGFloat
-        
+
         switch length {
         case 3: // RGB
             r = CGFloat((rgb & 0xF00) >> 8) / 15.0
@@ -268,7 +307,7 @@ public class GarnishColor {
         default:
             return nil
         }
-        
+
         return Color(.sRGB, red: r, green: g, blue: b, opacity: a)
     }
 }
