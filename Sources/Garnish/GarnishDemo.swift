@@ -109,32 +109,30 @@ struct CoreAPIDemo: View {
     @State private var selectedBlendStyle: Garnish.BlendStyle?
 
     private var monochromaticContrastResult: (shade: Color?, error: String?) {
-        do {
-            let shade = try Garnish.contrastingShade(
-                of: inputColor,
-                targetRatio: targetRatio,
-                minimumBlend: minimumBlend > 0 ? minimumBlend : nil,
-                blendStyle: selectedBlendStyle
-            )
-            return (shade, nil)
-        } catch {
-            return (nil, error.localizedDescription)
+        let shade = Garnish.contrastingShade(
+            of: inputColor,
+            targetRatio: targetRatio,
+            minimumBlend: minimumBlend > 0 ? minimumBlend : nil,
+            blendStyle: selectedBlendStyle
+        )
+        if shade == nil {
+            return (nil, "Failed to generate contrasting shade")
         }
+        return (shade, nil)
     }
 
     private var bichromaticContrastResult: (color: Color?, error: String?) {
-        do {
-            let color = try Garnish.contrastingColor(
-                inputColor,
-                against: backgroundColor,
-                targetRatio: targetRatio,
-                minimumBlend: minimumBlend > 0 ? minimumBlend : nil,
-                blendStyle: selectedBlendStyle
-            )
-            return (color, nil)
-        } catch {
-            return (nil, error.localizedDescription)
+        let color = Garnish.contrastingColor(
+            inputColor,
+            against: backgroundColor,
+            targetRatio: targetRatio,
+            minimumBlend: minimumBlend > 0 ? minimumBlend : nil,
+            blendStyle: selectedBlendStyle
+        )
+        if color == nil {
+            return (nil, "Failed to generate contrasting color")
         }
+        return (color, nil)
     }
 
     var body: some View {
