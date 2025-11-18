@@ -1040,7 +1040,7 @@ struct CodeBlock: View {
                 attrString[range].font = .system(.callout, design: .monospaced, weight: .medium)
 
                 // Use Garnish to calculate contrasting background
-                if let contrastingShade = try? Garnish.contrastingShade(of: color) {
+                if let contrastingShade = Garnish.contrastingShade(of: color) {
                     attrString[range].backgroundColor = contrastingShade.opacity(0.7)
                 } else {
                     attrString[range].backgroundColor = color.opacity(0.15)
