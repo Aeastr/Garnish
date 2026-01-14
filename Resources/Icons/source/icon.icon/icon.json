@@ -1,10 +1,10 @@
 {
   "fill" : {
-    "automatic-gradient" : "display-p3:0.19608,0.57255,0.97255,1.00000"
+    "automatic-gradient" : "display-p3:0.45750,0.34739,0.97255,1.00000"
   },
   "groups" : [
     {
-      "blur-material" : 0.1,
+      "blur-material" : 0.15,
       "hidden" : false,
       "layers" : [
         {
@@ -54,7 +54,7 @@
       },
       "translucency" : {
         "enabled" : true,
-        "value" : 0
+        "value" : 0.2
       }
     },
     {
@@ -65,6 +65,7 @@
           "fill" : {
             "solid" : "extended-gray:1.00000,1.00000"
           },
+          "hidden" : false,
           "image-name" : "Grid.png",
           "name" : "Grid",
           "opacity" : 0.2,

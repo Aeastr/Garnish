@@ -1,13 +1,11 @@
 {
-  "fill" : {
-    "automatic-gradient" : "display-p3:0.40713,0.55005,0.85498,1.00000"
-  },
+  "fill" : "system-light",
   "groups" : [
     {
       "layers" : [
         {
           "fill" : {
-            "solid" : "srgb:1.00000,1.00000,1.00000,1.00000"
+            "solid" : "display-p3:1.00000,0.39141,0.53351,1.00000"
           },
           "image-name" : "􃈟.svg",
           "name" : "􃈟"

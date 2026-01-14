@@ -1,13 +1,11 @@
 {
-  "fill" : {
-    "automatic-gradient" : "display-p3:0.40784,0.77255,0.87451,1.00000"
-  },
+  "fill" : "system-light",
   "groups" : [
     {
       "layers" : [
         {
           "fill" : {
-            "solid" : "srgb:1.00000,1.00000,1.00000,1.00000"
+            "solid" : "display-p3:0.02200,0.59009,1.00000,1.00000"
           },
           "image-name" : "􀪫.svg",
           "name" : "􀪫",
@@ -21,7 +19,7 @@
         },
         {
           "fill" : {
-            "solid" : "display-p3:0.58364,0.89719,0.97464,1.00000"
+            "solid" : "display-p3:0.18895,0.61536,1.00000,0.37283"
           },
           "image-name" : "􀪫.svg",
           "name" : "􀪫"
