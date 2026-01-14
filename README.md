@@ -15,7 +15,7 @@
   <a href="https://developer.apple.com"><img src="https://img.shields.io/badge/visionOS-1+-000000?logo=apple" alt="visionOS 1+"></a>
 </p>
 
-| ![Auto Contrast](resources/icons/autoContrast.png) | ![Color Math](resources/icons/colorMath.png) | ![Color Analysis](resources/icons/colorAnalysis.png) |
+| <img src="resources/icons/autoContrast.png" width="64"> | <img src="resources/icons/colorMath.png" width="64"> | <img src="resources/icons/colorAnalysis.png" width="64"> |
 |:---:|:---:|:---:|
 | **Auto Contrast** | **Color Math** | **Color Analysis** |
 | Automatically generate readable text colors from any background | Calculate luminance, brightness, and contrast ratios with WCAG standards | Classify colors as light/dark and validate accessibility compliance |
