@@ -44,3 +44,5 @@ fastlane/test_output
 # Other IDE or temporary files
 *.swp
 *.lock
+# macOS folder icon
+Icon?
