@@ -129,13 +129,13 @@ public class GarnishColor {
 
     // MARK: - Brightness Adjustment
 
-    /// Adjusts the brightness of a color by a percentage.
+    /// Adjusts the brightness of a color using RGB scaling.
     ///
     /// - Parameters:
     ///   - color: The color to adjust
-    ///   - percentage: Adjustment percentage (-1.0 to 1.0, where positive lightens, negative darkens)
+    ///   - amount: Adjustment amount (-1.0 to 1.0, where 0.0 = no change, positive = brighter, negative = darker)
     /// - Returns: Color with adjusted brightness, or `nil` if processing fails.
-    public static func adjustBrightness(of color: Color, by percentage: CGFloat) -> Color? {
+    public static func adjustBrightness(of color: Color, by amount: CGFloat) -> Color? {
         #if canImport(UIKit)
         typealias PlatformColor = UIColor
         #elseif os(macOS)
@@ -162,7 +162,7 @@ public class GarnishColor {
         a = rgbColor.alphaComponent
         #endif
 
-        let factor = 1.0 + percentage
+        let factor = 1.0 + amount
         let newR = min(max(r * factor, 0), 1)
         let newG = min(max(g * factor, 0), 1)
         let newB = min(max(b * factor, 0), 1)
@@ -174,13 +174,13 @@ public class GarnishColor {
         #endif
     }
 
-    /// Adjusts the luminance (HSB brightness) of a color by a factor.
+    /// Adjusts the luminance (HSB brightness) of a color by an amount.
     ///
     /// - Parameters:
     ///   - color: The color to adjust
-    ///   - factor: Luminance factor (1.0 = no change, >1.0 = brighter, <1.0 = darker)
+    ///   - amount: Luminance adjustment (0.0 = no change, positive = brighter, negative = darker)
     /// - Returns: Color with adjusted luminance
-    public static func adjustLuminance(of color: Color, by factor: CGFloat) -> Color {
+    public static func adjustLuminance(of color: Color, by amount: CGFloat) -> Color {
         #if canImport(UIKit)
         typealias PlatformColor = UIColor
         #elseif os(macOS)
@@ -192,12 +192,12 @@ public class GarnishColor {
 
         #if canImport(UIKit)
         platformColor.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
-        let newBrightness = max(min(b * factor, 1.0), 0.0)
+        let newBrightness = max(min(b + amount, 1.0), 0.0)
         return Color(PlatformColor(hue: h, saturation: s, brightness: newBrightness, alpha: a))
         #elseif os(macOS)
         let rgbColor = platformColor.usingColorSpace(.deviceRGB) ?? platformColor
         rgbColor.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
-        let newBrightness = max(min(b * factor, 1.0), 0.0)
+        let newBrightness = max(min(b + amount, 1.0), 0.0)
         return Color(PlatformColor(calibratedHue: h, saturation: s, brightness: newBrightness, alpha: a))
         #endif
     }

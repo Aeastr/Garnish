@@ -56,22 +56,21 @@ public extension Color {
         #endif
     }
 
-    /// Adjusts the brightness of a color using standardized RGB brightness calculation.
-    /// Uses the same method as GarnishColor.adjustBrightness for consistency.
+    /// Adjusts the brightness of a color using RGB scaling.
     ///
-    /// - Parameter factor: Brightness adjustment factor (1.0 = no change, >1.0 = brighter, <1.0 = darker)
+    /// - Parameter amount: Brightness adjustment (-1.0 to 1.0, where 0.0 = no change, positive = brighter, negative = darker)
     /// - Returns: A new Color with adjusted brightness, or `nil` if processing fails
-    func adjustedBrightness(by factor: CGFloat) -> Color? {
-        return GarnishColor.adjustBrightness(of: self, by: factor)
+    func adjustBrightness(by amount: CGFloat) -> Color? {
+        return GarnishColor.adjustBrightness(of: self, by: amount)
     }
 
-    /// Adjusts the luminance of a color using WCAG-compliant relative luminance calculation.
+    /// Adjusts the luminance (HSB brightness) of a color by an amount.
     /// Uses the same method as GarnishColor.adjustLuminance for consistency.
     ///
-    /// - Parameter factor: Luminance adjustment factor (1.0 = no change, >1.0 = brighter, <1.0 = darker)
+    /// - Parameter amount: Luminance adjustment (0.0 = no change, positive = brighter, negative = darker)
     /// - Returns: A new Color with adjusted luminance
-    func adjustedLuminance(by factor: CGFloat) -> Color {
-        return GarnishColor.adjustLuminance(of: self, by: factor)
+    func adjustLuminance(by amount: CGFloat) -> Color {
+        return GarnishColor.adjustLuminance(of: self, by: amount)
     }
 
     /// Returns the hexadecimal string representation of the Color.

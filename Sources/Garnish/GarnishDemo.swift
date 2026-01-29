@@ -628,9 +628,9 @@ struct ColorExtensionsDemo: View {
         }
     }
 
-    private var adjustedBrightnessResult: (color: Color?, error: String?) {
+    private var adjustBrightnessResult: (color: Color?, error: String?) {
         do {
-            let color = try baseColor.adjustedBrightness(by: CGFloat(brightnessAdjustment))
+            let color = try baseColor.adjustBrightness(by: CGFloat(brightnessAdjustment))
             return (color, nil)
         } catch {
             return (nil, error.localizedDescription)
@@ -654,14 +654,14 @@ struct ColorExtensionsDemo: View {
 
                         HStack(spacing: 20) {
                             ColorSwatch(color: baseColor, label: "Original")
-                            if let adjustedColor = adjustedBrightnessResult.color {
+                            if let adjustedColor = adjustBrightnessResult.color {
                                 ColorSwatch(color: adjustedColor, label: "Adjusted")
                             } else {
                                 VStack {
                                     Text("Error")
                                         .foregroundColor(.red)
                                         .font(.caption)
-                                    if let error = adjustedBrightnessResult.error {
+                                    if let error = adjustBrightnessResult.error {
                                         Text(error)
                                             .foregroundColor(.red)
                                             .font(.caption2)
@@ -676,10 +676,10 @@ struct ColorExtensionsDemo: View {
 
                         CodeBlock(
                             code: """
-                            let adjustedColor = baseColor.adjustedBrightness(by: \(String(format: "%.1f", brightnessAdjustment)))
+                            let adjustedColor = baseColor.adjustBrightness(by: \(String(format: "%.1f", brightnessAdjustment)))
                             """,
                             colorMappings: [
-                                "adjustedColor": adjustedBrightnessResult.color ?? .gray,
+                                "adjustedColor": adjustBrightnessResult.color ?? .gray,
                                 "baseColor": baseColor
                             ]
                         )

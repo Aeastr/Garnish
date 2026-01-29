@@ -27,8 +27,8 @@ This folder contains all Swift extensions for the Garnish package, organized by 
 ### Color Extensions
 ```swift
 // Brightness and luminance adjustment
-let brighterColor = try color.adjustedBrightness(by: 1.2)
-let adjustedColor = try color.adjustedLuminance(by: 0.8)
+let brighterColor = color.adjustBrightness(by: 0.2)  // 20% brighter
+let adjustedColor = color.adjustLuminance(by: 0.1)   // add 0.1 to HSB brightness
 
 // Hex conversion
 let hexString = try color.toHex(alpha: true)

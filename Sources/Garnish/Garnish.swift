@@ -135,12 +135,6 @@ public class Garnish {
         blendStyle: BlendStyle? = nil,
         blendRange: ClosedRange<CGFloat>? = nil
     ) -> Color? {
-        #if canImport(UIKit)
-        typealias PlatformColor = UIColor
-        #elseif os(macOS)
-        typealias PlatformColor = NSColor
-        #endif
-
         let platformColor = PlatformColor(color)
 
         // Calculate current contrast ratio
@@ -187,14 +181,14 @@ public class Garnish {
 
     // MARK: - Private Helper Methods
 
-    private static func determineContrastingBase<PlatformColor: PlatformColorProtocol>(
+    private static func determineContrastingBase(
         platformColor: PlatformColor,
         background: Color,
         direction: ContrastDirection,
         targetRatio: CGFloat
     ) -> PlatformColor? {
-        let blackBase: PlatformColor = .black
-        let whiteBase: PlatformColor = .white
+        let blackBase = PlatformColor.black
+        let whiteBase = PlatformColor.white
 
         switch direction {
         case .forceDark:
@@ -220,7 +214,7 @@ public class Garnish {
         }
     }
 
-    private static func determineAutoDirection<PlatformColor: PlatformColorProtocol>(
+    private static func determineAutoDirection(
         platformColor: PlatformColor,
         background: Color,
         blackBase: PlatformColor,
@@ -237,7 +231,7 @@ public class Garnish {
         return maxBlackRatio > maxWhiteRatio ? blackBase : whiteBase
     }
 
-    private static func determinePreferredDirection<PlatformColor: PlatformColorProtocol>(
+    private static func determinePreferredDirection(
         platformColor: PlatformColor,
         background: Color,
         direction: ContrastDirection,
@@ -272,7 +266,7 @@ public class Garnish {
         }
     }
 
-    private static func findOptimalBlend<PlatformColor: PlatformColorProtocol>(
+    private static func findOptimalBlend(
         platformColor: PlatformColor,
         contrastingBase: PlatformColor,
         background: Color,
